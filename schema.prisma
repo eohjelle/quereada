@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Source {
+  name       String   @id @unique
+  date_added DateTime @default(now())
+  Item       Item[]
+}
+
+model ItemType {
+  name String @id @unique
+  Item Item[]
+}
+
+model Language {
+  id   String @id @unique
+  name String
+  Item Item[]
+}
+
+model Topic {
+  id       Int     @id @default(autoincrement())
+  name     String  @unique
+  interest Boolean @default(false)
+  avoid    Boolean @default(false)
+  Item     Item?   @relation(fields: [itemId], references: [id])
+  itemId   Int?
+}
+
+model Author {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  Item Item[]
+}
+
+model Item {
+  id                         Int       @id @default(autoincrement())
+  item_type                  ItemType  @relation(fields: [item_type_name], references: [name])
+  item_type_name             String
+  source                     Source    @relation(fields: [source_name], references: [name])
+  source_name                String
+  language                   Language? @relation(fields: [lang_id], references: [id])
+  lang_id                    String?
+  title                      String
+  description                String?
+  link                       String
+  authors                    Author[]
+  date_published             DateTime?
+  date_added                 DateTime  @default(now())
+  likes                      Int?
+  comments_link              String?
+  comments_summary           String?
+  content                    String?
+  number_of_words            Int?
+  summary                    String?
+  image_link                 String?
+  image_caption              String?
+  image_credit               String?
+  topics                     Topic[]
+  relevant_to_interest_topic Boolean   @default(false)
+  relevant_to_avoid_topic    Boolean   @default(false)
+  seen                       Boolean   @default(false)
+  read_later                 Boolean   @default(false)
+  saved                      Boolean   @default(false)
+}
