@@ -13,15 +13,22 @@
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
+		"@types/node": "^22.4.1",
+		"@types/xml2js": "^0.4.14",
+		"eyes": "^0.1.8",
 		"svelte": "^4.2.7",
 		"svelte-check": "^3.6.0",
 		"typescript": "^5.0.0",
+		"util": "^0.12.5",
 		"vite": "^5.0.3"
 	},
 	"type": "module",
 	"dependencies": {
 		"@prisma/client": "^5.18.0",
-		"better-sqlite3": "^11.1.2",
-		"prisma": "^5.18.0"
+		"fs": "^0.0.1-security",
+		"openai": "^4.56.0",
+		"prisma": "^5.18.0",
+		"svelte-inview": "^4.0.2",
+		"xml2js": "^0.6.2"
 	}
 }

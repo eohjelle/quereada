@@ -1,69 +1,87 @@
 <script>
+  import { byline } from "$lib/components/helpers";
+  import { getContext } from "svelte";
+  import Summarizer from "./Summarizer.svelte";
+
   export let item;
+
+  // Initiate variable to indicate whether to show the summary. This will be controlled by a button in a child component.
+  const show_summary = getContext("show_summary");
 </script>
 
-<div class="news-box">
-  <img src={item.image_link} class="item-photo" />
-  <div class="news-content">
-    <header class="outlet-header">
-      <!-- <img src={item.outlet_logo} class="logo" /> -->
-      <h3>{item.source}</h3>
-    </header>
-    <h2><a href={item.link}>{@html item.title}</a></h2>
-    <footer>{item.authors}</footer>
-    <p class="summary">
-      {@html item.description}
-    </p>
+<div class="item-content">
+  <div class="base-layer">
+    <img src={item.image_link} class="item-photo" />
+    <div class="text-content">
+      <header class="outlet-header">
+        <!-- <img src={item.outlet_logo} class="logo" /> -->
+        <h3>{item.source_name}</h3>
+      </header>
+      <h2><a href={item.link}>{@html item.title}</a></h2>
+      <footer>{byline(item.authors)}</footer>
+      <p class="description">
+        {@html item.description}
+      </p>
+    </div>
   </div>
+  {#if $show_summary}
+    <div class="summary-overlay">
+      <Summarizer {item} />
+    </div>
+  {/if}
 </div>
 
 <style>
-  /* Container for the news item box */
-  .news-box {
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    margin: 20px;
-    background-color: #ffffff;
-    display: flex;
-    flex-direction: row;
-    width: 70%;
-    border: 1px solid #ddd;
+  /* Container for all content */
+  .item-content {
+    position: relative;
+  }
+
+  /* Base layer for the item */
+  .base-layer {
+    z-index: 0;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    display: grid;
+    grid-template-columns: 33% 67%;
+  }
+
+  /* summary overlay layer */
+  .summary-overlay {
+    position: absolute;
+    z-index: 1;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffffe9;
   }
 
   /* Image of the item */
-  .news-box img.item-photo {
-    max-width: 800px;
-    max-height: 200px;
-    border-radius: 15px;
-    height: auto;
-    border-bottom: 1px solid #ddd;
+  .item-photo {
+    max-width: 100%;
+    object-fit: cover;
+    border-radius: 15px 0 0 15px;
   }
 
   /* Logo of the outlet */
-  .news-box img.logo {
+  .logo {
     width: 50px;
     height: auto;
     margin: 10px;
   }
 
   /* Container for the text content */
-  .news-content {
-    padding: 15px;
+  .text-content {
+    padding: 5px;
   }
 
   /* Headline of the item */
-  .news-content h2 {
+  .item-content h2 {
     font-size: 1.5em;
-    margin: 10px 0;
+    margin: 5px 0;
     color: #333;
-  }
-
-  /* Summary of the item */
-  .news-content p.summary {
-    font-size: 1em;
-    color: #666;
-    margin: 10px 0;
   }
 
   /* Outlet logo and headline row */

@@ -5,7 +5,7 @@
   import FullTextArticle from "./FullTextArticle.svelte";
   // import Video from './Video.svelte';
 
-  export let query = "SELECT * FROM Items LIMIT 10";
+  export let query = "SELECT * FROM Item LIMIT 10";
   let items = [];
 
   // Fetch data from the API when the component is loaded
@@ -13,6 +13,17 @@
     const response = await fetch(
       `/api/data?query=${encodeURIComponent(query)}`
     );
+    items = await response.json();
+  }
+
+  async function prismaLoadItems() {
+    const response = await fetch("/api/fetch-data", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ query }),
+    });
     items = await response.json();
   }
 

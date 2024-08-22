@@ -11,14 +11,20 @@ datasource db {
 }
 
 model Source {
-  name       String   @id @unique
-  date_added DateTime @default(now())
+  name       String    @id @unique
+  url        String?
+  date_added DateTime  @default(now())
+  channels   Channel[]
   Item       Item[]
 }
 
-model ItemType {
-  name String @id @unique
-  Item Item[]
+model Channel {
+  id           Int    @id @default(autoincrement())
+  channel_name String
+  source       Source @relation(fields: [source_name], references: [name])
+  source_name  String
+
+  @@unique([source_name, channel_name])
 }
 
 model Language {
@@ -37,22 +43,21 @@ model Topic {
 }
 
 model Author {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-  Item Item[]
+  name  String @id @unique // todo: make a system where author names are not required to be unique
+  items Item[]
 }
 
 model Item {
   id                         Int       @id @default(autoincrement())
-  item_type                  ItemType  @relation(fields: [item_type_name], references: [name])
-  item_type_name             String
+  // item_type                  ItemType  @default(Link) // see below; enums are not supported for SQLite
+  item_type                  String    @default("Link")
   source                     Source    @relation(fields: [source_name], references: [name])
   source_name                String
   language                   Language? @relation(fields: [lang_id], references: [id])
   lang_id                    String?
   title                      String
   description                String?
-  link                       String
+  link                       String    @unique
   authors                    Author[]
   date_published             DateTime?
   date_added                 DateTime  @default(now())
@@ -72,3 +77,8 @@ model Item {
   read_later                 Boolean   @default(false)
   saved                      Boolean   @default(false)
 }
+
+// enum ItemType {
+//   Link
+//   FullTextArticle
+// }

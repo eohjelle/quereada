@@ -1,12 +1,6 @@
-import Database from 'better-sqlite3';
-import { DB_PATH } from '$env/static/private';
-import fs from 'fs';
+import { PrismaClient } from '@prisma/client';
+import { DATABASE_URL } from '$env/static/private';
 
-console.log('DB_PATH:', DB_PATH); // For debugging purposes. todo: remove
+console.log(`Loading database at ${DATABASE_URL}...`);
 
-export const db = new Database(DB_PATH);
-db.exec(fs.readFileSync('seed.sql', 'utf8'));
-
-export async function query(sql: string, params?: any[]) {
-  return db.prepare(sql).all(params);
-}
+export const db = new PrismaClient();
