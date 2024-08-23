@@ -26,7 +26,7 @@ export class TheAtlantic implements SourceWithFetch {
                 source_name: this.name,
                 lang_id: 'en-us',
                 title: raw_item.title[0]._,
-                description: raw_item.summary[0]._,
+                description: raw_item.summary?.[0]._ || null,
                 link: raw_item.link[0].$.href,
                 date_published: new Date(raw_item.published[0]),
                 date_added: new Date(),

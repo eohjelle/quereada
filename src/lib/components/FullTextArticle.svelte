@@ -55,7 +55,7 @@
     left: 0px;
     width: 100%;
     height: 100%;
-    background-color: #ffffffe9;
+    background-color: #fffbf0ee;
   }
 
   /* Image of the item */

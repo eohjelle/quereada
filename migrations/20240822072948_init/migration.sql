@@ -1,12 +1,16 @@
 -- CreateTable
 CREATE TABLE "Source" (
     "name" TEXT NOT NULL PRIMARY KEY,
+    "url" TEXT,
     "date_added" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- CreateTable
-CREATE TABLE "ItemType" (
-    "name" TEXT NOT NULL PRIMARY KEY
+CREATE TABLE "Channel" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "channel_name" TEXT NOT NULL,
+    "source_name" TEXT NOT NULL,
+    CONSTRAINT "Channel_source_name_fkey" FOREIGN KEY ("source_name") REFERENCES "Source" ("name") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -27,14 +31,13 @@ CREATE TABLE "Topic" (
 
 -- CreateTable
 CREATE TABLE "Author" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "name" TEXT NOT NULL
+    "name" TEXT NOT NULL PRIMARY KEY
 );
 
 -- CreateTable
 CREATE TABLE "Item" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "item_type_name" TEXT NOT NULL,
+    "item_type" TEXT NOT NULL DEFAULT 'Link',
     "source_name" TEXT NOT NULL,
     "lang_id" TEXT,
     "title" TEXT NOT NULL,
@@ -56,16 +59,15 @@ CREATE TABLE "Item" (
     "seen" BOOLEAN NOT NULL DEFAULT false,
     "read_later" BOOLEAN NOT NULL DEFAULT false,
     "saved" BOOLEAN NOT NULL DEFAULT false,
-    CONSTRAINT "Item_item_type_name_fkey" FOREIGN KEY ("item_type_name") REFERENCES "ItemType" ("name") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Item_source_name_fkey" FOREIGN KEY ("source_name") REFERENCES "Source" ("name") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Item_lang_id_fkey" FOREIGN KEY ("lang_id") REFERENCES "Language" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateTable
 CREATE TABLE "_AuthorToItem" (
-    "A" INTEGER NOT NULL,
+    "A" TEXT NOT NULL,
     "B" INTEGER NOT NULL,
-    CONSTRAINT "_AuthorToItem_A_fkey" FOREIGN KEY ("A") REFERENCES "Author" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "_AuthorToItem_A_fkey" FOREIGN KEY ("A") REFERENCES "Author" ("name") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "_AuthorToItem_B_fkey" FOREIGN KEY ("B") REFERENCES "Item" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -73,7 +75,7 @@ CREATE TABLE "_AuthorToItem" (
 CREATE UNIQUE INDEX "Source_name_key" ON "Source"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ItemType_name_key" ON "ItemType"("name");
+CREATE UNIQUE INDEX "Channel_source_name_channel_name_key" ON "Channel"("source_name", "channel_name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Language_id_key" ON "Language"("id");
@@ -83,6 +85,9 @@ CREATE UNIQUE INDEX "Topic_name_key" ON "Topic"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Author_name_key" ON "Author"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Item_link_key" ON "Item"("link");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_AuthorToItem_AB_unique" ON "_AuthorToItem"("A", "B");
