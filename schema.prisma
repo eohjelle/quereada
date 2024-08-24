@@ -11,11 +11,12 @@ datasource db {
 }
 
 model Source {
-  name       String    @id @unique
-  url        String?
-  date_added DateTime  @default(now())
-  channels   Channel[]
-  Item       Item[]
+  name        String    @id @unique
+  source_type String // would be useful to have an enum of possible source types, but not supported with current database. todo: rename to source_class?
+  url         String?
+  date_added  DateTime  @default(now())
+  channels    Channel[]
+  Item        Item[]
 }
 
 model Channel {

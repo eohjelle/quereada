@@ -1,16 +1,21 @@
 import { parseStringPromise } from 'xml2js';
 import type { Item, Author } from '@prisma/client';
 import type { SourceWithFetch } from '../types';
-import util from 'util';
+import util from 'util'; // only used for debugging
 
 export class TheAtlantic implements SourceWithFetch {
     name: string = 'The Atlantic';
     url: string = 'https://www.theatlantic.com/feed/';
-    channels: string[] = ['bestof']
+    channels: string[] = ['bestof'];
     date_added: Date = new Date();
 
+    constructor({ name, url, channels }: { name: string; url: string; channels: string[] }) {
+        console.log(`TheAtlantic constructor called with channels`,channels);
+        this.channels = channels;
+    }
+
     async fetch_new_items_from_channel(channel: string) {
-        const parsed_xml = await fetch(`https://www.theatlantic.com/feed/${channel}/`) // todo: fix to fetch from channels)
+        const parsed_xml = await fetch(`https://www.theatlantic.com/feed/${channel}/`)
             .then((response) => response.text())
             .then((text) => parseStringPromise(text));
 
@@ -27,13 +32,13 @@ export class TheAtlantic implements SourceWithFetch {
                 lang_id: 'en-us',
                 title: raw_item.title[0]._,
                 description: raw_item.summary?.[0]._ || null,
-                link: raw_item.link[0].$.href,
-                date_published: new Date(raw_item.published[0]),
+                link: raw_item.link?.[0].$.href,
+                date_published: new Date(raw_item.published?.[0]),
                 date_added: new Date(),
-                content: raw_item.content[0]._,
+                content: raw_item.content?.[0]._,
                 number_of_words: raw_item.content[0]._.split(' ').length,
-                image_link: raw_item['media:content']?.[0]?.['$']?.url || null,
-                image_credit: raw_item['media:content']?.[0]?.['$']?.credit || null
+                image_link: raw_item['media:content']?.[0]['$'].url || null,
+                image_credit: raw_item['media:content']?.[0]['$'].credit || null
             };
             item_authors_pairs.push([item, authors]);
         }

@@ -4,6 +4,7 @@
   import ButtonContainer from "./ButtonContainer.svelte";
   import { setContext } from "svelte";
   import { writable } from "svelte/store";
+  import Link from "./Link.svelte";
 
   // The item to be displayed
   export let item;
@@ -11,6 +12,7 @@
   // A dictionary to map names of item types (used in db) to the corresponding svelte component
   const svelte_component_of_type = {
     FullTextArticle: FullTextArticle,
+    Link: Link,
   };
 
   // Function to update database when the item is seen
@@ -39,6 +41,11 @@
   // This state is controlled by a button component, and will be read by the "content" component.
   // This is irrelevant for item types that don't have content, but the variable must be initialized here in order to be shared between the content and button components.
   const show_summary = setContext("show_summary", writable(false));
+
+  import { onMount } from "svelte";
+  onMount(() => {
+    console.log("ItemContainer mounted for the following item:", item);
+  });
 </script>
 
 <div

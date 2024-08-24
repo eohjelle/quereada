@@ -61,11 +61,13 @@
       updateSavedToDB();
     }}>{item.saved ? "Remove from saved" : "Save"}</button
   >
-  <button
-    on:click={() => {
-      show_summary.update((bool) => !bool);
-    }}>{$show_summary ? "Close Summary" : "Summarize"}</button
-  >
+  {#if item.content}
+    <button
+      on:click={() => {
+        show_summary.update((bool) => !bool);
+      }}>{$show_summary ? "Close Summary" : "Summarize"}</button
+    >
+  {/if}
 </div>
 
 <style>
