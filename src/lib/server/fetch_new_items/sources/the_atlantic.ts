@@ -28,7 +28,7 @@ export class TheAtlantic implements SourceWithFetch {
             const item: Item = {
                 item_type: 'Article',
                 source_name: this.name,
-                lang_id: 'en-us',
+                lang_id: 'en',
                 title: raw_item.title[0]._,
                 description: raw_item.summary?.[0]._ || null,
                 link: raw_item.link?.[0].$.href,

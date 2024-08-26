@@ -33,5 +33,8 @@
 		"rss-parser": "^3.13.0",
 		"svelte-inview": "^4.0.2",
 		"xml2js": "^0.6.2"
+	},
+	"prisma": {
+		"seed": "node ./database-seed.js"
 	}
 }

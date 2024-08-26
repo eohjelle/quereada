@@ -31,7 +31,7 @@ export class NYTimesAPI implements SourceWithFetch{
             const item: Item = {
                 item_type: 'Article',
                 source_name: this.name,
-                lang_id: 'en-us',
+                lang_id: 'en',
                 title: raw_item.title,
                 description: raw_item.abstract,
                 link: raw_item.url,

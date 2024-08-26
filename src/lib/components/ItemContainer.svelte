@@ -1,6 +1,6 @@
 <script>
   import { inview } from "svelte-inview";
-  import FullTextArticle from "./FullTextArticle.svelte";
+  import Article from "./Article.svelte";
   import ButtonContainer from "./ButtonContainer.svelte";
   import { setContext } from "svelte";
   import { writable } from "svelte/store";
@@ -11,7 +11,7 @@
 
   // A dictionary to map names of item types (used in db) to the corresponding svelte component
   const svelte_component_of_type = {
-    FullTextArticle: FullTextArticle,
+    Article: Article,
     Link: Link,
   };
 

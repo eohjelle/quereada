@@ -1,6 +1,7 @@
 -- CreateTable
 CREATE TABLE "Source" (
     "name" TEXT NOT NULL PRIMARY KEY,
+    "source_type" TEXT NOT NULL,
     "url" TEXT,
     "date_added" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
