@@ -63,14 +63,18 @@ async function loadSources(): Promise<SourceWithFetch[]> {
     return sources;
 }
 
+async function delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // Function to fetch all new items from all sources
 export async function fetch_all_new_items(): Promise<void> {
     const sources = await loadSources();
-    Promise.all(sources.map(async (source) => {
+    await Promise.all(sources.map(async (source) => {
         console.log(`Fetching new items from ${source.name}...`);
-        source.fetch_new_items()
-        .then((new_item_authors_pairs) => {
-            console.log(`Fetched ${new_item_authors_pairs.length} new items from ${source.name}.`);
+        return source.fetch_new_items()
+        .then(async (new_item_authors_pairs) => {
+            console.log(`Fetched ${new_item_authors_pairs.length} items from ${source.name}.`);
             for (const [item, authors] of new_item_authors_pairs) {
                 push_item_with_authors_to_db(item, authors);
             }

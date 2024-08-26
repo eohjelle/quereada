@@ -1,4 +1,6 @@
-[
+import { subDays } from 'date-fns';
+
+const feeds = [
     {
         "feed_title": "Serious News",
         "blocks": [
@@ -44,7 +46,10 @@
                 "prisma_function": "findMany",
                 "prisma_args": {
                     "where": {
-                        "source_name": "Hacker News"
+                        "source_name": "Hacker News",
+                        "date_published": {
+                            "gt": subDays(new Date(), 1) // only show articles from the last day
+                        }
                     },
                     "include": {
                         "authors": true
@@ -105,3 +110,5 @@
         ]
     }
 ]
+
+export default feeds;

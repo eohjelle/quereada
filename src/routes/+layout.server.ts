@@ -1,5 +1,5 @@
-import feeds from './[feed]/feeds.json';
+import feeds from './[feed]/feeds';
 
-export function load({ params }) {
+export function load() {
     return { feeds: feeds.map((feed) => feed.feed_title) };
 }

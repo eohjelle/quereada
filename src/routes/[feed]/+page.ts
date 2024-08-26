@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import feeds from './feeds.json';
+import feeds from './feeds';
 
 export function load({ params }) {
     const feed = feeds.find((feed) => feed.feed_title === params.feed);

@@ -10,7 +10,6 @@ export class TheAtlantic implements SourceWithFetch {
     date_added: Date = new Date();
 
     constructor({ name, url, channels }: { name: string; url: string; channels: string[] }) {
-        console.log(`TheAtlantic constructor called with channels`,channels);
         this.channels = channels;
     }
 
@@ -27,7 +26,7 @@ export class TheAtlantic implements SourceWithFetch {
 
             const authors = raw_item.author.map((author: { name: string }) => ({ name: author.name[0] }));
             const item: Item = {
-                item_type: 'FullTextArticle',
+                item_type: 'Article',
                 source_name: this.name,
                 lang_id: 'en-us',
                 title: raw_item.title[0]._,

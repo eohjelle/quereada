@@ -5,8 +5,8 @@ import util from 'util'; // only used for debugging
 
 function authors_from_byline(byline: string): Author[] {
     return byline
-        .replace('By', '') // remove "By" from the beginning of the byline
-        .replace('and', ',') // replace "and" with ","
+        .replace('By ', '') // remove "By" from the beginning of the byline
+        .replace(' and ', ',') // replace "and" with ","
         .split(',') // split the byline into an array of names
         .map((name: string) => ({ name: name.trim() })); // trim each name and create an Author object
 }
@@ -29,7 +29,7 @@ export class NYTimesAPI implements SourceWithFetch{
         for (const raw_item of data.results) {
             const authors = authors_from_byline(raw_item.byline);
             const item: Item = {
-                item_type: 'Link',
+                item_type: 'Article',
                 source_name: this.name,
                 lang_id: 'en-us',
                 title: raw_item.title,

@@ -1,31 +1,21 @@
 <script>
   import ItemContainer from "$lib/components/ItemContainer.svelte";
-  import { onMount, onDestroy, afterUpdate } from "svelte"; // Not sure if I need all. todo: remove superfluous imports
+  import { onMount, onDestroy, afterUpdate } from "svelte";
 
-  // Inspiration for infinite scrolling: https://svelte.dev/repl/aacd1a2d8eb14bb19e5cb3b0ad20fdbe?version=3.32.3
-  let itemsContainer;
-
-  let items = [];
-
-  // Sample blocks to be loaded
-  // todo: write function to load blocks from a json file
+  // Feed is a variable supplied by the parent component.
+  // It contains the blocks that define the feed.
   export let feed;
 
   // View block_stack as a LIFO stack to load the blocks in the correct order.
   // The spread operator is used to create a copy of the array. This is necessary because we don't want to remove items from the original array.
   let block_stack = [...feed.blocks].reverse();
 
-  $: console.log(
-    `Hello from Feed.svelte. This is the feed titled ${feed.feed_title}. There are ${feed.blocks.length} blocks to load.`
-  );
-  $: console.log(
-    `To start with, the block stack has length ${block_stack.length}.`
-  );
+  // Initialize some variables
+  let items = []; // List of items to be displayed
+  let itemsContainer; // Reference to the container of items
+  const pageSize = 2; // Number of items to be loaded at a time. todo: compute based on the size of the window
 
-  // Elements of items on a page
-  // todo: compute based on the size of the window
-  const pageSize = 2;
-
+  // Make an API call to fetch data from the database
   async function fetchBlock(block) {
     const response = await fetch("/api/data", {
       method: "POST",
@@ -38,7 +28,8 @@
     return await response.json();
   }
 
-  async function loadMoreItems(block_stack) {
+  // Load more items based on the current state of block_stack and pageSize
+  async function loadMoreItems() {
     if (block_stack.length == 0) {
       console.log("No more items to show.");
       removeEventListener("scroll", loadMoreItemsIfCloseToBottom); // It's possible that this can lead to items failing to load. todo: revisit this later on
@@ -46,7 +37,7 @@
     }
     const block = JSON.parse(JSON.stringify(block_stack.pop())); // We create a deep copy of the block to avoid modifying the original block in feed.blocks
     let left_over;
-    // First decide how many blocks to load
+    // First decide how many items to load
     if (block.prisma_args.take) {
       const [div, rem] = [
         Math.floor(block.prisma_args.take / pageSize),
@@ -58,9 +49,10 @@
       block.prisma_args.take = pageSize;
       left_over = Infinity;
     }
+    // Fetch new items and add to the list of items
     const newItems = await fetchBlock(block);
-    items = [...items, ...newItems]; // todo: try to use push with spread operator
-    // Decide if there are potentially any more blocks left to load.
+    items = [...items, ...newItems];
+    // Decide if there are potentially any more items in the block left to load.
     if (left_over > 0 && newItems.length == pageSize) {
       block.prisma_args.skip = block.prisma_args.skip
         ? block.prisma_args.skip + block.prisma_args.take
@@ -72,9 +64,9 @@
     }
   }
 
-  // We use a promise to keep track of calls to loadMoreItems, in order to prevent calling loadMoreItems again before the previous call has finished.
+  // Events trigger the wrapper function loadMoreItemsIfCloseToBottom, which calls loadMoreItems if the user is close to the bottom of the page.
+  // A promise is used to keep track of calls to loadMoreItems, in order to prevent calling loadMoreItems again before the previous call has finished.
   let loadingPromise = null;
-
   async function loadMoreItemsIfCloseToBottom() {
     // If there's an ongoing loading operation, wait for it to complete
     if (loadingPromise) {
@@ -88,7 +80,7 @@
       // Create a new loadingPromise
       loadingPromise = (async () => {
         try {
-          await loadMoreItems(block_stack);
+          await loadMoreItems();
         } catch (error) {
           console.error("Error in loadMoreItems:", error);
         } finally {
@@ -118,10 +110,7 @@
 
 <div class="items-container" bind:this={itemsContainer}>
   {#each items as item}
-    <!-- <label> -->
     <ItemContainer {item} />
-    <!-- {item.title} -->
-    <!-- </label> -->
   {/each}
 </div>
 
@@ -131,6 +120,6 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    /* border: 2px solid red; */
+    /* border: 2px solid red; */ /* For development purposes */
   }
 </style>
