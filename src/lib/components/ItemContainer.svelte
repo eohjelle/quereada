@@ -41,11 +41,6 @@
   // This state is controlled by a button component, and will be read by the "content" component.
   // This is irrelevant for item types that don't have content, but the variable must be initialized here in order to be shared between the content and button components.
   const show_summary = setContext("show_summary", writable(false));
-
-  import { onMount } from "svelte";
-  onMount(() => {
-    console.log("ItemContainer mounted for the following item:", item);
-  });
 </script>
 
 <div

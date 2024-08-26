@@ -17,7 +17,7 @@
         <!-- <img src={item.outlet_logo} class="logo" /> -->
         <h3>{item.source_name}</h3>
       </header>
-      <h2><a href={item.link}>{@html item.title}</a></h2>
+      <h2 class="headline"><a href={item.link}>{@html item.title}</a></h2>
       <footer>{byline(item.authors)}</footer>
       <p class="description">
         {@html item.description}
@@ -32,6 +32,8 @@
 </div>
 
 <style>
+  @import url("https://fonts.googleapis.com/css2?family=Baskervville+SC&display=swap"); /* todo: download font and host locally */
+
   /* Container for all content */
   .item-content {
     position: relative;
@@ -93,5 +95,11 @@
   /* Logo inside the headline row */
   .outlet-header img.logo {
     margin-right: 10px;
+  }
+
+  .headline {
+    font-family: "Baskervville SC", serif;
+    font-weight: 400;
+    font-style: normal;
   }
 </style>
