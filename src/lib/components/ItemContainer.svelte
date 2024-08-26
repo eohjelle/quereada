@@ -65,7 +65,6 @@
 <style>
   /* Container for the item item box */
   .item-box {
-    position: relative; /* Makes the container "positioned" which allows the summary to be positioned absolutely within it. */
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
