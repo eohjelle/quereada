@@ -2,26 +2,15 @@
   import { onMount } from "svelte";
 
   export let item;
-  let summary_promise;
+
+  onMount(() => {
+    get_summary();
+  });
+
+  let summary = "";
 
   async function get_summary() {
-    console.log(`Sending api request to summarize item with id ${item.id}...`);
-    // const test_summary = await fetch("/api/summarize", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     id: item.id,
-    //     source: item.source_name,
-    //     title: item.title,
-    //     authors: item.authors,
-    //     description: item.description,
-    //     content: item.content,
-    //   }),
-    // });
-    // console.log(`Received response: ${await test_summary.text()}`);
-    summary_promise = fetch("/api/summarize", {
+    const response = await fetch("/api/summarize", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -34,19 +23,27 @@
         description: item.description,
         content: item.content,
       }),
-    }).then((response) => response.text());
-  }
+    });
+    // todo: use the following code to read the response body as a stream when [Symbol.asynciterator] becomes supported by Safari: https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream#browser_compatibility
+    // const decoder = new TextDecoder();
+    // for await (const chunk of response.body) {
+    //   console.log(decoder.decode(chunk));
+    //   summary += decoder.decode(chunk);
+    // }
 
-  onMount(() => get_summary());
+    // todo: remove the following code when [Symbol.asynciterator] becomes supported by Safari
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      summary += decoder.decode(value);
+    }
+  }
 </script>
 
-{#await summary_promise}
-  <p>Loading summary...</p>
-{:then summary}
-  <p>{summary}</p>
-{:catch}
-  <p>Failed to load summary.</p>
-{/await}
+<p>{summary}</p>
 
 <style>
   p {

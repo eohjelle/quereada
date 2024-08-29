@@ -50,6 +50,7 @@
     position: relative;
     width: 100%;
     max-height: inherit; /* todo: make sure this keeps the item-content within the parent container */
+    background-color: inherit;
   }
 
   /* Base layer for the item */
@@ -62,6 +63,7 @@
     height: 100%;
     display: grid;
     grid-template-columns: 33% 67%;
+    background-color: inherit;
   }
 
   /* summary overlay layer */
@@ -73,7 +75,7 @@
     width: 100%;
     height: 100%;
     background-color: inherit;
-    opacity: 0.8;
+    opacity: 0.9;
   }
 
   .summary-overlay-content {
