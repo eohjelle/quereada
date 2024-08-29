@@ -7,7 +7,7 @@
     get_summary();
   });
 
-  let summary = "";
+  let summary = "Loading summary...";
 
   async function get_summary() {
     const response = await fetch("/api/summarize", {
@@ -35,6 +35,7 @@
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
 
+    summary = "";
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
