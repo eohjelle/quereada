@@ -36,19 +36,20 @@
     </div>
   </div>
   {#if $show_summary}
-    <div class="summary-overlay">
-      <Summarizer {item} />
+    <div class="summary-overlay-background">
+      <div class="summary-overlay-content">
+        <Summarizer {item} />
+      </div>
     </div>
   {/if}
 </div>
 
 <style>
-  @import url("https://fonts.googleapis.com/css2?family=Baskervville+SC&display=swap"); /* todo: download font and host locally */
-  @import url("https://fonts.googleapis.com/css2?family=Lugrasimo&display=swap");
-
   /* Container for all content */
   .item-content {
     position: relative;
+    width: 100%;
+    max-height: inherit; /* todo: make sure this keeps the item-content within the parent container */
   }
 
   /* Base layer for the item */
@@ -64,14 +65,25 @@
   }
 
   /* summary overlay layer */
-  .summary-overlay {
+  .summary-overlay-background {
     position: absolute;
     z-index: 1;
     top: 0px;
     left: 0px;
     width: 100%;
     height: 100%;
-    background-color: #fffbf0ee;
+    background-color: inherit;
+    opacity: 0.8;
+  }
+
+  .summary-overlay-content {
+    position: absolute;
+    z-index: 2;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
   }
 
   /* Image of the item */
@@ -90,8 +102,11 @@
 
   /* Container for the text content */
   .text-content {
-    margin: 15px;
+    padding: 15px;
     display: flex;
+    max-height: inherit;
+    width: 100%;
+    box-sizing: border-box;
     flex-direction: column;
     justify-content: space-evenly;
   }
@@ -100,7 +115,7 @@
   .outlet-header {
     display: flex;
     justify-content: space-between;
-    font-family: "Lugrasimo", cursive;
+    font-family: var(--outlet-font);
     font-weight: 400;
     font-style: normal;
   }
@@ -113,11 +128,7 @@
     margin-right: 5%;
   }
 
-  .headline {
-    font-family: "Baskervville SC", serif;
-    font-weight: 400;
-    font-style: normal;
-    text-align: left;
+  .headline a {
     margin: 0;
   }
 
@@ -129,9 +140,7 @@
   }
 
   .byline {
-    font-family: "Baskervville SC", serif;
-    font-weight: 400;
-    font-style: normal;
+    font-family: var(--author-font);
     text-align: left;
     margin: 0;
   }

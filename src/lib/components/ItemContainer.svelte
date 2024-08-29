@@ -73,6 +73,7 @@
     display: grid;
     grid-template-columns: 90% 10%;
     width: 80%;
+    height: 250px; /* If removed, text content seems to cut off in some cases. todo: investigate */
     max-height: 250px;
     border: 2px solid #ddd;
   }

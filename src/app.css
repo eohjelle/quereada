@@ -1,0 +1,24 @@
+@import '@fontsource-variable/eb-garamond';
+@import '@fontsource/baskervville-sc';
+@import '@fontsource/lugrasimo';
+
+:root {
+  --default-font: 'EB Garamond Variable', serif;
+  --author-font: 'Baskervville SC', serif;
+  --outlet-font: 'Lugrasimo', cursive;
+}
+
+body {
+    font-family: var(--default-font);
+}
+
+a {
+    color: #333333;
+    text-decoration: none;
+    transition: color 0.3s ease, border-bottom 0.3s ease;
+}
+
+a:hover {
+    color: #e7131a;
+    border-bottom: 2px solid #e7131a;
+}

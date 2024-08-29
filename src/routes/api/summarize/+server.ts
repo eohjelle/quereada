@@ -1,8 +1,9 @@
 import { OPENAI_API_KEY} from '$env/static/private';
 import OpenAI from 'openai';
-import { json } from '@sveltejs/kit';
+import { json, text } from '@sveltejs/kit';
 import type { Item } from '@prisma/client';
 import { db } from '$lib/server/database';
+import util from 'util';
 
 const openai = new OpenAI(OPENAI_API_KEY);
 
@@ -23,10 +24,12 @@ async function summarize(item: Partial<Item>) {
     return summary;
 };
 
+// todo: support summary streaming
 export async function POST({ request }) {
     const item = await request.json();
-    console.log(`Received request: summarize ${item.title} using OpenAI API.`)
+    // console.log(`Received request: summarize ${item.title} using OpenAI API.`)
     const res = await summarize(item);
-    console.log(`Summary: ${res}`);
-    return json(res);
+    // console.log(`Summary: ${res}`);
+    // console.log(`The json version of the summary is ${util.inspect(json(res), false, null)}`);
+    return text(res); // todo: handle case where res is null
 }

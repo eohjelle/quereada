@@ -1,4 +1,5 @@
 <script>
+  import "../app.css";
   import RefreshButton from "$lib/components/RefreshButton.svelte";
 
   export let data;

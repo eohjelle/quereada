@@ -10,7 +10,8 @@ const feeds = [
                 "prisma_args": {
                     "take": 10,
                     "where": {
-                        "source_name": "The Atlantic"
+                        "source_name": "The Atlantic",
+                        "seen": false,
                     },
                     "include": {
                         "authors": true
@@ -21,12 +22,15 @@ const feeds = [
                 }
             },
             {
-                "header": "Articles in The New York Times",
+                "header": "More articles",
                 "prisma_function": "findMany",
                 "prisma_args": {
-                    "take": 10,
                     "where": {
-                        "source_name": "The New York Times"
+                        "source_name": "The New York Times",
+                        "seen": false,
+                        "date_published": {
+                            "gt": subDays(new Date(), 1) // only show articles from the last day
+                        }
                     },
                     "include": {
                         "authors": true
@@ -35,7 +39,7 @@ const feeds = [
                         "date_published": "desc"
                     }
                 }
-            }
+            },
         ]
     },
     {
@@ -53,6 +57,9 @@ const feeds = [
                     },
                     "include": {
                         "authors": true
+                    },
+                    "orderBy": {
+                        "date_published": "desc"
                     }
                 }
             }
@@ -70,6 +77,9 @@ const feeds = [
                     },
                     "include": {
                         "authors": true
+                    },
+                    "orderBy": {
+                        "date_published": "desc"
                     }
                 }
             }
