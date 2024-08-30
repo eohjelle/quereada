@@ -19,7 +19,7 @@
   async function updateSeenToDB() {
     const request = {
       prisma_function: "update",
-      prisma_args: {
+      prisma_query: {
         where: { id: item.id },
         data: { seen: item.seen },
       },

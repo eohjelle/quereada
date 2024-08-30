@@ -37,7 +37,8 @@ export class TheAtlantic implements SourceWithFetch {
                 content: raw_item.content?.[0]._,
                 number_of_words: raw_item.content[0]._.split(' ').length,
                 image_link: raw_item['media:content']?.[0]['$'].url || null,
-                image_credit: raw_item['media:content']?.[0]['$'].credit || null
+                image_credit: raw_item['media:content']?.[0]['$'].credit || null,
+                summarizable: true
             };
             item_authors_pairs.push([item, authors]);
         }

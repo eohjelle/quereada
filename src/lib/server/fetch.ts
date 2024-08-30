@@ -1,20 +1,8 @@
 import { db } from '$lib/server/database';
 import type { Author, Item } from '@prisma/client';
-import type { SourceWithFetch } from './types';
+import { SourceWithFetch } from './types';
 import util from 'util'; // only used for debugging
-
-
-// Import source classes and create a dictionary mapping the source_type field to the correct class
-// todo: create more dynamic import of the source classes. 
-import { TheAtlantic } from './sources/the_atlantic'; 
-import { RSS } from './sources/rss';
-import { NYTimesAPI } from './sources/nytimes';
-
-const sourceClasses: { [key: string]: new (...args: any[]) => SourceWithFetch } = {
-    'TheAtlantic': TheAtlantic,
-    'RSS': RSS,
-    'NYTimesAPI': NYTimesAPI,
-}
+import { sourceClasses } from './sources';
 
 // Some functions for pushing items to the database. They are called directly by the fetch methods of the sources.
 export async function push_authors_to_db(authors: Author[]): Promise<void> {
@@ -49,9 +37,9 @@ export async function push_item_with_authors_to_db(item: Item, authors: Author[]
 // Function to load sources (construct the relevant classes) based on sources in database
 async function loadSources(): Promise<SourceWithFetch[]> {
     const sources: SourceWithFetch[] = [];
-    const sourceData = await db.source.findMany({ select: { name: true, source_type: true, url: true, channels: { select: { channel_name: true } } } });
+    const sourceData = await db.source.findMany({ select: { name: true, source_class: true, url: true, channels: { select: { channel_name: true } } } });
     for (const source of sourceData) {
-        const SourceClass = sourceClasses[source.source_type];
+        const SourceClass = sourceClasses[source.source_class];
         const instance = new SourceClass({
             name: source.name,
             url: source.url,

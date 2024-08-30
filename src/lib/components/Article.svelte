@@ -13,6 +13,12 @@
     "The Atlantic": "the_atlantic.svg",
   };
   const logo_path = outlet_logos[item.source_name]; // could be null if the outlet is not in the dictionary
+
+  const date = new Date(item.date_published).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 </script>
 
 <div class="item-content">
@@ -29,6 +35,7 @@
         {#if item.number_of_words}
           <span>{Math.round(item.number_of_words / 250)} minutes</span>
         {/if}
+        <span>{date}</span>
       </footer>
       <p class="description">
         {@html item.description}

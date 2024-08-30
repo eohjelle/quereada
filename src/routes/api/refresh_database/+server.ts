@@ -1,5 +1,5 @@
 import { db } from '$lib/server/database';
-import { fetch_all_new_items } from '$lib/server/fetch_new_items';
+import { fetch_all_new_items } from '$lib/server/fetch';
 
 export async function GET() {
     try {

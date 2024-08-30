@@ -5,7 +5,7 @@
   async function updateReadLaterToDB() {
     const request = {
       prisma_function: "update",
-      prisma_args: {
+      prisma_query: {
         where: { id: item.id },
         data: { read_later: item.read_later },
       },
@@ -23,7 +23,7 @@
   async function updateSavedToDB() {
     const request = {
       prisma_function: "update",
-      prisma_args: {
+      prisma_query: {
         where: { id: item.id },
         data: { saved: item.saved },
       },
@@ -39,8 +39,7 @@
 
   export let item;
 
-  // Initiate variable to indicate whether to show the summary.
-  // It is only relevant for item types that have content.
+  // Initiate variable to indicate whether to show the summary. It is only relevant for items that are summarizable.
   const show_summary = getContext("show_summary");
 </script>
 
@@ -61,7 +60,7 @@
       updateSavedToDB();
     }}>{item.saved ? "Remove from saved" : "Save"}</button
   >
-  {#if item.content}
+  {#if item.summarizable}
     <button
       on:click={() => {
         show_summary.update((bool) => !bool);
