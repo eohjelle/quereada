@@ -27,3 +27,8 @@ export function get_values(obj: any): any[] {
 	recurse(obj);
     return Array.from(new Set(values.flat()));
 }
+
+// Get the cartesian product of two arrays
+export function cartesian_product<T>(a: T[], b: T[]): [T, T][] {
+	return a.flatMap(x => b.map(y => [x, y] as [T, T]));
+}

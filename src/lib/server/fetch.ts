@@ -3,7 +3,7 @@ import type { Author, Item } from '@prisma/client';
 import { SourceWithFetch } from './types';
 import util from 'util'; // only used for debugging
 import { sourceClasses } from './sources';
-import { set_relevance_of_item_to_topic_group, update_relevance_of_item_to_topic_group_in_db } from './decide_if_relevant';
+import { update_relevance_of_item_to_topic_group } from './decide_if_relevant';
 import { get_values } from '$lib/utils';
 
 // Some functions for pushing items to the database. They are called directly by the fetch methods of the sources.
@@ -43,11 +43,12 @@ export async function push_item_with_authors_to_db(source, item: Item, authors: 
                 id: true,
                 title: true,
                 description: true,
-                checked_relevance_to_topic_groups: { select: { title: true } }
+                checked_relevance_to_topic_groups: { select: { title: true } },
+                relevant_topic_groups: { select: { title: true } }
             }
         });
         await Promise.all(source.occurs_with_topic_groups_titles.map(async (topic_group_title) => {
-            return update_relevance_of_item_to_topic_group_in_db(dbitem, topic_group_title)
+            return update_relevance_of_item_to_topic_group(dbitem, topic_group_title)
         }));
     }
 }
@@ -65,17 +66,16 @@ async function loadSources(): Promise<SourceWithFetch[]> {
             occurs_in_blocks: { select: { contains_topic_groups: { select: { title: true } } } } 
         } 
     } );
-    console.log(`Loaded source data: ${util.inspect(sourceData, false, null)}`);
     for (const source of sourceData) {
         const SourceClass = sourceClasses[source.source_class];
-        console.log(`Source ${source.name} occurs with topic groups ${get_values(source.occurs_in_blocks)}`);
+        // console.log(`Source ${source.name} occurs with topic groups ${get_values(source.occurs_in_blocks)}`);
         const instance = new SourceClass({
             name: source.name,
             url: source.url,
             channels: source.channels.map(channel => channel.channel_name),
             occurs_with_topic_groups_titles: get_values(source.occurs_in_blocks)
         });
-        console.log(`We have created the class for ${source.name}. It is ${util.inspect(instance, false, null)}`);
+        // console.log(`We have created the class for ${source.name}. It is ${util.inspect(instance, false, null)}`);
         sources.push(instance);
     }
     return sources;
