@@ -44,11 +44,10 @@
   }
 </script>
 
-<p>{summary}</p>
+<span>{summary}</span>
 
 <style>
-  p {
-    padding: 20px;
+  span {
     white-space: pre-line;
   }
 </style>

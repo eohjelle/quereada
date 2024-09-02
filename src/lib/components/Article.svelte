@@ -1,5 +1,5 @@
 <script>
-  import { byline } from "$lib/components/helpers";
+  import { byline } from "$lib/utils";
   import { getContext } from "svelte";
   import Summarizer from "./Summarizer.svelte";
 
@@ -92,7 +92,9 @@
     left: 0px;
     width: 100%;
     height: 100%;
+    box-sizing: border-box;
     padding: 20px;
+    overflow-y: auto;
   }
 
   /* Image of the item */

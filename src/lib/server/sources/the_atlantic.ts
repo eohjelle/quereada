@@ -7,10 +7,12 @@ export class TheAtlantic implements SourceWithFetch {
     name: string = 'The Atlantic';
     url: string = 'https://www.theatlantic.com/feed/';
     channels: string[] = ['bestof'];
+    occurs_with_topic_groups_titles: string[] = [];
     date_added: Date = new Date();
 
-    constructor({ name, url, channels }: { name: string; url: string; channels: string[] }) {
+    constructor({ name, url, channels, occurs_with_topic_groups_titles }: { name: string, url: string, channels: string[], occurs_with_topic_groups_titles: string[] }) {
         this.channels = channels;
+        this.occurs_with_topic_groups_titles = occurs_with_topic_groups_titles;
     }
 
     async fetch_new_items_from_channel(channel: string) {

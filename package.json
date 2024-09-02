@@ -35,7 +35,8 @@
     "prisma": "^5.18.0",
     "rss-parser": "^3.13.0",
     "svelte-inview": "^4.0.2",
-    "xml2js": "^0.6.2"
+    "xml2js": "^0.6.2",
+    "zod": "^3.23.8"
   },
   "prisma": {
     "seed": "node ./database-seed.js"

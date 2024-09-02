@@ -36,3 +36,10 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+
+# To do list
+
+- Enable config file in `$lib/config`.
+- Make config reload on refresh. Make sure interests are dealt with appropriately.
+- Migrate database to postgres
+- Host project online. Use Heroku?

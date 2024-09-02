@@ -9,6 +9,11 @@ export async function load({ params }) {
                 select: {
                     header: true,
                     prisma_query: true,
+                    contains_topic_groups: {
+                        select: {
+                            title: true
+                        }
+                    }
                 }
             }
         },

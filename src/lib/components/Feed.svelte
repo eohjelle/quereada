@@ -12,7 +12,7 @@
   // Initialize some variables
   let items = []; // List of items to be displayed
   let itemsContainer; // Reference to the container of items
-  const pageSize = 2; // Number of items to be loaded at a time. todo: compute based on the size of the window
+  const pageSize = 5; // Number of items to be loaded at a time. todo: compute based on the size of the window
 
   // Make an API call to fetch data from the database
   async function fetchBlock(block) {
@@ -33,10 +33,12 @@
   async function loadMoreItems() {
     if (block_stack.length == 0) {
       console.log("No more items to show.");
-      removeEventListener("scroll", loadMoreItemsIfCloseToBottom); // It's possible that this can lead to items failing to load. todo: revisit this later on
+      finishedLoading = true;
+      removeEventListener("scroll", loadMoreItemsIfCloseToBottom);
       return;
     }
     const block = JSON.parse(JSON.stringify(block_stack.pop())); // We create a deep copy of the block to avoid modifying the original block in feed.blocks
+    console.log(`Loading more items from block ${JSON.stringify(block)}`);
     let left_over;
     // First decide how many items to load
     if (block.prisma_query.take) {
@@ -75,8 +77,8 @@
     }
     // Check if we're close to the bottom of the page
     if (
-      itemsContainer.offsetHeight - window.scrollY <=
-      window.innerHeight + 50 // todo: this is maybe not the optimal condition, so improve it
+      itemsContainer.offsetHeight <=
+      1.5 * window.innerHeight + window.scrollY // todo: this is maybe not the optimal condition, so improve it
     ) {
       // Create a new loadingPromise
       loadingPromise = (async () => {
@@ -104,8 +106,12 @@
     }
   });
 
+  // After loading more items, check if we need to load more items again
+  let finishedLoading = false;
   afterUpdate(async () => {
-    await loadMoreItemsIfCloseToBottom();
+    if (!finishedLoading) {
+      await loadMoreItemsIfCloseToBottom();
+    }
   });
 </script>
 
@@ -113,6 +119,11 @@
   {#each items as item}
     <ItemContainer {item} />
   {/each}
+  {#if !finishedLoading}
+    <h1 style="text-alignment: center">Loading more items...</h1>
+  {:else}
+    <h1 style="text-alignment: center">No more items to show.</h1>
+  {/if}
 </div>
 
 <style>

@@ -32,11 +32,14 @@ async function add_sources() {
 async function add_topics() {
     const datas = [
         {
-            title: "Avoid these topics",
+            title: "2024 US Politics",
             topics: { 
                 create: [
                     { topic: "The 2024 US Presidential Election" } ,
-                    { topic: "Donald Trump" }
+                    { topic: "Donald Trump" },
+                    { topic: "J. D. Vance" },
+                    { topic: "Kamala Harris" },
+                    { topic: "Tim Walz" }
                 ]
             }
         },
@@ -64,16 +67,17 @@ async function add_feeds() {
             blocks: {
                 create: [
                     {
-                        header: "Articles in The Atlantic",
+                        header: "US Centric News",
                         prisma_query: JSON.stringify({
-                            take: 10,
                             where: {
-                                source_name: "The Atlantic",
+                                source_name: {
+                                    in: ["The Atlantic", "The New York Times"]
+                                },
                                 relevant_topic_groups: {
                                     none: {
-                                        title: "Avoid these topics"
+                                        title: "2024 US Politics"
                                     }
-                                },
+                                }
                             },
                             include: {
                                 authors: true
@@ -82,16 +86,15 @@ async function add_feeds() {
                                 date_published: "desc"
                             }
                         }),
-                        contains_sources: { connect: [ { name: "The Atlantic" } ] },
-                        contains_topic_groups: { connect: [ { title: "Avoid these topics" } ] }
+                        contains_sources: { connect: [ { name: "The Atlantic" }, { name: "The New York Times" } ] }, // todo: move feeds to a config file. When importing, automatically detect all sources and topic groups.
+                        contains_topic_groups: { connect: [ { title: "2024 US Politics" } ] }
                     },
                     {
-                        header: "More articles",
+                        header: "10 News about Norway",
                         prisma_query: JSON.stringify({
+                            take: 10,
                             where: {
-                                source_name: {
-                                    in: ["The New York Times", "NRK"]
-                                },
+                                source_name: "NRK",
                                 seen: false,
                                 date_published: {
                                     gt: subDays(new Date(), 1) // only show articles from the last day
@@ -104,7 +107,37 @@ async function add_feeds() {
                                 date_published: "desc"
                             }
                         }),
-                        contains_sources: { connect: [ { name: "The New York Times" }, { name: "NRK" } ] }
+                        contains_sources: { connect: [ { name: "NRK" } ] }
+                    }
+                ]
+            }
+        },
+        {
+            title: "2024 US Politics",
+            blocks: {
+                create: [
+                    {
+                        header: "2024 US Politics",
+                        prisma_query: JSON.stringify({
+                            where: {
+                                source_name: {
+                                    in: ["The Atlantic", "The New York Times"]
+                                },
+                                relevant_topic_groups: {
+                                    some: {
+                                        title: "2024 US Politics"
+                                    }
+                                },
+                            },
+                            include: {
+                                authors: true
+                            },
+                            orderBy: {
+                                date_published: "desc"
+                            }
+                        }),
+                        contains_sources: { connect: [ { name: "The Atlantic" }, { name: "The New York Times" } ] }, // todo: move feeds to a config file. When importing, automatically detect all sources and topic groups.
+                        contains_topic_groups: { connect: [ { title: "2024 US Politics" } ] }
                     }
                 ]
             }

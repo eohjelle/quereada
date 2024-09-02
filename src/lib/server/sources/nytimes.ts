@@ -15,9 +15,12 @@ export class NYTimesAPI implements SourceWithFetch{
     name: string = 'The New York Times';
     url: string = 'https://api.nytimes.com/svc';
     channels: string[] = ["topstories/v2/home.json", "mostpopular/v2/viewed/1.json"]; // todo: make channel names more intuitive
+    occurs_with_topic_groups_titles: string[];
     date_added: Date = new Date();
 
-    constructor({ name, url, channels }: { name: string; url: string; channels: string[] }) {};
+    constructor({ name, url, channels, occurs_with_topic_groups_titles }: { name: string, url: string, channels: string[], occurs_with_topic_groups_titles: string[] }) {
+        this.occurs_with_topic_groups_titles = occurs_with_topic_groups_titles;
+    }
 
     async fetch_new_items_from_channel(channel_code: string) {
         const response = await fetch(`${this.url}/${channel_code}?api-key=${NYTIMES_API_KEY}`);

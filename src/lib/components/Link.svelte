@@ -1,5 +1,5 @@
 <script>
-  import { byline } from "$lib/components/helpers";
+  import { byline } from "$lib/utils";
 
   export let item;
 </script>
