@@ -37,9 +37,14 @@ You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
 
+# Quirks
+
+- Relevance of items to topic group is checked when fetching new items (however, only )
+
 # To do list
 
-- Enable config file in `$lib/config`.
-- Make config reload on refresh. Make sure interests are dealt with appropriately.
-- Migrate database to postgres
-- Host project online. Use Heroku?
+- [x] Enable config file `config.ts` to define the feeds.
+- [x] Make config reload on refresh.
+- [ ] Enable checking relevance of item to topic groups on demand. (Currently, this is done when fetching new items from the sources. Note that the check is only being done for items and topic groups that appear together in a feed, so many superfluous calls to the OpenAI API are not being made.)
+- [ ] Migrate database to postgres
+- [ ] Host project online. Use Heroku?

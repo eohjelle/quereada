@@ -88,23 +88,15 @@ export async function fetch_all_new_items(): Promise<void> {
         console.log(`Fetching new items from ${source.name}...`);
         console.log(`More info about source: ${util.inspect(source, false, null)}`);
         return source.fetch_new_items()
-        .then(async (new_item_authors_pairs) => {
-            console.log(`Fetched ${new_item_authors_pairs.length} items from ${source.name}.`);
-            return Promise.all(new_item_authors_pairs.map(async ([item, authors]) => {push_item_with_authors_to_db(source, item, authors)}))
-        }).catch((error) => console.error(`Error fetching new items from ${source.name}:`, error));
+            .then(async (new_item_authors_pairs) => {
+                console.log(`Fetched ${new_item_authors_pairs.length} items from ${source.name}. Checking relevance of items to topic groups and pushing to database...`);
+                return Promise.all(new_item_authors_pairs.map(async ([item, authors]) => {return push_item_with_authors_to_db(source, item, authors)}));
+            })
+            .then(() => {
+                console.log(`Done fetching new items from ${source.name}.`);
+            })
+            .catch((error) => {
+                console.error(`Error fetching new items from ${source.name}:`, error);
+            });
     }));
-}
-
-// Get the topic groups occuring with a source
-function topic_groups_occuring_with_source(source): string[] {
-    let topic_group_titles: string[] = [];
-    console.log(`Trying to get topic group titles occuring with source ${util.inspect(source, false, null)}`);
-    for (const block of source.occurs_in_blocks) {
-        for (const topic_group of block.contains_topic_groups) {
-            if (!topic_group_titles.includes(topic_group.title)) {
-                topic_group_titles.push(topic_group.title);
-            }
-        }
-    }
-    return topic_group_titles;
 }

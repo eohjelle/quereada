@@ -25,7 +25,6 @@ async function fetch_topics(topic_group_title: string): Promise<String[]> {
 
 // todo: maybe add channel, language, etc, to help with context
 async function decide_if_item_is_relevant_to_topic_group(item: { source_name?: string, title: string, description?: string }, topic_group_title: string): Promise<boolean> {
-    console.log(`Checking if item ${item.title} is relevant to topic group ${topic_group_title}...`);
     const topics = await fetch_topics(topic_group_title).then((topics) => z.enum(topics));
     const response_object = z.object({
         explanation: z.string(),
@@ -51,8 +50,10 @@ export async function update_relevance_of_item_to_topic_group(item: Item, topic_
         // console.log(`Item ${item.title} has already been checked for relevance to topic group ${topic_group_title}. Skipping...`);
         return;
     }
+    // console.log(`Checking relevance of item ${item.title} to topic group ${topic_group_title}...`);
     const is_relevant = await decide_if_item_is_relevant_to_topic_group(item, topic_group_title);
     await set_relevance_of_item_to_topic_group(item, topic_group_title, is_relevant);
+    // console.log(`Item ${item.title} is ${is_relevant ? '' : 'not '}relevant to topic group ${topic_group_title}.`);
 }
 
 // Set relevance of item to topic group in the database
@@ -61,6 +62,9 @@ async function set_relevance_of_item_to_topic_group(item: Item, topic_group_titl
         await db.item.update({
             where : { id : item.id },
             data: {
+                checked_relevance_to_topic_groups: {
+                    connect: { title: topic_group_title }
+                },
                 relevant_topic_groups: {
                     connect: { title: topic_group_title }
                 }

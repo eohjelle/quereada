@@ -6,32 +6,9 @@
 
   async function update_db() {
     clicked = true;
-    console.log("Updating database with fresh links...");
     refreshPromise = fetch("/api/refresh_database");
-  }
-
-  // Copied from here: https://learn.svelte.dev/tutorial/custom-js-transitions
-  function typewriter(node, { speed = 1 }) {
-    const valid =
-      node.childNodes.length === 1 &&
-      node.childNodes[0].nodeType === Node.TEXT_NODE;
-
-    if (!valid) {
-      throw new Error(
-        `This transition only works on elements with a single text node child`
-      );
-    }
-
-    const text = node.textContent;
-    const duration = text.length / (speed * 0.01);
-
-    return {
-      duration,
-      tick: (t) => {
-        const i = Math.trunc(text.length * t);
-        node.textContent = text.slice(0, i);
-      },
-    };
+    await refreshPromise;
+    location.reload();
   }
 </script>
 
