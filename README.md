@@ -37,11 +37,9 @@ You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
 
-# Quirks
-
-- Relevance of items to topic group is checked when fetching new items (however, only )
-
 # To do list
+
+#todo
 
 - [x] Enable config file `config.ts` to define the feeds.
 - [x] Make config reload on refresh.

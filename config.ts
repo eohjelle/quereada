@@ -183,7 +183,7 @@ export const blocks =
 export const feeds = 
 [
     {
-        title: "Serious News",
+        title: "Serious News Minus Presidential Election",
         blocks: [ "US News Minus 2024 Presidential Election", "10 News about Norway" ]
     },
     {
