@@ -21,8 +21,5 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 package-lock.json
 store.db
-migrations/20240819163108_init/migration.sql
-migrations/20240819203736_init/migration.sql
-migrations/20240819225304_small_change/migration.sql
-migrations/20240820173733_unique_channels/migration.sql
+migrations/*
 store.db-journal
