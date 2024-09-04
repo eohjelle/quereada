@@ -28,6 +28,7 @@
     "@fontsource/baskervville-sc": "^5.0.2",
     "@fontsource/lugrasimo": "^5.0.6",
     "@prisma/client": "^5.18.0",
+    "@sveltejs/adapter-node": "^5.2.2",
     "date-fns": "^3.6.0",
     "fs": "^0.0.1-security",
     "openai": "^4.56.0",
