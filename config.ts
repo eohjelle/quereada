@@ -216,7 +216,7 @@ export const feeds =
     },
     {
         title: "Environmental News",
-        blocks: [ "Environmental Issues"]
+        blocks: [ "Environmental News"]
     },
     {
         title: "Unseen Items",

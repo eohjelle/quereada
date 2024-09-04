@@ -24,3 +24,4 @@ There is no standalone app at the moment, but you can host it locally and access
 - [x] Migrate database to postgres
 - [x] Host project online. Use Heroku?
 - [ ] Write instructions for installation.
+- [ ] Enable automatic refresh every n minutes. Make sure
