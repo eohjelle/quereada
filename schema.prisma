@@ -31,8 +31,8 @@ model Channel {
 }
 
 model Language {
-  id   String @id @unique
-  name String
+  id   String  @id @unique
+  name String?
   Item Item[]
 }
 

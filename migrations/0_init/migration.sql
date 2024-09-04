@@ -20,7 +20,7 @@ CREATE TABLE "Channel" (
 -- CreateTable
 CREATE TABLE "Language" (
     "id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
+    "name" TEXT,
 
     CONSTRAINT "Language_pkey" PRIMARY KEY ("id")
 );

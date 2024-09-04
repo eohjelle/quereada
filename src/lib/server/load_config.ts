@@ -44,7 +44,7 @@ export async function load_config(): Promise<void> {
 
     // Finally, set blocks and feeds. We're not using Promise.all because we want the blocks and feeds to appear in the database in the order they are defined in the config.
     for (const block of blocks) {
-        const contains_sources = block.prisma_query.where?.source_name ? 
+        const contains_sources = block.prisma_query.where?.source_name ? // todo: Fix this to get the right array in case of keywords "notIn" or no keyword
             get_values(block.prisma_query.where.source_name).map(source => ({ name: source })) : [];
         const contains_topic_groups = block.prisma_query.where?.relevant_topic_groups ? 
             get_values(block.prisma_query.where.relevant_topic_groups).map(topic_group => ({ title: topic_group })) : [];

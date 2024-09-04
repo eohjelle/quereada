@@ -1,10 +1,5 @@
 import { subDays } from 'date-fns';
 
-// todo: In postgres, the following fields should be arrays of strings:
-// - channels (in sources)
-// - topics (in topic_groups)
-
-
 
 export const sources = 
 [
@@ -18,20 +13,10 @@ export const sources =
         channels: ['bestof']
     },
     { 
-        name: 'Hacker News', 
-        source_class: 'RSS', 
-        url: 'https://news.ycombinator.com/rss' 
-    },
-    { 
         name: "Dan Carlin's Substack", 
         source_class: 'RSS', 
         url: 'https://dancarlin.substack.com/feed' 
-    },
-    { 
-        name: 'NRK', 
-        source_class: 'RSS', 
-        url: 'https://www.nrk.no/toppsaker.rss' 
-    },
+    }
 ];
 
 export const topic_groups = 
@@ -47,9 +32,14 @@ export const topic_groups =
         ]
     },
     {
-        title: "My interests",
+        title: "Environmental Issues",
         topics: [
-            "Development and launches of SpaceX's Starship rocket"
+            "The Environment",
+            "Climate Change",
+            "Global Warming",
+            "Pollution",
+            "Green Energy",
+            "Waste Management"
         ]
     }
 ];
@@ -75,9 +65,32 @@ export const blocks =
             orderBy: {
                 date_published: "desc"
             }
-        },
-        contains_sources: { connect: [ { name: "The Atlantic" }, { name: "The New York Times" } ] }, // todo: move feeds to a config file. When importing, automatically detect all sources and topic groups.
-        contains_topic_groups: { connect: [ { title: "2024 US Politics" } ] }
+        }
+    },
+    {
+        header: "Interesting articles you may have missed",
+        prisma_query: {
+            where: {
+                source_name: {
+                    in: [ "The Atlantic" ]
+                },
+                relevant_topic_groups: {
+                    none: {
+                        title: "2024 US Politics"
+                    }
+                },
+                seen: false,
+                number_of_words: {
+                    gte: 500
+                },
+                date_published: {
+                    gte: subDays(new Date(), 7)
+                },
+                orderBy: {
+                    number_of_words: "desc"
+                }
+            }
+        }
     },
     {
         header: "2024 Presidential Election",
@@ -98,19 +111,19 @@ export const blocks =
             orderBy: {
                 date_published: "desc"
             }
-        },
-        contains_sources: { connect: [ { name: "The Atlantic" }, { name: "The New York Times" } ] }, // todo: move feeds to a config file. When importing, automatically detect all sources and topic groups.
-        contains_topic_groups: { connect: [ { title: "2024 US Politics" } ] }
+        }
     },
     {
-        header: "10 News about Norway",
+        header: "Environmental News",
         prisma_query: {
-            take: 10,
             where: {
-                source_name: "NRK",
-                seen: false,
-                date_published: {
-                    gt: subDays(new Date(), 1) // only show articles from the last day
+                relevant_topic_groups: {
+                    some: {
+                        title: "Environmental Issues"
+                    }
+                },
+                source_name: {
+                    in: ["The Atlantic", "The New York Times"]
                 }
             },
             include: {
@@ -119,23 +132,25 @@ export const blocks =
             orderBy: {
                 date_published: "desc"
             }
-        },
-        contains_sources: { connect: [ { name: "NRK" } ] }
+        }
     },
     {
-        header: "Hacker News",
+        header: "Articles by Olga Khazan",
         prisma_query: {
             where: {
-                source_name: "Hacker News",
-                date_published: {
-                    gt: subDays(new Date(), 1) // only show articles from the last day
+                authors: {
+                    some: {
+                        name: "Olga Khazan"
+                    }
                 }
+            },
+            include: {
+                authors: true
             },
             orderBy: {
                 date_published: "desc"
             }
-        },
-        contains_sources: { connect: [ { name: "Hacker News" } ] }
+        }
     },
     {
         header: "Unseen Items",
@@ -149,8 +164,7 @@ export const blocks =
             orderBy: {
                 date_published: "desc"
             }
-        },
-        contains_sources: { connect: [ { name: "The New York Times" }, { name: "The Atlantic" }, { name: "Hacker News" }, { name: "Dan Carlin's Substack" }, { name: "NRK" } ] } // todo: better way to include all?
+        }
     },
     {
         header: "Read Later",
@@ -161,8 +175,7 @@ export const blocks =
             include: {
                 authors: true
             }
-        },
-        contains_sources: { connect: [ { name: "The New York Times" }, { name: "The Atlantic" }, { name: "Hacker News" }, { name: "Dan Carlin's Substack" }, { name: "NRK" } ] } // todo: better way to include all?
+        }
     },
     {
         header: "Saved items",
@@ -175,31 +188,38 @@ export const blocks =
             {
                 authors: true
             }
-        },
-        contains_sources: { connect: [ { name: "The New York Times" }, { name: "The Atlantic" }, { name: "Hacker News" }, { name: "Dan Carlin's Substack" }, { name: "NRK" } ] } // todo: better way to include all?
+        }
     }
 ]
 
 export const feeds = 
 [
     {
-        title: "Serious News Minus Presidential Election",
-        blocks: [ "US News Minus 2024 Presidential Election", "10 News about Norway" ]
-    },
-    {
-        title: "2024 Presidential Election",
-        blocks: [ "2024 Presidential Election" ]
-    },
-    {
-        title: "Unseen Items",
-        blocks: [ "Unseen Items" ]
+        title: "Saved",
+        blocks: [ "Saved items" ]
     },
     {
         title: "Read Later",
         blocks: [ "Read Later" ]
     },
     {
-        title: "Saved",
-        blocks: [ "Saved items" ]
+        title: "Serious News Minus Presidential Election",
+        blocks: [ "US News Minus 2024 Presidential Election" ]
+    },
+    {
+        title: "2024 Presidential Election",
+        blocks: [ "2024 Presidential Election" ]
+    },
+    {
+        title: "Articles by Olga Khazan",
+        blocks: [ "Articles by Olga Khazan" ]
+    },
+    {
+        title: "Environmental News",
+        blocks: [ "Environmental Issues"]
+    },
+    {
+        title: "Unseen Items",
+        blocks: [ "Unseen Items" ]
     }
 ];

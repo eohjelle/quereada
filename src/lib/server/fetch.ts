@@ -18,6 +18,13 @@ export async function push_authors_to_db(authors: Author[]): Promise<void> {
 }
 
 export async function push_item_to_db(item: Item): Promise<void> {
+    if (item.lang_id) {
+        await db.language.upsert({
+            where: { id: item.lang_id },
+            update: {},
+            create: { id: item.lang_id }
+        });
+    }
     await db.item.upsert({
         where: { link: item.link },
         update: item,
