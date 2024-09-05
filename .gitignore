@@ -22,3 +22,6 @@ vite.config.ts.timestamp-*
 package-lock.json
 store.db
 store.db-journal
+
+# Heroku
+Procfile
