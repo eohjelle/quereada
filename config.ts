@@ -1,3 +1,4 @@
+
 import { subDays } from 'date-fns';
 
 
@@ -81,7 +82,7 @@ export const blocks =
                 },
                 seen: false,
                 number_of_words: {
-                    gte: 500
+                    gte: 2000
                 },
                 date_published: {
                     gte: subDays(new Date(), 7)
@@ -204,7 +205,7 @@ export const feeds =
     },
     {
         title: "Serious News Minus Presidential Election",
-        blocks: [ "US News Minus 2024 Presidential Election" ]
+        blocks: [ "US News Minus 2024 Presidential Election", "Interesting articles you may have missed" ]
     },
     {
         title: "2024 Presidential Election",
