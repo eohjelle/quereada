@@ -7,11 +7,16 @@
 
 <main>
   <p>
-    This page is a demo of Querygator, a news and media aggregator which offers
-    high degree of customizability. Try navigating to some feeds using the
-    navigation bar on the top of the window.
+    This page is a demo of <a href="https://github.com/eohjelle/querygator"
+      >Querygator</a
+    >, a news and media aggregator which offers a high degree of
+    customizability. Try navigating to some feeds using the navigation bar on
+    the top of the window.
   </p>
-  <p>For this demo, the following configuration file is used.</p>
+  <p>
+    The visible feeds are controlled by a configuration file. For this demo, the
+    following configuration is used.
+  </p>
   <div class="codebox">
     <div class="codebox-header">
       <span class="filename">config.ts</span>
@@ -36,6 +41,17 @@
     max-width: 800px;
     padding: 2em;
   }
+
+  main p a {
+    color: blue;
+  }
+
+  main p a:hover {
+    color: blue;
+    text-decoration: underline;
+    border-bottom: 0;
+  }
+
   /* Codebox container */
   .codebox {
     border: 1px solid #ccc;
