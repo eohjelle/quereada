@@ -74,7 +74,8 @@
     margin-left: auto; /* Pushes the button container to the far right */
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
+    gap: 5px;
+    /* justify-content: space-evenly; */
     width: 100%;
   }
 

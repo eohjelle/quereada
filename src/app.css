@@ -6,19 +6,23 @@
   --default-font: 'EB Garamond Variable', serif;
   --author-font: 'Baskervville SC', serif;
   --outlet-font: 'Lugrasimo', cursive;
+  --item-hover-color: #fffbf0;
+  --link-color: #333333;
+  --link-hover-color: #e7131a;
 }
 
 body {
     font-family: var(--default-font);
+    margin: 0;
 }
 
 a {
-    color: #333333;
+    color: var(--link-color);
     text-decoration: none;
     transition: color 0.3s ease, border-bottom 0.3s ease;
 }
 
 a:hover {
-    color: #e7131a;
-    border-bottom: 2px solid #e7131a;
+    color: var(--link-hover-color);
+    border-bottom: 2px solid var(--link-hover-color);
 }

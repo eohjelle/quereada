@@ -80,6 +80,6 @@
 
   .item-box:hover {
     /* border: 2px solid orange; */
-    background-color: #fffbf0;
+    background-color: var(--item-hover-color);
   }
 </style>
