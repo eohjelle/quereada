@@ -32,7 +32,6 @@
     "date-fns": "^3.6.0",
     "openai": "^4.56.0",
     "prisma": "^5.18.0",
-    "prismjs": "^1.29.0",
     "rss-parser": "^3.13.0",
     "svelte-inview": "^4.0.2",
     "xml2js": "^0.6.2",

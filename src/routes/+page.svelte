@@ -1,5 +1,4 @@
 <script>
-  import Prism from "prismjs";
   export let data;
 
   const config = data.config;
@@ -7,33 +6,17 @@
 
 <main>
   <p>
-    This page is a demo of <a href="https://github.com/eohjelle/querygator"
+    This is the front page of <a href="https://github.com/eohjelle/querygator"
       >Querygator</a
     >, a news and media aggregator which offers a high degree of
     customizability. Try navigating to some feeds using the navigation bar on
     the top of the window.
   </p>
   <p>
-    The visible feeds are controlled by a configuration file. For this demo, the
-    following configuration is used.
+    The visible feeds are controlled by a configuration file in the root folder
+    called 'config.ts`.
   </p>
-  <div class="codebox">
-    <div class="codebox-header">
-      <span class="filename">config.ts</span>
-      <span class="language">(TypeScript)</span>
-    </div>
-    <pre><code class="language-javascript">
-        {config}
-    </code></pre>
-  </div>
 </main>
-
-<svelte:head>
-  <link
-    href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/themes/prism.min.css"
-    rel="stylesheet"
-  />
-</svelte:head>
 
 <style>
   main {
