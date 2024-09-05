@@ -20,8 +20,9 @@ There is no standalone app at the moment, but you can host it locally and access
 
 - [x] Enable config file `config.ts` to define the feeds.
 - [x] Make config reload on refresh.
-- [ ] Enable checking relevance of item to topic groups on demand. (Currently, this is done when fetching new items from the sources. Note that the check is only being done for items and topic groups that appear together in a feed, so many superfluous calls to the OpenAI API are not being made.)
+- [ ] Move relevance checks "closer to the database".
+  - [ ] Enable checking relevance of item to topic groups on demand. (Currently, this is done when fetching new items from the sources. Note that the check is only being done for items and topic groups that appear together in a feed, so many superfluous calls to the OpenAI API are not being made.)
 - [x] Migrate database to postgres
 - [x] Host project online. Use Heroku?
-- [ ] Write instructions for installation.
-- [ ] Enable automatic refresh every n minutes. Make sure
+- [ ] Finish README
+- [ ] Enable automatic refresh every n minutes. Make sure this doesn't lead to conflicts when someone is using the site at the same time.
