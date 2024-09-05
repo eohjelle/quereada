@@ -1,5 +1,5 @@
 Querygator is a news and media aggregator which offers unparalleled customization and advanced features.
-Click here (todo: link) to see a demo.
+[Click here](https://querygator-c8a6b9c38b54.herokuapp.com/) to see a demo.
 
 Querygator works by:
 
