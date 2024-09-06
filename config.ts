@@ -205,15 +205,15 @@ export const feeds =
     },
     {
         title: "Serious News Minus Presidential Election",
-        blocks: [ "US News Minus 2024 Presidential Election", "Interesting articles you may have missed" ]
+        blocks: [ "US News Minus 2024 Presidential Election" ]
     },
     {
         title: "2024 Presidential Election",
         blocks: [ "2024 Presidential Election" ]
     },
     {
-        title: "Articles by Olga Khazan",
-        blocks: [ "Articles by Olga Khazan" ]
+        title: "Articles by Olga Khazan and more",
+        blocks: [ "Articles by Olga Khazan", "Interesting articles you may have missed" ]
     },
     {
         title: "Environmental News",
