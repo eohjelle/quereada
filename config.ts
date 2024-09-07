@@ -75,21 +75,18 @@ export const blocks =
                 source_name: {
                     in: [ "The Atlantic" ]
                 },
-                relevant_topic_groups: {
-                    none: {
-                        title: "2024 US Politics"
-                    }
-                },
-                seen: false,
                 number_of_words: {
                     gte: 2000
                 },
                 date_published: {
-                    gte: subDays(new Date(), 7)
+                    lte: subDays(new Date(), 3)
                 },
-                orderBy: {
-                    number_of_words: "desc"
-                }
+            },
+            include: {
+                authors: true
+            },
+            orderBy: {
+                number_of_words: "desc"
             }
         }
     },
@@ -212,7 +209,7 @@ export const feeds =
         blocks: [ "2024 Presidential Election" ]
     },
     {
-        title: "Articles by Olga Khazan and more",
+        title: "Long Reads and Articles by Olga Khazan",
         blocks: [ "Articles by Olga Khazan", "Interesting articles you may have missed" ]
     },
     {
