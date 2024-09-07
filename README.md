@@ -1,3 +1,5 @@
+# About
+
 Querygator is a news and media aggregator which offers a high degree of control and customization, as well as advanced features.
 [Click here](https://querygator-c8a6b9c38b54.herokuapp.com/) to see a demo.
 
@@ -6,15 +8,23 @@ Querygator works by:
 1. _Aggregating_ new items such as articles and videos from various sources on the internet. RSS feeds have basic support, but in principle, anything on the internet can be a source, and the design of the codebase makes it easy to add custom support for additional sources.
 2. Building feeds using _queries_ defined in a config file, where it is possible to filter by properties such as source, date published, authors, whether the item has been seen or clicked before, number of words, number of likes, and more. It is even possible to filter items by their relevance to any topic.
 
-What sets Querygator apart from other news aggregators and RSS readers? Unlike most news aggregators with automatic suggestions, Querygator offers you much more control over what you see. The philosophy behind this app is to let editors of newspapers, and not an algorithm, make most decisions about what your daily feed should look like. But at the same time, Querygator allows you to combine and filter these feeds in ways that makes it much more customizable than most RSS readers.
+## What sets Querygator apart from other news aggregators and RSS readers?
 
-# Instructions
+Unlike most news aggregators with automatic suggestions, Querygator offers you much more control over what you see. The philosophy behind this app is to let editors of newspapers, and not an algorithm, make most decisions about what your daily feed should look like. But at the same time, Querygator allows you to combine and filter these feeds in ways that makes it much more customizable than most RSS readers. It is also open source, so you can make a fork of the project tailored to your own preferences.
 
-## Installation
+## AI-powered features
+
+Querygator's most advanced features, namely summarization and topic classification, are powered by LLMs. However, care has been made to not to use these powerful tools for tasks where they are not needed, such as scraping websites for content, because this would be a waste of resources.
+
+# How to use
 
 There is no standalone app at the moment, but you can host it locally and access the app in a web browser.
 
+## Installation
+
 ## Writing `config.ts`
+
+## Environmental variables
 
 # Contributing
 
@@ -33,3 +43,27 @@ There is no standalone app at the moment, but you can host it locally and access
 - [ ] Refactor loading mechanism: use slot props
 - [ ] Enable summarization for NYTimes (may need captcha popup)
 - [ ]
+
+# License
+
+MIT License
+
+Copyright (c) 2024 Eivind Otto Hjelle
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
