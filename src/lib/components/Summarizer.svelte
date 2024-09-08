@@ -15,14 +15,7 @@
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        id: item.id,
-        source: item.source_name,
-        title: item.title,
-        authors: item.authors,
-        description: item.description,
-        content: item.content,
-      }),
+      body: JSON.stringify({ id: item.id }),
     });
     // todo: use the following code to read the response body as a stream when [Symbol.asynciterator] becomes supported by Safari: https://developer.mozilla.org/en-US/docs/Web/API/ReadableStream#browser_compatibility
     // const decoder = new TextDecoder();
