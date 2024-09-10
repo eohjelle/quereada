@@ -29,11 +29,10 @@ export async function summarize(item: ItemWithAuthors): Promise<ReadableStream> 
     });
     const res = new ReadableStream({
         async start(controller) {
-            const textEncoder = new TextEncoder();
             for await(const chunk of stream) {
                 const message_chunk = chunk.choices[0]?.delta?.content;
                 if (message_chunk) {
-                    controller.enqueue(textEncoder.encode(message_chunk));
+                    controller.enqueue(message_chunk);
                     // process.stdout.write(message_chunk || ""); // print to console
                 }
             }
@@ -44,7 +43,7 @@ export async function summarize(item: ItemWithAuthors): Promise<ReadableStream> 
 }
 
 // Handle a request to summarize an item (typically by clicking the "summarize" button)
-export async function handleSummarizeRequest(item_id: number): Promise<ReadableStream | string> {
+export async function handleSummarizeRequest(item_id: number): Promise<ReadableStream<string>> {
     // Check if the item is already summarized
     const item = await db.item.findUniqueOrThrow({
         where: {
@@ -56,7 +55,13 @@ export async function handleSummarizeRequest(item_id: number): Promise<ReadableS
     });
     if (item.summary) {
         console.log(`Item ${item_id} already summarized`);
-        return item.summary;
+        const res = new ReadableStream({
+            start(controller) {
+                controller.enqueue(item.summary);
+                controller.close();
+            }
+        });
+        return res;
     }
     const source = await db.source.findUniqueOrThrow({ where: { name: item.source_name } }).then((source) => new sourceClasses[source.source_class](source));
     let stream;
@@ -74,17 +79,12 @@ export async function handleSummarizeRequest(item_id: number): Promise<ReadableS
     return streams[1];
 }
 
-async function saveSummary(item_id: number, stream: ReadableStream): Promise<void> {
-    const reader = stream.getReader();
+async function saveSummary(item_id: number, stream: ReadableStream<string>): Promise<void> {
     let summary = "";
-    // todo: do the following more elegantly once safari has better support for readable streams, as in Summarize.svelte
-    while (true) {
-        const { done, value } = await reader.read();
-        if (done) {
-            break;
-        }
-        summary += new TextDecoder().decode(value);
+    for await(const chunk of stream) {
+        summary += chunk;
     }
+
     await db.item.update({
         where: { id: item_id },
         data: {
