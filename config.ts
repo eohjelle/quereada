@@ -69,24 +69,22 @@ export const blocks =
         }
     },
     {
-        header: "Interesting articles you may have missed",
+        header: "Long Reads in The Atlantic",
         prisma_query: {
+            take: 15,
             where: {
                 source_name: {
                     in: [ "The Atlantic" ]
                 },
                 number_of_words: {
-                    gte: 2000
-                },
-                date_published: {
-                    lte: subDays(new Date(), 3)
-                },
+                    gte: 4000
+                }
             },
             include: {
                 authors: true
             },
             orderBy: {
-                number_of_words: "desc"
+                date_added: "desc"
             }
         }
     },
@@ -133,12 +131,12 @@ export const blocks =
         }
     },
     {
-        header: "Articles by Olga Khazan",
+        header: "Articles by George Packer",
         prisma_query: {
             where: {
                 authors: {
                     some: {
-                        name: "Olga Khazan"
+                        name: "George Packer"
                     }
                 }
             },
@@ -209,8 +207,8 @@ export const feeds =
         blocks: [ "2024 Presidential Election" ]
     },
     {
-        title: "Long Reads and Articles by Olga Khazan",
-        blocks: [ "Articles by Olga Khazan", "Interesting articles you may have missed" ]
+        title: "Long Reads and George Packer",
+        blocks: [ "Long Reads in The Atlantic", "Articles by George Packer" ]
     },
     {
         title: "Environmental News",
