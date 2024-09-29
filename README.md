@@ -26,6 +26,17 @@ There is no standalone app at the moment, but you can host it locally and access
 
 ## Environmental variables
 
+## Running the app.
+
+### Web
+
+1. `npm run build:web`
+2. `npm run start:web`
+
+### Desktop
+
+#todo
+
 # Contributing
 
 # To do list

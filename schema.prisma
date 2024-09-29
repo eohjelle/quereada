@@ -11,14 +11,12 @@ datasource db {
 }
 
 model Source {
-  name             String      @id @unique
-  source_class     String // would be useful to have an enum of possible source types, but not supported with current database. todo: rename to source_class?
-  url              String?
-  date_added       DateTime    @default(now())
-  channels         Channel[]
-  items            Item[]
-  // occurs_with_topic_group TopicGroup[]
-  occurs_in_blocks FeedBlock[]
+  name         String    @id @unique
+  source_class String // would be useful to have an enum of possible source types, but not supported with current database. todo: rename to source_class?
+  url          String?
+  date_added   DateTime  @default(now())
+  channels     Channel[]
+  items        Item[]
 }
 
 model Channel {
@@ -36,18 +34,12 @@ model Language {
   Item Item[]
 }
 
-model Topic {
-  topic        String       @id @unique
-  topic_groups TopicGroup[]
-}
-
-model TopicGroup {
-  title                      String      @id @unique
-  topics                     Topic[]
-  checked_relevance_to_items Item[]      @relation("checked_relevance_of_items_to_topic_group")
-  relevant_to_items          Item[]      @relation("items_relevant_to_topic_group")
-  // occurs_in_block_with_sources    Source[]
-  occurs_in_blocks           FeedBlock[]
+model Filter {
+  title          String  @id @unique
+  implementation String
+  args           String? // stringified JSON
+  items_checked  Item[]  @relation("item_checked_filter")
+  items_passed   Item[]  @relation("item_passed_filter")
 }
 
 model Author {
@@ -56,52 +48,59 @@ model Author {
 }
 
 model Item {
-  id                                Int          @id @default(autoincrement())
-  // item_type                  ItemType  @default(Link) // see below; enums are not supported for SQLite
-  item_type                         String       @default("Link")
-  source                            Source       @relation(fields: [source_name], references: [name])
-  source_name                       String
-  language                          Language?    @relation(fields: [lang_id], references: [id])
-  lang_id                           String?
-  title                             String
-  description                       String?
-  link                              String       @unique
-  authors                           Author[]
-  date_published                    DateTime?
-  date_added                        DateTime     @default(now())
-  likes                             Int?
-  comments_link                     String?
-  comments_summary                  String?
-  content                           String?
-  number_of_words                   Int?
-  summarizable                      Boolean      @default(false)
-  summary                           String?
-  image_link                        String?
-  image_caption                     String?
-  image_credit                      String?
-  checked_relevance_to_topic_groups TopicGroup[] @relation("checked_relevance_of_items_to_topic_group")
-  relevant_topic_groups             TopicGroup[] @relation("items_relevant_to_topic_group")
-  seen                              Boolean      @default(false)
-  read_later                        Boolean      @default(false)
-  saved                             Boolean      @default(false)
+  id               Int       @id @default(autoincrement())
+  item_type        String    @default("Link")
+  source           Source    @relation(fields: [source_name], references: [name])
+  source_name      String
+  language         Language? @relation(fields: [lang_id], references: [id])
+  lang_id          String?
+  title            String
+  description      String?
+  link             String    @unique
+  authors          Author[]
+  date_published   DateTime?
+  date_added       DateTime  @default(now())
+  likes            Int?
+  comments_link    String?
+  comments_summary String?
+  content          String?
+  number_of_words  Int?
+  summarizable     Boolean   @default(false)
+  summary          String?
+  image_link       String?
+  image_caption    String?
+  image_credit     String?
+  seen             Boolean   @default(false)
+  read_later       Boolean   @default(false)
+  saved            Boolean   @default(false)
+  clicked          Int       @default(0)
+  filters_checked  Filter[]  @relation("item_checked_filter")
+  filters_passed   Filter[]  @relation("item_passed_filter")
+  seen_in_blocks   Block[]
+  seen_in_feeds    Feed[]
 }
 
-model FeedBlock {
-  id                    Int          @id @default(autoincrement())
-  header                String       @unique
-  prisma_query          String // This should be a JSON string which can be jsonified into a valid query for the Prisma client's findMany method
-  contains_sources      Source[]
-  contains_topic_groups TopicGroup[]
-  occurs_in_feed        Feed[]
+model Block {
+  title String                @id @unique
+  query String // This should be a JSON string which can be jsonified into a valid query for the Prisma client's findMany method
+  feeds OrderedBlocksInFeed[]
+  items Item[]
 }
 
 model Feed {
-  id     Int         @id @default(autoincrement())
-  title  String      @unique
-  blocks FeedBlock[]
+  index  Int // It will be unique, but it's easier to not enforce uniqueness becauuse of how load_config works
+  title  String                @id @unique
+  blocks OrderedBlocksInFeed[]
+  items  Item[]
 }
 
-// enum ItemType {
-//   Link
-//   FullTextArticle
-// }
+model OrderedBlocksInFeed {
+  id          Int    @id @default(autoincrement())
+  block       Block  @relation(fields: [block_title], references: [title])
+  block_title String
+  feed        Feed   @relation(fields: [feed_title], references: [title])
+  feed_title  String
+  index       Int
+
+  @@unique([feed_title, block_title, index])
+}

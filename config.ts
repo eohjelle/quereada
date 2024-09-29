@@ -1,8 +1,10 @@
 
 import { subDays } from 'date-fns';
 
+import type { ConfigSource, ConfigFilter, ConfigBlock, ConfigFeed } from './src/backend/load_config';
 
-export const sources = 
+
+export const sources: ConfigSource[] = 
 [
     { 
         name: 'The New York Times', 
@@ -20,43 +22,49 @@ export const sources =
     }
 ];
 
-export const topic_groups = 
+export const filters: ConfigFilter[] = 
 [
     {
-        title: "2024 US Politics",
-        topics: [
-            "The 2024 US Presidential Election" ,
-            "Donald Trump",
-            "J. D. Vance",
-            "Kamala Harris",
-            "Tim Walz"
-        ]
+        title: "Relevant to 2024 US Politics",
+        implementation: "RelevantToTopics",
+        args: {
+            topics: [
+                "The 2024 US Presidential Election" ,
+                "Donald Trump",
+                "J. D. Vance",
+                "Kamala Harris",
+                "Tim Walz"
+            ]
+        }
     },
     {
-        title: "Environmental Issues",
-        topics: [
-            "The Environment",
-            "Climate Change",
-            "Global Warming",
-            "Pollution",
-            "Green Energy",
-            "Waste Management"
-        ]
+        title: "Relevant to Environmental Issues",
+        implementation: "RelevantToTopics",
+        args: {
+            topics: [
+                "The Environment",
+                "Climate Change",
+                "Global Warming",
+                "Pollution",
+                "Green Energy",
+                "Waste Management"
+            ]
+        }
     }
 ];
 
-export const blocks = 
+export const blocks: ConfigBlock[] = 
 [
     {
-        header: "US News Minus 2024 Presidential Election",
-        prisma_query: {
+        title: "US News Not Relevant To 2024 Presidential Election",
+        query: {
             where: {
                 source_name: {
                     in: ["The Atlantic", "The New York Times"]
                 },
-                relevant_topic_groups: {
+                filters_passed: {
                     none: {
-                        title: "2024 US Politics"
+                        title: "Relevant to 2024 US Politics"
                     }
                 }
             },
@@ -69,8 +77,8 @@ export const blocks =
         }
     },
     {
-        header: "Long Reads in The Atlantic",
-        prisma_query: {
+        title: "Long Reads in The Atlantic",
+        query: {
             take: 15,
             where: {
                 source_name: {
@@ -89,15 +97,15 @@ export const blocks =
         }
     },
     {
-        header: "2024 Presidential Election",
-        prisma_query: {
+        title: "2024 Presidential Election",
+        query: {
             where: {
                 source_name: {
                     in: ["The Atlantic", "The New York Times"]
                 },
-                relevant_topic_groups: {
+                filters_passed: {
                     some: {
-                        title: "2024 US Politics"
+                        title: "Relevant to 2024 US Politics"
                     }
                 },
             },
@@ -110,12 +118,12 @@ export const blocks =
         }
     },
     {
-        header: "Environmental News",
-        prisma_query: {
+        title: "Environmental News",
+        query: {
             where: {
-                relevant_topic_groups: {
+                filters_passed: {
                     some: {
-                        title: "Environmental Issues"
+                        title: "Relevant to Environmental Issues"
                     }
                 },
                 source_name: {
@@ -131,8 +139,8 @@ export const blocks =
         }
     },
     {
-        header: "Articles by George Packer",
-        prisma_query: {
+        title: "Articles by George Packer",
+        query: {
             where: {
                 authors: {
                     some: {
@@ -149,8 +157,8 @@ export const blocks =
         }
     },
     {
-        header: "Unseen Items",
-        prisma_query: {
+        title: "Unseen Items",
+        query: {
             where: {
                 seen: false
             },
@@ -158,24 +166,27 @@ export const blocks =
                 authors: true
             },
             orderBy: {
-                date_published: "desc"
+                date_added: "desc"
             }
         }
     },
     {
-        header: "Read Later",
-        prisma_query: {
+        title: "Read Later",
+        query: {
             where: {
                 read_later: true
             },
             include: {
                 authors: true
+            },
+            orderBy: {
+                date_added: "desc"
             }
         }
     },
     {
-        header: "Saved items",
-        prisma_query: {
+        title: "Saved items",
+        query: {
             where: 
             {
                 saved: true
@@ -183,13 +194,28 @@ export const blocks =
             include: 
             {
                 authors: true
+            },
+            orderBy: {
+                date_added: "desc"
+            }
+        }
+    },
+    {
+        title: "All items",
+        query: {
+            orderBy: {
+                id: "desc"
             }
         }
     }
 ]
 
-export const feeds = 
+export const feeds: ConfigFeed[] = 
 [
+    {
+        title: "All items",
+        blocks: [ "All items" ]
+    },
     {
         title: "Saved",
         blocks: [ "Saved items" ]
@@ -200,7 +226,7 @@ export const feeds =
     },
     {
         title: "Serious News Minus Presidential Election",
-        blocks: [ "US News Minus 2024 Presidential Election" ]
+        blocks: [ "US News Not Relevant To 2024 Presidential Election" ]
     },
     {
         title: "2024 Presidential Election",
