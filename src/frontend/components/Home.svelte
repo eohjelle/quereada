@@ -28,39 +28,4 @@
     text-decoration: underline;
     border-bottom: 0;
   }
-
-  /* Codebox container */
-  .codebox {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    margin: 20px 0;
-    overflow: hidden;
-    font-family: "Courier New", Courier, monospace;
-  }
-
-  /* Codebox header */
-  .codebox-header {
-    background-color: #f5f5f5;
-    padding: 10px;
-    font-weight: bold;
-    border-bottom: 1px solid #ccc;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  /* File name */
-  .filename {
-    font-style: italic;
-  }
-
-  /* Language */
-  .language {
-    color: #888;
-  }
-
-  /* Code block */
-  pre {
-    margin: 0;
-    padding: 15px;
-  }
 </style>
