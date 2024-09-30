@@ -2,7 +2,7 @@
   import { inview } from "svelte-inview";
   import Article from "./Article.svelte";
   import ButtonContainer from "./ButtonContainer.svelte";
-  import { setContext } from "svelte";
+  import { onDestroy, setContext } from "svelte";
   import { writable, type Writable } from "svelte/store";
   import { onMount, createEventDispatcher } from "svelte";
   import Link from "./Link.svelte";
@@ -37,6 +37,10 @@
   // It is used to tell the feed when to get more items.
   let hasEnteredView = false;
   const dispatch = createEventDispatcher();
+
+  onDestroy(() => {
+    clearTimeout(seen_timer);
+  });
 </script>
 
 <!-- Use two div boxes because we have two separate inviews. -->

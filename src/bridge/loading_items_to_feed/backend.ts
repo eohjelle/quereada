@@ -1,17 +1,18 @@
 import { ItemsStream } from '$src/backend/items_stream';
 import type { FrontendStatus, BackendStatus, Chunk, Instructions } from './types';
 
+
+// todo: simplifiy this class. Only need two properties: itemsStream and itemsReader. 
+// A request to get an item should call itemsReader.read() and return the value. 
 export abstract class StreamBackend<T = any> {
     protected clientItemsStream: Map<T, ItemsStream>;
     protected clientStreams: Map<T, WritableStream>;
     protected clientReady: Map<T, Promise<any>>;
-    protected clientInstructions: Map<T, Instructions>;
 
     constructor() {
         this.clientItemsStream = new Map();
         this.clientStreams = new Map();
         this.clientReady = new Map();
-        this.clientInstructions = new Map();
     }
 
     // In the subclass, the constructor also sets up listeners to handle three types of messages:
@@ -43,9 +44,9 @@ export abstract class StreamBackend<T = any> {
 
     protected initClient(client: T, instructions: Instructions) {
         console.log('Initializing client with instructions', instructions);
-        this.clientInstructions.set(client, instructions);
         this.clientReady.set(client, this.waitForStatus(client, 'ready'));
         this.clientStreams.set(client, this.createClientStream(client));
+
         this.clientItemsStream.set(client, new ItemsStream(instructions));
         this.clientItemsStream.get(client)!.stream.pipeTo(this.clientStreams.get(client)!).then(() => {
             this.closeClient(client);
@@ -57,12 +58,6 @@ export abstract class StreamBackend<T = any> {
         console.log('Closing client connection...');
         this.clientStreams.delete(client);
         this.clientReady.delete(client);
-        this.clientInstructions.delete(client);
         this.clientItemsStream.delete(client);
-    }
-
-    protected setInstructions(client: T, instructions: Instructions) {
-        this.clientInstructions.set(client, instructions);
-        this.clientItemsStream.get(client)!.setInstructions(instructions);
     }
 }

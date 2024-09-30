@@ -10,7 +10,7 @@ export function getStream(instructions: Instructions) {
     } else if (import.meta.env.MODE === 'electron') {
         streamFrontend = new ElectronStreamFrontend(instructions);
     } else {
-        throw new Error('Environmental variable RUNTIME_ENV must be set to "web" or "electron".');
+        throw new Error('vite build must run with parameter --mode set to "web" or "electron".');
     }
     return streamFrontend;
 }

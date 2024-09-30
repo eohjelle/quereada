@@ -103,18 +103,23 @@ export class ItemsStream {
             } else {
                 const itemPassesUncheckedRelevantFilters = await Promise.all(
                     uncheckedRelevantFilters.map(async filter => {
-                        const passes = await filters[filter.implementation](JSON.parse(filter.args || '{}'))(item);
-                        return [filter, passes] as const;
+                        try {
+                            const passes = await filters[filter.implementation](JSON.parse(filter.args || '{}'))(item);
+                            return [filter, passes] as const;
+                        } catch (error) {
+                            console.error(`Error applying filter ${filter.title} to item ${item.id}:`, error);
+                            return [filter, undefined] as const;
+                        }
                     })
-                ).then(results => results.filter(([_, passes]) => passes).map(([filter, _]) => filter));
+                );
                 await db.item.update({
                     where: { id: item.id },
                     data: {
                         filters_checked: {
-                            connect: uncheckedRelevantFilters.map(filter => ({ title: filter.title }))
+                            connect: itemPassesUncheckedRelevantFilters.filter(([_, passes]) => passes !== undefined).map(([filter, _]) => ({ title: filter.title }))
                         },
                         filters_passed: {
-                            connect: itemPassesUncheckedRelevantFilters.map(filter => ({ title: filter.title }))
+                            connect: itemPassesUncheckedRelevantFilters.filter(([_, passes]) => passes === true).map(([filter, _]) => ({ title: filter.title }))
                         }
                     }
                 });

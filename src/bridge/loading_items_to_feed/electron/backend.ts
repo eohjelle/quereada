@@ -18,10 +18,6 @@ export class ElectronStreamBackend extends StreamBackend<WebContents> {
                 return 'Connection closed!';
             }
         });
-
-        ipcMain.on('instructions', (event: IpcMainEvent, instructions: Instructions) => {
-            this.setInstructions(event.sender, instructions);
-        });
     }
 
     sendChunk(client: WebContents, chunk: Chunk) {
@@ -34,7 +30,7 @@ export class ElectronStreamBackend extends StreamBackend<WebContents> {
 
     waitForStatus(client: WebContents, status: FrontendStatus): Promise<void> {
         return new Promise<void>((resolve) => {
-            function messageHandler(event: IpcMainEvent, frontendStatus: FrontendStatus) {
+            const messageHandler = (event: IpcMainEvent, frontendStatus: FrontendStatus) => {
                 if (frontendStatus === status && event.sender === client) {
                     ipcMain.removeListener('status', messageHandler);
                     resolve();

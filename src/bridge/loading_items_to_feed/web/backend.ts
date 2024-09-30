@@ -27,8 +27,6 @@ export class StreamSocketServer extends StreamBackend<WebSocket> {
                     } else if (parsedMessage.status === 'close') {
                         ws.close();
                     }
-                } else if (parsedMessage.instructions) {
-                    this.setInstructions(ws, parsedMessage.instructions);
                 }
             });
 

@@ -4,12 +4,12 @@ import type { FrontendStatus, BackendStatus, Chunk, Instructions } from '../type
 export class StreamSocket extends StreamFrontend {
     private socket: WebSocket;
     protected connectionPromise: Promise<void>;
-    private resolveConnection!: () => void;
 
     constructor(instructions: Instructions) {
-        super(instructions);
+        super();
+        let resolveConnection: () => void;
         this.connectionPromise = new Promise((resolve) => {
-            this.resolveConnection = resolve;
+            resolveConnection = resolve;
         });
 
         // Initialize the WebSocket connection
@@ -23,8 +23,8 @@ export class StreamSocket extends StreamFrontend {
         // Send a message to start the stream when the connection is open
         this.socket.onopen = () => {
             console.log("Connected to WebSocket server.");
-            this.socket.send(JSON.stringify({ status: 'start', instructions: this.instructions }));
-            this.resolveConnection();
+            this.socket.send(JSON.stringify({ status: 'start', instructions: instructions }));
+            resolveConnection();
         };
 
         this.socket.onclose = (event) => {
@@ -34,10 +34,6 @@ export class StreamSocket extends StreamFrontend {
 
     sendStatus(status: FrontendStatus) {
         this.socket.send(JSON.stringify({ status: status }));
-    }
-
-    sendInstructions() {
-        this.socket.send(JSON.stringify({ instructions: this.instructions }));
     }
     
     async waitForChunk(): Promise<Chunk> {

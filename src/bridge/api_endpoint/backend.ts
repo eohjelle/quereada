@@ -41,7 +41,8 @@ export class EndpointBackend {
                     .map((block) => {
                         return {
                             title: block.block.title,
-                            query: JSON.parse(block.block.query) as Prisma.ItemFindManyArgs
+                            query: JSON.parse(block.block.query) as Prisma.ItemFindManyArgs,
+                            stop_loading_if_not_items_for: block.block.stop_loading_if_not_items_for
                         }
                 })
             }

@@ -1,25 +1,14 @@
 import type { Chunk, Instructions, FrontendStatus, BackendStatus } from './types';
 
 export abstract class StreamFrontend {
-    stream: ReadableStream; 
-    protected instructions: Instructions;
+    stream: ReadableStream;
     protected abstract connectionPromise: Promise<void>;
     
-    constructor(instructions: Instructions) {
-        this.instructions = instructions;
+    constructor() {
         this.stream = this.initStream();
     }
 
     protected abstract sendStatus(status: FrontendStatus): void;
-
-    // todo: decide if I want to keep these instructions related functions
-    protected abstract sendInstructions(): void;
-
-    setInstructions(instructions: Instructions): void {
-        console.log(`Setting instructions:`, instructions);
-        this.instructions = instructions;
-        this.sendInstructions();
-    }
 
     protected abstract waitForChunk(): Promise<Chunk>;
 

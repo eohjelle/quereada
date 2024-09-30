@@ -8,7 +8,9 @@
     "start:web": "tsx --inspect src/backend/main/web/index.ts",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
-    "test": "vitest"
+    "test": "vitest",
+    "build:electron": "vite build --emptyOutDir --mode electron && tsc -p tsconfig.json && tsc-alias -p tsconfig.json && fix-esm-import-path ./dist/src/backend/main/electron/* && mv ./dist/src/backend/main/electron/preload.js ./dist/src/backend/main/electron/preload.mjs",
+    "start:electron": "electron dist/src/backend/main/electron/index.js"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.0.0",
@@ -23,6 +25,7 @@
     "svelte": "^4.2.7",
     "svelte-check": "^3.6.0",
     "svelte-spa-router": "^4.0.1",
+    "tsc-alias": "^1.8.10",
     "tsx": "^4.19.1",
     "typescript": "^5.0.0",
     "util": "^0.12.5",
