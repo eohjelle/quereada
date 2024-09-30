@@ -4,16 +4,15 @@ export abstract class StreamFrontend {
     stream: ReadableStream; 
     protected instructions: Instructions;
     protected abstract connectionPromise: Promise<void>;
-    protected batchSize: number = 10;
     
     constructor(instructions: Instructions) {
         this.instructions = instructions;
-        this.batchSize = instructions.pageSize;
         this.stream = this.initStream();
     }
 
     protected abstract sendStatus(status: FrontendStatus): void;
 
+    // todo: decide if I want to keep these instructions related functions
     protected abstract sendInstructions(): void;
 
     setInstructions(instructions: Instructions): void {
@@ -31,20 +30,24 @@ export abstract class StreamFrontend {
         return new ReadableStream({
             start: async (controller) => {
                 await this.connectionPromise; // Wait for the connection to be established
-                console.log('Connection established');
+                console.log('Connection established.');
                 await this.waitForStatus("start"); // Make sure that the connection is established before trying to send or receive other messages
-                console.log('Received start message');
+                console.log('Backend is ready to send items.');
             },
             pull: async (controller) => {
-                this.sendStatus("ready");
-                for (let i = 0; i < this.batchSize; i++) {
-                    const chunk = await this.waitForChunk();
+                try {
+                    const chunkPromise = this.waitForChunk();
+                    this.sendStatus("ready");
+                    const chunk = await chunkPromise;
                     controller.enqueue(chunk);
+                    console.log('Chunk received:', chunk.id);
+                } catch (error) {
+                    console.log("Closing stream.");
+                    controller.close();
                 }
             }
         });
     }
+
+    abstract close(): void;
 }
-
-
-// todo: close connection when the stream is closed

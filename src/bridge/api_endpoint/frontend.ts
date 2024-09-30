@@ -15,14 +15,25 @@ export abstract class EndpointFrontend {
 
     abstract getRawConfig(): Promise<string>;
 
-    // todo: updateSeen should also update seen_in_blocks field (connect origin block)
-    async updateSeen(item_id: number, seen: boolean): Promise<void> {
+    async updateSeen(item_id: number, feed_title: string, block_title: string): Promise<void> {
         await this.itemUpdate({
             where: {
                 id: item_id,
             },
             data: {
-                seen: seen,
+                seen: {
+                    increment: 1,
+                },
+                seen_in_feeds: {
+                    connect: {
+                        title: feed_title,
+                    }
+                },
+                seen_in_blocks: {
+                    connect: {
+                        title: block_title,
+                    }
+                }
             },
         });
     }
@@ -49,14 +60,26 @@ export abstract class EndpointFrontend {
         });
     }
 
-    async incrementClicked(item_id: number): Promise<void> {
+    async updateClicks (item_id: number, feed_title: string, block_title: string): Promise<void> {
         await this.itemUpdate({
             where: {
                 id: item_id,
             },
             data: {
-                clicked: { increment: 1 },
-            },
+                clicks: {
+                    increment: 1,
+                },
+                clicked_in_blocks: {
+                    connect: {
+                        title: block_title,
+                    }
+                },
+                clicked_in_feeds: {
+                    connect: {
+                        title: feed_title,
+                    }
+                }
+            }
         });
     }
 }

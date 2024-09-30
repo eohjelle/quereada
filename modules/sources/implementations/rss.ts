@@ -19,19 +19,13 @@ export class RSS extends Source {
     }
 
     async fetchItemsFromSource () {
-        // const parser = new Parser();
-        // const feed1 = await parser.parseURL(this.url);
-        // console.log(`\n\n\n\n\nHere is the feed using rss-parser:`); // useful for debugging. todo: remove
-        // console.log(util.inspect(feed1));
-        
-        const feed2 = await extract(this.url!);
-        // console.log(`\n\n\n\n\nHere is the feed using @extractus/feed-extractor:`); // useful for debugging. todo: remove
+        const feed = await extract(this.url!);
         const items: FetchItem[] = [];
-        if (!feed2.entries) {
+        if (!feed.entries) {
             console.error(`No entries found in feed for ${this.name}`);
             return [];
         }
-        for (const raw_item of feed2.entries) {
+        for (const raw_item of feed.entries) {
             const authors: string[] = []; // todo: implement authors
             const item: FetchItem = {
                 item_type: 'Link',

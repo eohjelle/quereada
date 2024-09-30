@@ -9,8 +9,6 @@
   on:click={async () => {
     clicked = true;
     refreshPromise = api.refreshFeeds();
-    await refreshPromise;
-    location.reload();
   }}
 >
   {#if !clicked}

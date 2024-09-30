@@ -13,7 +13,7 @@
 <div class="button-container">
   <div
     class="seen-button"
-    style="background-color: {item.seen ? 'green' : 'red'}"
+    style="background-color: {item.seen > 0 ? 'green' : 'gray'}"
   />
   <button
     on:click={() => {

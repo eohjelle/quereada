@@ -6,7 +6,6 @@ import { authorListFromByline, authorListToConnectOrCreateField } from '$lib/uti
 export class NYTimesAPI extends Source{
     constructor({ channels = ["topstories/v2/home.json", "mostpopular/v2/viewed/1.json"] }: SourceConstructorParams) {
         // todo: make channel names more intuitive
-
         super({
             name: 'The New York Times',
             url: 'https://api.nytimes.com/svc',
@@ -20,12 +19,10 @@ export class NYTimesAPI extends Source{
     async fetchItemsFromChannel(channel_code: string) {
         const response = await fetch(`${this.url}/${channel_code}?api-key=${process.env.NYTIMES_API_KEY}`);
         const data = await response.json();
-        // console.log(`Loaded data from NYTimes API at endpoint ${this.url}/${channel_code}?api-key=${NYTIMES_API_KEY}: ${util.inspect(data, false, null)}`);
 
         const items: FetchItem[] = [];
         
         for (const raw_item of data.results) {
-            // console.log(`\n\n\nProcessing item: ${util.inspect(raw_item, false, null)}`);
             const authors = authorListFromByline(raw_item.byline);
             const item: FetchItem = {
                 title: raw_item.title,

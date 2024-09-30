@@ -55,8 +55,8 @@ export type Item = Prisma.ItemGetPayload<{
 export type DisplayItem = Pick<
     Item, 
     'id' | 'item_type' | 'source_name' | 'title' | 'description' | 'link' | 'authors' | 'date_published' | 'image_link' | 'image_caption' | 'image_credit' | 'number_of_words' | 'likes' | 'comments_link'
-    | 'seen' | 'read_later' | 'saved' | 'clicked' | 'summarizable'
-> & { block_title: string };
+    | 'seen' | 'read_later' | 'saved' | 'summarizable'
+> & { feed_title: string, block_title: string };
 
 /** The type used for summarization. */
 export type ItemToSummarize = Pick<

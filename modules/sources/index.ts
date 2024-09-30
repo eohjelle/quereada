@@ -26,13 +26,11 @@ async function loadSources(): Promise<{ [name: string]: Source }> {
     } );
     for (const source of sourceData) {
         const SourceClass = sourceClasses[source.source_class];
-        // console.log(`Source ${source.name} occurs with topic groups ${get_values(source.occurs_in_blocks)}`);
         const instance = new SourceClass({
             name: source.name,
             url: source.url || undefined,
-            channels: source.channels.map((channel: { channel_name: string }) => channel.channel_name)
+            channels: source.channels.length > 0 ? source.channels.map((channel: { channel_name: string }) => channel.channel_name) : undefined
         });
-        // console.log(`We have created the class for ${source.name}. It is ${util.inspect(instance, false, null)}`);
         sources[source.name] = instance;
     }
     return sources;

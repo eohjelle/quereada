@@ -18,7 +18,6 @@ export class WebEndpointFrontend extends EndpointFrontend {
     }
 
     async getSummary(item_id: number): Promise<ReadableStream<string>> {
-        console.log(`Requesting summary for item ${item_id}...`);
         const response = await fetch(`/api/get_summary?item_id=${item_id}`, {
             method: "GET"
         });

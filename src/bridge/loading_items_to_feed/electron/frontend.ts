@@ -32,8 +32,6 @@ export class ElectronStreamFrontend extends StreamFrontend {
     }
 
     sendStatus(status: FrontendStatus) {
-        // console.log(`Sending message to backend: ${message}`);
-        // console.log(`Using the streamAPI: ${window.streamAPI}`);
         window.streamAPI.sendStatus(status);
     }
 

@@ -23,8 +23,7 @@
   };
 
   // A timer that updates item to "seen" after it's been in view for 3 seconds
-  let inview_options = { threshold: 0.9 }; // threshold = 1 means that the item is considered in view when it's fully visible
-  let inview_timer: NodeJS.Timeout;
+  let seen_timer: NodeJS.Timeout;
 
   // Initiate variable to indicate whether to show the summary.
   // This state is controlled by a button component, and will be read by the "content" component.
@@ -34,41 +33,40 @@
     writable(false)
   );
 
-  onMount(() => {
-    console.log("ItemContainer mounted");
-    // todo: check if we need to clean up?
-  });
-
   // Event dispatcher for when an item enters view.
   // It is used to tell the feed when to get more items.
   let hasEnteredView = false;
   const dispatch = createEventDispatcher();
 </script>
 
+<!-- Use two div boxes because we have two separate inviews. -->
 <div
-  class="item-box"
-  in:fade
-  use:inview={inview_options}
+  use:inview={{ threshold: 0, unobserveOnEnter: true }}
   on:inview_enter={() => {
     if (!hasEnteredView) {
       hasEnteredView = true;
       dispatch("entered_view");
     }
-    if (!item.seen) {
-      inview_timer = setTimeout(() => {
-        item.seen = true;
-        api.updateSeen(item.id, item.seen);
-      }, 3000);
-    }
-  }}
-  on:inview_leave={() => {
-    if (!item.seen) {
-      clearTimeout(inview_timer);
-    }
   }}
 >
-  <svelte:component this={svelte_component_of_type[item.item_type]} {item} />
-  <ButtonContainer {item} />
+  <div
+    class="item-box"
+    in:fade
+    use:inview={{ threshold: 1 }}
+    on:inview_enter={(event) => {
+      seen_timer = setTimeout(() => {
+        item.seen += 1;
+        api.updateSeen(item.id, item.feed_title, item.block_title);
+        event.detail.observer.unobserve(event.detail.node);
+      }, 3000);
+    }}
+    on:inview_leave={() => {
+      clearTimeout(seen_timer);
+    }}
+  >
+    <svelte:component this={svelte_component_of_type[item.item_type]} {item} />
+    <ButtonContainer {item} />
+  </div>
 </div>
 
 <style>
@@ -81,7 +79,8 @@
     background-color: #ffffff;
     display: grid;
     grid-template-columns: 90% 10%;
-    width: 80%;
+    width: 80vw;
+    max-width: 80%;
     height: 250px; /* If removed, text content seems to cut off in some cases. todo: investigate */
     max-height: 250px;
     border: 2px solid #ddd;

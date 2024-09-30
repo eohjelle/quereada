@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "build:db": "prisma generate && prisma migrate dev",
     "build:web": "vite build --emptyOutDir --mode web",
     "start:web": "tsx --inspect src/backend/main/web/index.ts",
     "check": "svelte-check --tsconfig ./tsconfig.json",

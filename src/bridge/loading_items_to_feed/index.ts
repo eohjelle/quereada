@@ -4,7 +4,6 @@ import { ElectronStreamFrontend } from './electron/frontend';
 import type { Instructions } from './types';
 
 export function getStream(instructions: Instructions) {
-    console.log(`MODE: ${import.meta.env.MODE}`);
     let streamFrontend: StreamFrontend;
     if (import.meta.env.MODE === 'web') {
         streamFrontend = new StreamSocket(instructions);

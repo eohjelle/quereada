@@ -1,3 +1,7 @@
+<script lang="ts">
+  import Configbox from "./Configbox.svelte";
+</script>
+
 <main>
   <p>
     This is the start page of <a href="https://github.com/eohjelle/querygator"
@@ -7,9 +11,10 @@
     the top of the window.
   </p>
   <p>
-    The visible feeds are controlled by a configuration file in the root folder
-    called 'config.ts`.
+    The visible feeds are controlled by a configuration file. It looks like
+    this:
   </p>
+  <Configbox />
 </main>
 
 <style>

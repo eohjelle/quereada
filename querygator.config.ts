@@ -160,7 +160,9 @@ export const blocks: ConfigBlock[] =
         title: "Unseen Items",
         query: {
             where: {
-                seen: false
+                seen: {
+                    equals: 0
+                }
             },
             include: {
                 authors: true
@@ -225,7 +227,7 @@ export const feeds: ConfigFeed[] =
         blocks: [ "Read Later" ]
     },
     {
-        title: "Serious News Minus Presidential Election",
+        title: "US News Minus Presidential Election",
         blocks: [ "US News Not Relevant To 2024 Presidential Election" ]
     },
     {

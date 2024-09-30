@@ -79,6 +79,9 @@ export async function loadConfig(): Promise<void> {
         });
     }));
 
+    // Reset orderedBlocksInFeed
+    await db.orderedBlocksInFeed.deleteMany();
+
     // Upsert feeds
     await Promise.all(feeds.map(async (feed, index) => {
         const feed_data = {
@@ -111,7 +114,7 @@ export async function loadConfig(): Promise<void> {
         });
     }));
 
-    // Remove unused feeds and blocks
+    // Remove unused feeds and blocks. todo: mark as inactive instead of deleting?
     await db.feed.deleteMany({
         where: {
             title: { notIn: feeds.map(feed => feed.title) }

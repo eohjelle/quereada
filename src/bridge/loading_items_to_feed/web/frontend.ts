@@ -33,7 +33,6 @@ export class StreamSocket extends StreamFrontend {
     }
 
     sendStatus(status: FrontendStatus) {
-        // console.log(`Sending status: ${status}`);
         this.socket.send(JSON.stringify({ status: status }));
     }
 
@@ -48,6 +47,9 @@ export class StreamSocket extends StreamFrontend {
                     this.socket.removeEventListener('message', messageHandler);
                     const chunk = JSON.parse(event.data).chunk;
                     resolve(chunk);
+                } else if (JSON.parse(event.data).status === 'close') {
+                    this.socket.removeEventListener('message', messageHandler);
+                    reject(new Error('Stream closed by backend.'));
                 }
             }
             this.socket.addEventListener('message', messageHandler);
@@ -56,7 +58,6 @@ export class StreamSocket extends StreamFrontend {
 
     async waitForStatus(status: BackendStatus) {
         return new Promise<void>((resolve, reject) => {
-            console.log('Waiting for status:', status);
             const messageHandler = (event: MessageEvent) => {
                 if (JSON.parse(event.data).status === status) {
                     this.socket.removeEventListener('message', messageHandler);
@@ -65,5 +66,9 @@ export class StreamSocket extends StreamFrontend {
             }
             this.socket.addEventListener('message', messageHandler);
         });
+    }
+
+    close() {
+        this.socket.close();
     }
 }

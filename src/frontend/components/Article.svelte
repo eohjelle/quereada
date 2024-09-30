@@ -4,9 +4,6 @@
   import Summarizer from "./Summarizer.svelte";
   import Headline from "./Headline.svelte";
   import { type Writable } from "svelte/store";
-  import { time } from "console";
-
-  console.log("Initializing Article component...");
 
   export let item;
 

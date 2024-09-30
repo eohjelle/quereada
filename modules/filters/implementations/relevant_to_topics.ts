@@ -33,7 +33,7 @@ export const RelevantToTopics: FilterConstructor<{ topics: string[] }> = ({ topi
     if (!response) {
         throw new Error(`Attempt to decide if item ${item.title} is relevant to topics ${topics} failed`);
     }
-    // console.log(`Asked gpt-4o if ${item.title} is relevant to topic group ${topic_group_title}. Response: ${response}`);
+    // (`Asked gpt-4o if ${item.title} is relevant to topic group ${topic_group_title}. Response: ${response}`);
     return JSON.parse(response).is_relevant;
 }
 

@@ -20,13 +20,11 @@ export class ElectronStreamBackend extends StreamBackend<WebContents> {
         });
 
         ipcMain.on('instructions', (event: IpcMainEvent, instructions: Instructions) => {
-            // console.log(`Received instructions:`, instructions);
             this.setInstructions(event.sender, instructions);
         });
     }
 
     sendChunk(client: WebContents, chunk: Chunk) {
-        // console.log(`Sending message to client: ${message}`);
         client.send('stream', chunk);
     }
 

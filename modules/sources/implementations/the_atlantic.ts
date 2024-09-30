@@ -22,9 +22,6 @@ export class TheAtlantic extends Source {
         const items: FetchItem[] = [];
 
         for (const raw_item of parsed_xml.feed.entry) {
-            // console.log(`\n\n\n\n\nHere is a raw item:`); // useful for debugging. todo: remove
-            // console.log(util.inspect(raw_item, false, null));
-
             const authors: string[] = raw_item.author.map((author: { name: string }) => (author.name[0]));
             const item: FetchItem = {
                 title: raw_item.title[0]._,

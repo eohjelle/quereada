@@ -48,50 +48,55 @@ model Author {
 }
 
 model Item {
-  id               Int       @id @default(autoincrement())
-  item_type        String    @default("Link")
-  source           Source    @relation(fields: [source_name], references: [name])
-  source_name      String
-  language         Language? @relation(fields: [lang_id], references: [id])
-  lang_id          String?
-  title            String
-  description      String?
-  link             String    @unique
-  authors          Author[]
-  date_published   DateTime?
-  date_added       DateTime  @default(now())
-  likes            Int?
-  comments_link    String?
-  comments_summary String?
-  content          String?
-  number_of_words  Int?
-  summarizable     Boolean   @default(false)
-  summary          String?
-  image_link       String?
-  image_caption    String?
-  image_credit     String?
-  seen             Boolean   @default(false)
-  read_later       Boolean   @default(false)
-  saved            Boolean   @default(false)
-  clicked          Int       @default(0)
-  filters_checked  Filter[]  @relation("item_checked_filter")
-  filters_passed   Filter[]  @relation("item_passed_filter")
-  seen_in_blocks   Block[]
-  seen_in_feeds    Feed[]
+  id                Int       @id @default(autoincrement())
+  item_type         String    @default("Link")
+  source            Source    @relation(fields: [source_name], references: [name])
+  source_name       String
+  language          Language? @relation(fields: [lang_id], references: [id])
+  lang_id           String?
+  title             String
+  description       String?
+  link              String    @unique
+  authors           Author[]
+  date_published    DateTime?
+  date_added        DateTime  @default(now())
+  likes             Int?
+  comments_link     String?
+  comments_summary  String?
+  content           String?
+  number_of_words   Int?
+  summarizable      Boolean   @default(false)
+  summary           String?
+  image_link        String?
+  image_caption     String?
+  image_credit      String?
+  read_later        Boolean   @default(false)
+  saved             Boolean   @default(false)
+  filters_checked   Filter[]  @relation("item_checked_filter")
+  filters_passed    Filter[]  @relation("item_passed_filter")
+  seen              Int       @default(0)
+  seen_in_blocks    Block[]   @relation("item_seen_in_blocks")
+  seen_in_feeds     Feed[]    @relation("item_seen_in_feeds")
+  clicks            Int       @default(0)
+  clicked_in_blocks Block[]   @relation("item_clicked_in_blocks")
+  clicked_in_feeds  Feed[]    @relation("item_clicked_in_feeds")
 }
 
 model Block {
-  title String                @id @unique
-  query String // This should be a JSON string which can be jsonified into a valid query for the Prisma client's findMany method
-  feeds OrderedBlocksInFeed[]
-  items Item[]
+  title                         String                @id @unique
+  query                         String // This should be a JSON string which can be jsonified into a valid query for the Prisma client's findMany method
+  stop_loading_if_not_items_for Int?
+  feeds                         OrderedBlocksInFeed[]
+  seen_items                    Item[]                @relation("item_seen_in_blocks")
+  clicked_items                 Item[]                @relation("item_clicked_in_blocks")
 }
 
 model Feed {
-  index  Int // It will be unique, but it's easier to not enforce uniqueness becauuse of how load_config works
-  title  String                @id @unique
-  blocks OrderedBlocksInFeed[]
-  items  Item[]
+  index         Int // It will be unique, but it's easier to not enforce uniqueness becauuse of how load_config works
+  title         String                @id @unique
+  blocks        OrderedBlocksInFeed[]
+  seen_items    Item[]                @relation("item_seen_in_feeds")
+  clicked_items Item[]                @relation("item_clicked_in_feeds")
 }
 
 model OrderedBlocksInFeed {

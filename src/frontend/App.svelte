@@ -12,7 +12,6 @@
   onMount(async () => {
     console.log("Loading feed data...");
     feeds = await api.getFeedData();
-    console.log("Feed data loaded:", feeds);
   });
 </script>
 

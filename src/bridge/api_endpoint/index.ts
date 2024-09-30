@@ -2,7 +2,6 @@ import { EndpointFrontend } from './frontend';
 import { WebEndpointFrontend } from './web/frontend';
 
 function getEndpoint() {
-    console.log(`MODE: ${import.meta.env.MODE}`);
     let streamFrontend: EndpointFrontend;
     if (import.meta.env.MODE === 'web') {
         streamFrontend = new WebEndpointFrontend();

@@ -74,7 +74,7 @@ export class WebEndpointBackend extends EndpointBackend {
         this.app.get('/api/get_raw_config', async (req, res) => {
             try {
                 const rawConfig = await this.getRawConfig();
-                res.status(200).json({ config: rawConfig });
+                res.status(200).send(rawConfig);
             } catch (error) {
                 console.error('Error getting raw config:', error);
                 res.status(500).json({ error: 'Internal server error' });
