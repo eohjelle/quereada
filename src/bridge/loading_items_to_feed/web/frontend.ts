@@ -1,11 +1,12 @@
-import { StreamFrontend } from '../frontend';
-import type { FrontendStatus, BackendStatus, Chunk, Instructions } from '../types';
+import { StreamInterface } from '../frontend';
+import type { Instructions, FrontendRequest, BackendResponse } from '../types';
+import { v4 as uuidv4 } from 'uuid';
 
-export class StreamSocket extends StreamFrontend {
+export class WebStreamInterface extends StreamInterface {
     private socket: WebSocket;
     protected connectionPromise: Promise<void>;
 
-    constructor(instructions: Instructions) {
+    constructor() {
         super();
         let resolveConnection: () => void;
         this.connectionPromise = new Promise((resolve) => {
@@ -21,9 +22,8 @@ export class StreamSocket extends StreamFrontend {
         };
     
         // Send a message to start the stream when the connection is open
-        this.socket.onopen = () => {
+        this.socket.onopen = async () => {
             console.log("Connected to WebSocket server.");
-            this.socket.send(JSON.stringify({ status: 'start', instructions: instructions }));
             resolveConnection();
         };
 
@@ -32,39 +32,26 @@ export class StreamSocket extends StreamFrontend {
         };
     }
 
-    sendStatus(status: FrontendStatus) {
-        this.socket.send(JSON.stringify({ status: status }));
-    }
-    
-    async waitForChunk(): Promise<Chunk> {
-        return new Promise((resolve, reject) => {
-            const messageHandler = (event: MessageEvent) => {
-                if (JSON.parse(event.data).status === 'chunk') {
-                    this.socket.removeEventListener('message', messageHandler);
-                    const chunk = JSON.parse(event.data).chunk;
-                    resolve(chunk);
-                } else if (JSON.parse(event.data).status === 'close') {
-                    this.socket.removeEventListener('message', messageHandler);
-                    reject(new Error('Stream closed by backend.'));
+    protected async sendRequest<T extends BackendResponse>(request: FrontendRequest, instructions?: Instructions): Promise<T> {
+        console.log('Sending request:', request);
+        const id = uuidv4();
+        const promise = new Promise((resolve, reject) => {
+            const callback = (event: MessageEvent) => {
+                const data = JSON.parse(event.data);
+                if (data.id === id) {
+                    this.socket.removeEventListener('message', callback);
+                    if (data.type === 'json') {
+                        resolve(data.data);
+                    } else if (data.type === 'string') {
+                        resolve(data.data);
+                    } else {
+                        reject(new Error('Unexpected message type received'));
+                    }
                 }
             }
-            this.socket.addEventListener('message', messageHandler);
+            this.socket.addEventListener('message', callback);
         });
-    }
-
-    async waitForStatus(status: BackendStatus) {
-        return new Promise<void>((resolve, reject) => {
-            const messageHandler = (event: MessageEvent) => {
-                if (JSON.parse(event.data).status === status) {
-                    this.socket.removeEventListener('message', messageHandler);
-                    resolve();
-                }
-            }
-            this.socket.addEventListener('message', messageHandler);
-        });
-    }
-
-    close() {
-        this.socket.close();
+        this.socket.send(JSON.stringify({ request: request, instructions: instructions, id: id }));
+        return promise as Promise<T>;
     }
 }

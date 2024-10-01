@@ -5,13 +5,19 @@
   import { onMount } from "svelte";
   import { api } from "$bridge/api_endpoint";
   import type { Feed as FeedType } from "$lib/types";
+  import {
+    getStreamInterface,
+    type StreamInterface,
+  } from "$bridge/loading_items_to_feed";
 
   let feeds: FeedType[] = [];
   let selectedFeed: FeedType;
+  let streamInterface: StreamInterface;
 
   onMount(async () => {
     console.log("Loading feed data...");
     feeds = await api.getFeedData();
+    streamInterface = getStreamInterface();
   });
 </script>
 
@@ -35,7 +41,7 @@
 <main>
   {#if selectedFeed}
     {#key selectedFeed}
-      <Feed feed={selectedFeed} />
+      <Feed feed={selectedFeed} {streamInterface} />
     {/key}
   {:else}
     <Home />

@@ -1,12 +1,13 @@
 <script lang="ts">
   import ItemContainer from "./ItemContainer.svelte";
   import { onMount, onDestroy } from "svelte";
-  import { getStream } from "$bridge/loading_items_to_feed";
   import type { DisplayItem } from "$lib/types";
   import type { Feed as FeedType } from "$lib/types";
-  import type { StreamFrontend } from "$bridge/loading_items_to_feed/frontend";
+  import type { StreamInterface } from "$bridge/loading_items_to_feed/frontend";
 
   export let feed: FeedType;
+  export let streamInterface: StreamInterface;
+  let abortController = new AbortController();
   let items: DisplayItem[] = [];
   const pageSize = 5;
 
@@ -26,15 +27,17 @@
     waitToGetAnotherItem = new Promise((resolve) => (getAnotherItem = resolve));
   };
 
-  let itemsStream: StreamFrontend;
-
   onMount(async () => {
-    console.log("Initializing items stream for feed", feed);
-    itemsStream = await getStream({
-      feed: feed,
-      pageSize: pageSize,
-    });
-    itemsStream.stream.pipeTo(
+    console.log(`Initializing stream for feed ${feed.title}...`);
+    await streamInterface
+      .start({
+        feed: feed,
+        pageSize: pageSize,
+      })
+      .then((message) => {
+        console.log(message);
+      });
+    streamInterface.stream.pipeTo(
       new WritableStream(
         {
           write: async (item) => {
@@ -56,16 +59,18 @@
           },
         },
         new CountQueuingStrategy({ highWaterMark: pageSize })
-      )
+      ),
+      { signal: abortController.signal }
     );
 
     startShowLoadingItemsMessageTimer();
   });
 
-  onDestroy(() => {
-    console.log("Canceling items stream...");
-    itemsStream.close();
-    console.log("Items stream canceled. Destroying component...");
+  onDestroy(async () => {
+    console.log(`Closing stream for feed ${feed.title}...`);
+    abortController.abort();
+    await streamInterface.close();
+    console.log(`Stream for feed ${feed.title} closed.`);
   });
 </script>
 

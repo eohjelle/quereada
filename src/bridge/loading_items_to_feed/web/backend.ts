@@ -1,5 +1,5 @@
 import { StreamBackend } from '../backend';
-import type { BackendStatus, FrontendStatus, Chunk, Instructions } from '../types';
+import type { Instructions, FrontendRequest } from '../types';
 import { WebSocket, WebSocketServer } from 'ws';
 import type { MessageEvent } from 'ws';
 import { Server } from 'http';
@@ -15,48 +15,29 @@ export class StreamSocketServer extends StreamBackend<WebSocket> {
         this.wss = new WebSocketServer({ server });
 
         this.wss.on('connection', (ws) => {
-            console.log('Client connected');
+            console.log('Client connected.');
             
             // Handle messages from the client
-            ws.on('message', (message: MessageEvent) => {
-                console.log('Received:', message.toString());
-                const parsedMessage: { status?: FrontendStatus, instructions?: Instructions } = JSON.parse(message.toString());
-                if (parsedMessage.status) {
-                    if (parsedMessage.status === 'start') {
-                        this.initClient(ws, parsedMessage.instructions!);
-                    } else if (parsedMessage.status === 'close') {
-                        ws.close();
-                    }
+            ws.on('message', async (message: MessageEvent) => {
+                console.log('Received request:', message.toString());
+                const parsedMessage: { request: FrontendRequest, instructions?: Instructions, id: string } = JSON.parse(message.toString());
+                if (parsedMessage.request === 'start') {
+                    this.initClient(ws, parsedMessage.instructions!);
+                    ws.send(JSON.stringify({ type: 'string', data: 'Server: Initialized items stream.', id: parsedMessage.id }));
+                } else if (parsedMessage.request === 'close') {
+                    await this.closeClient(ws);
+                    ws.send(JSON.stringify({ type: 'string', data: 'Server: Closed items stream.', id: parsedMessage.id }));
+                } else if (parsedMessage.request === 'next') {
+                    const { done, item } = await this.nextItem(ws);
+                    ws.send(JSON.stringify({ type: 'json', data: { done, item }, id: parsedMessage.id }));
                 }
             });
 
             // Handle client disconnection
             ws.on('close', () => {
-                console.log('Client disconnected');
+                console.log('Client disconnected.');
                 this.closeClient(ws);
             });
-        });
-    }
-
-    sendChunk(ws: WebSocket, chunk: Chunk) {
-        ws.send(JSON.stringify({ status: 'chunk', chunk: chunk }));
-    }
-
-    sendStatus(ws: WebSocket, status: BackendStatus) {
-        ws.send(JSON.stringify({ status: status }));
-    }
-
-    // Create a promise that resolves when the client sends a message with the specified status
-    waitForStatus(ws: WebSocket, statusToWaitFor: FrontendStatus) {
-        return new Promise<void>((resolve) => {
-            function messageHandler(message: MessageEvent) {
-                const messageParsed = JSON.parse(message.data.toString());
-                if (messageParsed.status === statusToWaitFor) {
-                    ws.removeEventListener('message', messageHandler);
-                    resolve(messageParsed);
-                }
-            }
-            ws.addEventListener('message', messageHandler);
         });
     }
 }

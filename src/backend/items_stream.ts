@@ -12,7 +12,7 @@ export type ItemsStreamInstructions = {
 export class ItemsStream {
     stream: ReadableStream;
     private feed: Feed;
-    private blockStack: Block[];
+    private blockQueue: Block[];
     private currentBlock: Block | undefined = undefined;
     private query!: Prisma.ItemFindManyArgs; // initialized in constructor
     private relevantFilters!: Promise<PrismaFilter[]>; // initialized in constructor
@@ -23,7 +23,7 @@ export class ItemsStream {
     constructor({ feed, pageSize }: ItemsStreamInstructions) {
         this.batchSize = pageSize*10;
         this.feed = feed;
-        this.blockStack = [...feed.blocks].reverse(); // Create a shallow copy of the blocks array. We will pop from the end of the array, so we reverse it.
+        this.blockQueue = [...feed.blocks]; // Create a shallow copy of the blocks array.
         this.goToNextBlock();
         this.stream = this.initStream(pageSize*2);
     }
@@ -188,7 +188,7 @@ export class ItemsStream {
     }
 
     private goToNextBlock() {
-        this.currentBlock = this.blockStack.pop();
+        this.currentBlock = this.blockQueue.shift();
         this.query = JSON.parse(JSON.stringify(this.currentBlock?.query || {})); // Make a deep copy of the query because we may modify it.
         this.stopLoadingIfNotItemsFor = this.currentBlock?.stop_loading_if_not_items_for ?? null;
         this.relevantFilters = this.query ? this.getRelevantFilters(this.query) : Promise.resolve([]);

@@ -1,5 +1,5 @@
 import { StreamBackend } from '../backend';
-import type { FrontendStatus, BackendStatus, Chunk, Instructions } from '../types';
+import type { FrontendRequest, BackendResponse, Chunk, Instructions } from '../types';
 import { ipcMain } from 'electron';
 import type { IpcMainEvent, IpcMainInvokeEvent, WebContents } from 'electron';
 
@@ -8,35 +8,16 @@ export class ElectronStreamBackend extends StreamBackend<WebContents> {
     constructor() {
         super();
         
-        ipcMain.handle('connection', (event: IpcMainInvokeEvent, message: { status: FrontendStatus, instructions: Instructions }) => {
-            // console.log(`Received message from client: { status: ${message.status}, instructions: ${message.instructions} }`);
-            if (message.status === 'start') {
-                this.initClient(event.sender, message.instructions);
-                return 'Connection successful!';
-            } else if (message.status === 'close') {
+        ipcMain.handle('feedAPI', (event: IpcMainInvokeEvent, message:{ request: FrontendRequest, instructions?: Instructions }) => {
+            if (message.request === 'start') {
+                this.initClient(event.sender, message.instructions!);
+                return 'Stream initialized!';
+            } else if (message.request === 'close') {
                 this.closeClient(event.sender);
-                return 'Connection closed!';
+                return 'Stream closed!';
+            } else if (message.request === 'next') {
+                return this.nextItem(event.sender);
             }
-        });
-    }
-
-    sendChunk(client: WebContents, chunk: Chunk) {
-        client.send('stream', chunk);
-    }
-
-    sendStatus(client: WebContents, status: BackendStatus): void {
-        client.send('status', status);
-    }
-
-    waitForStatus(client: WebContents, status: FrontendStatus): Promise<void> {
-        return new Promise<void>((resolve) => {
-            const messageHandler = (event: IpcMainEvent, frontendStatus: FrontendStatus) => {
-                if (frontendStatus === status && event.sender === client) {
-                    ipcMain.removeListener('status', messageHandler);
-                    resolve();
-                }
-            }
-            ipcMain.on('status', messageHandler);
         });
     }
 }

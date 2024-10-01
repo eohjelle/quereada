@@ -1,16 +1,17 @@
-import { StreamFrontend } from './frontend';
-import { StreamSocket } from './web/frontend';
-import { ElectronStreamFrontend } from './electron/frontend';
-import type { Instructions } from './types';
+import { StreamInterface } from './frontend';
+import { WebStreamInterface } from './web/frontend';
+import { ElectronStreamInterface } from './electron/frontend';
 
-export function getStream(instructions: Instructions) {
-    let streamFrontend: StreamFrontend;
+export function getStreamInterface() {
+    let streamFrontend: StreamInterface;
     if (import.meta.env.MODE === 'web') {
-        streamFrontend = new StreamSocket(instructions);
+        streamFrontend = new WebStreamInterface();
     } else if (import.meta.env.MODE === 'electron') {
-        streamFrontend = new ElectronStreamFrontend(instructions);
+        streamFrontend = new ElectronStreamInterface();
     } else {
         throw new Error('vite build must run with parameter --mode set to "web" or "electron".');
     }
     return streamFrontend;
 }
+
+export type { StreamInterface };
