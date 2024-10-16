@@ -24,7 +24,8 @@
 		"$modules/*": ["./modules/*"]
 	  },
 	  "rootDir": "./",
-	  "outDir": "./dist"
+	  "outDir": "./dist",
+	  "verbatimModuleSyntax": true
 	},
 	"include": ["./src/**/*", "./modules/**/*", "./src/frontend/**/*.svelte", "vite-env.d.ts"],
 	"exclude": ["./node_modules/*"],

@@ -1,7 +1,12 @@
+import * as preinitialization from './preinitialization'; // Although no functions are called, this module sets up environmental variables and logging. It should be imported first.
 import { app, BrowserWindow } from 'electron';
-import * as path from 'path';
 import { ElectronEndpointBackend } from '$bridge/api_endpoint/electron/backend';
 import { ElectronStreamBackend } from '$bridge/loading_items_to_feed/electron/backend';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __main_filename = fileURLToPath(import.meta.url);
+const __main_dirname = path.dirname(__main_filename);
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -9,11 +14,14 @@ function createWindow() {
     height: 600,
     webPreferences: {
       sandbox: false,
-      preload: path.join(process.cwd(), 'dist/src/backend/main/electron/preload.mjs')
+      preload: path.join(__main_dirname, '..', 'preload', 'preload.mjs')
     }
   });
-
-  win.loadFile(path.join(process.cwd(), 'dist/src/frontend/index.html'));
+  if (!app.isPackaged && process.env['ELECTRON_RENDERER_URL']) {
+    win.loadURL(process.env['ELECTRON_RENDERER_URL']);
+  } else {
+    win.loadFile(path.join(__main_dirname, '..', 'renderer', 'index.html'));
+  }
 }
 
 app.whenReady().then(

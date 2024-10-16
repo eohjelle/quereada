@@ -22,7 +22,7 @@ There is no standalone app at the moment, but you can host it locally and access
 
 ## Installation
 
-## Writing `config.ts`
+## Writing `querygator.config.ts`
 
 ## Environmental variables
 
@@ -35,7 +35,20 @@ There is no standalone app at the moment, but you can host it locally and access
 
 ### Desktop
 
-#todo
+## API keys
+
+The app will look for API keys in a `userData` folder, which defaults to `~/.config/querygator` on Linux, `~/Library/Application Support/querygator` on macOS, and `AppData\Roaming\querygator` on Windows. Specifically, it will look for a file called `api_keys.json`. Inside, you should have keys for the services you want to use. For example:
+
+```userData/api_keys.json
+{
+    "OPENAI_API_KEY": "sk-proj-...",
+    "NYTIMES_API_KEY": "..."
+}
+```
+
+At the moment, `OPENAI_API_KEY` is the only key that is required.
+
+#todo Create an interface for setting API keys.
 
 # Contributing
 

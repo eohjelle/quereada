@@ -12,13 +12,16 @@
   const pageSize = 5;
 
   let showLoadingItemsMessage = false;
-  let showLoadingItemsMessageTimer: NodeJS.Timeout;
-  const startShowLoadingItemsMessageTimer = () => {
+  const resetShowLoadingItemsMessageTimer = (timeout?: NodeJS.Timeout) => {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
     return setTimeout(() => {
       showLoadingItemsMessage = true;
     }, 300);
   };
 
+  let showLoadingItemsMessageTimer: NodeJS.Timeout;
   let finishedLoading = false;
 
   let waitToGetAnotherItem: Promise<void> = Promise.resolve();
@@ -28,6 +31,7 @@
   };
 
   onMount(async () => {
+    showLoadingItemsMessageTimer = resetShowLoadingItemsMessageTimer();
     console.log(`Initializing stream for feed ${feed.title}...`);
     await streamInterface
       .start({
@@ -43,10 +47,11 @@
           write: async (item) => {
             items = [...items, item];
 
-            // If items hasn't been changed within 200ms, show "Loading items..."
+            // If items hasn't been changed within 300ms, show "Loading items..."
             showLoadingItemsMessage = false;
-            clearTimeout(showLoadingItemsMessageTimer);
-            showLoadingItemsMessageTimer = startShowLoadingItemsMessageTimer();
+            showLoadingItemsMessageTimer = resetShowLoadingItemsMessageTimer(
+              showLoadingItemsMessageTimer
+            );
 
             // Only push new items when we are close to the end of the stream.
             await waitToGetAnotherItem.then(setWaitToGetAnotherItem);
@@ -62,14 +67,13 @@
       ),
       { signal: abortController.signal }
     );
-
-    startShowLoadingItemsMessageTimer();
   });
 
   onDestroy(async () => {
     console.log(`Closing stream for feed ${feed.title}...`);
     abortController.abort();
     await streamInterface.close();
+    clearTimeout(showLoadingItemsMessageTimer);
     console.log(`Stream for feed ${feed.title} closed.`);
   });
 </script>

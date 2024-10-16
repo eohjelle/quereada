@@ -1,7 +1,6 @@
 import { parseStringPromise } from 'xml2js';
-import type { FetchItem, Author } from '$lib/types';
+import type { FetchItem } from '$lib/types';
 import { Source } from '../source';
-import util from 'util'; // only used for debugging
 import { authorListToConnectOrCreateField } from '$lib/utils';
 
 export class TheAtlantic extends Source {

@@ -32,7 +32,7 @@ export abstract class StreamInterface {
                         controller.close();
                     } else {
                         controller.enqueue(item);
-                        console.log('Chunk received:', item.id);
+                        console.log('Item received:', item.id);
                     }
                 } catch (error) {
                     console.error("Error in stream:", error);

@@ -1,6 +1,5 @@
 import type { FetchItem } from '$lib/types';
 import { Source, type SourceConstructorParams } from '../source';
-import util from 'util'; // only used for debugging
 import { authorListFromByline, authorListToConnectOrCreateField } from '$lib/utils';
 
 export class NYTimesAPI extends Source{

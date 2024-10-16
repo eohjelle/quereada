@@ -1,10 +1,8 @@
 import { Source, type SourceConstructorParams } from '../source';
 import { authorListToConnectOrCreateField } from '$lib/utils';
-import Parser from 'rss-parser';
 import { extract } from '@extractus/feed-extractor';
-import util from 'util'; // only used for debugging
+import type { FetchItem } from '$lib/types';
 
-import type { FetchItem, Author } from '$lib/types';
 
 
 export class RSS extends Source {

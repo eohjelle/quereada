@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
     })],
     root: mode === 'test' ? './src/' : './src/frontend',
     build: {
-      outDir: path.resolve('./dist/src/frontend')
+      outDir: path.resolve('./out-web')
     },
     resolve: {
       alias: {

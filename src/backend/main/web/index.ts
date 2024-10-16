@@ -6,11 +6,11 @@ const app = express();
 const port = 3000;
 
 // Serve static files from the 'dist' directory
-app.use(express.static(path.join(process.cwd(), 'dist/src/frontend')));
+app.use(express.static(path.join(process.cwd(), 'out-web')));
 
 // Fallback to index.html for SPA routing
 app.get('/#/*', (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'dist/src/frontend/index.html'));
+  res.sendFile(path.join(process.cwd(), 'out-web/index.html'));
 });
 
 // Create the HTTP server

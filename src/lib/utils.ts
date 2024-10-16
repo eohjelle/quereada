@@ -81,7 +81,7 @@ export function cartesian_product<T>(a: T[], b: T[]): [T, T][] {
 }
 
 // Convert an array of author names to a Prisma connectOrCreate field
-import { Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 export function authorListToConnectOrCreateField(authors: string[]): Prisma.AuthorCreateNestedManyWithoutItemsInput {
 	return {
 		connectOrCreate: authors.map(author => ({

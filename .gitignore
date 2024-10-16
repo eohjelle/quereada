@@ -1,11 +1,13 @@
 node_modules
 
 # Output
-dist
 .output
 .vercel
 /.svelte-kit
 /build
+out
+out-web
+dist
 
 # OS
 .DS_Store
@@ -20,7 +22,6 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
-package-lock.json
 store.db
 store.db-journal
 
