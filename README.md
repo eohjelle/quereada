@@ -20,22 +20,13 @@ Querygator's most advanced features, namely summarization and topic classificati
 
 There is no standalone app at the moment, but you can host it locally and access the app in a web browser.
 
-## Installation
+# Installation
 
-## Writing `querygator.config.ts`
+This program can run as a web app that can be accessed in a web browser, or as a desktop app that runs natively on your machine. It is recommended to run it as a desktop app, but the choice is yours. Depending on your choice, follow the instructions below.
 
-## Environmental variables
+## Desktop installation
 
-## Running the app.
-
-### Web
-
-1. `npm run build:web`
-2. `npm run start:web`
-
-### Desktop
-
-## API keys
+### API keys
 
 The app will look for API keys in a `userData` folder, which defaults to `~/.config/querygator` on Linux, `~/Library/Application Support/querygator` on macOS, and `AppData\Roaming\querygator` on Windows. Specifically, it will look for a file called `api_keys.json`. Inside, you should have keys for the services you want to use. For example:
 
@@ -49,6 +40,27 @@ The app will look for API keys in a `userData` folder, which defaults to `~/.con
 At the moment, `OPENAI_API_KEY` is the only key that is required.
 
 #todo Create an interface for setting API keys.
+
+### Building from source
+
+## Web installation
+
+### Environment variables
+
+### Starting the app
+
+1. `npm run build:web`
+2. `npm run start:web`
+
+# Customization
+
+Now that you have the app up and running, you can customize it to your liking.
+
+## Writing `querygator.config.ts`
+
+## Adding new sources
+
+## Creating filters
 
 # Contributing
 
@@ -67,27 +79,3 @@ At the moment, `OPENAI_API_KEY` is the only key that is required.
 - [ ] Refactor loading mechanism: use slot props
 - [ ] Enable summarization for NYTimes (may need captcha popup)
 - [ ]
-
-# License
-
-MIT License
-
-Copyright (c) 2024 Eivind Otto Hjelle
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
