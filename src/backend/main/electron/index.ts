@@ -1,4 +1,4 @@
-import * as preinitialization from './preinitialization'; // Although no functions are called, this module sets up environmental variables and logging. It should be imported first.
+import './preinitialization'; // This module sets up environmental variables and logging. It should be imported first.
 import { app, BrowserWindow } from 'electron';
 import { ElectronEndpointBackend } from '$bridge/api_endpoint/electron/backend';
 import { ElectronStreamBackend } from '$bridge/loading_items_to_feed/electron/backend';

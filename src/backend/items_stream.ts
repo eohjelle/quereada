@@ -126,8 +126,10 @@ export class ItemsStream {
                 return await db.item.findFirst({
                     ...this.query,
                     where: {
-                        ...this.query?.where,
-                        id: item.id
+                        AND: [
+                            this.query.where ?? {},
+                            { id: item.id }
+                        ]
                     },
                     include: {
                         ...this.query?.include,

@@ -3,9 +3,6 @@ import log from "electron-log";
 import path from "path";
 import fs from "fs";
 
-const CONFIG_FOLDER = app.getPath('userData');
-app.setPath('sessionData', path.join(CONFIG_FOLDER, 'session')); // Make the userData folder look less scary
-
 // Enable logging. Logs can be found in ~/Library/Logs/querygator on macOS, and inside the userData directory on Linux and Windows.
 
 console.log = log.info;
@@ -13,18 +10,12 @@ console.warn = log.warn;
 console.error = log.error;
 console.debug = log.debug;
 
-// console.log('These are the environment variables:');
-// console.log(process.env);
+// The electron build handles environmental variables differently than the web build.
+// Instead of setting environmental variables, all configuration is stored in the userData directory.
+const CONFIG_FOLDER = app.getPath('userData');
+app.setPath('sessionData', path.join(CONFIG_FOLDER, 'session')); // Make the userData folder look less scary
+const RESOURCES_PATH = import.meta.env.DEV ? path.resolve(process.cwd()) : process.resourcesPath; // Contains templates for the database and config file.
 
-
-// Load all environmental variables into process.env which is where the web build expects them to be
-for (const [key, value] of Object.entries(import.meta.env)) {
-    console.log(`Setting environment variable ${key} to ${value}`);
-    process.env[key] = value;
-}
-
-// process.env['MODE'] = 'electron';
-  
 // Load API keys from CONFIG_FOLDER/api_keys.json
 const apiKeysPath = path.join(CONFIG_FOLDER, 'api_keys.json');
 if (fs.existsSync(apiKeysPath)) {
@@ -50,7 +41,7 @@ if (app.isPackaged) {
 if (!fs.existsSync(dbPath)) {
 try {
     console.log(`Could not find database at ${dbPath}, copying from resources...`);
-    fs.copyFileSync(path.join(process.resourcesPath, 'store.db'), dbPath);
+    fs.copyFileSync(path.join(RESOURCES_PATH, 'store.db'), dbPath);
     console.log(`Database file copied to ${dbPath}!`);
 } catch (error) {
     throw new Error(`Error copying database file: ${error}`);
@@ -59,3 +50,20 @@ try {
 
 process.env['DATABASE_URL'] = `file://${dbPath}`;
 console.log(`Set DATABASE_URL to ${process.env['DATABASE_URL']}`);
+
+// Set CONFIG_PATH to CONFIG_FOLDER/config.ts, copying a template if it doesn't exist
+const configPath = path.join(CONFIG_FOLDER, 'config.ts');
+if (!fs.existsSync(configPath)) {
+    try {
+        console.log(`Could not find config at ${configPath}, copying template from resources...`);
+        fs.copyFileSync(path.join(RESOURCES_PATH, 'querygator.config.ts'), configPath);
+        console.log(`Config file copied to ${configPath}!`);
+    } catch (error) {
+        throw new Error(`Error copying config file: ${error}`);
+    }
+}
+
+process.env['CONFIG_PATH'] = configPath;
+console.log(`Set CONFIG_PATH to ${process.env['CONFIG_PATH']}`);
+
+console.log(`Resources path: ${process.resourcesPath}`);

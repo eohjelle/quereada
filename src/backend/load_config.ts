@@ -1,37 +1,18 @@
 import { db } from '$src/backend/database';
 import type { Prisma } from '@prisma/client';
 import path from 'path';
+import { importTypescript } from '$src/lib/import';
+
 
 export type ConfigSource = Pick<Prisma.SourceCreateInput, 'name' | 'source_class' | 'url'> & { channels?: string[] };
 export type ConfigFilter = Pick<Prisma.FilterCreateInput, 'title' | 'implementation'> & { args?: Record<string, any> };
 export type ConfigBlock = Pick<Prisma.BlockCreateInput, 'title'> & { query: Omit<Prisma.ItemFindManyArgs, 'filters_checked'>, filters?: string[] };
 export type ConfigFeed = Pick<Prisma.FeedCreateInput, 'title'> & { blocks: string[] };
 
-function resolveConfigPath(configPath?: string) {
-    let result: string;
-    if (configPath) {
-        result = configPath;
-    } else if (process.env.CONFIG_PATH) {
-        result = process.env.CONFIG_PATH;
-    } else {
-        // todo: How does this work for local app?
-        throw new Error('No valid path to config file give. Set CONFIG_PATH environmental variable.');
-    }
-    if (path.isAbsolute(result)) {
-        return result;
-    } else {
-        return path.join(process.cwd(), result);
-    }
-}
-
-async function readConfigFile(configPath?: string): Promise<{
-    sources: ConfigSource[], filters: ConfigFilter[], blocks: ConfigBlock[], feeds: ConfigFeed[]
-}> {
-    return await import(resolveConfigPath(configPath));
-}
-
 export async function loadConfig(): Promise<void> {
-    const { sources, filters, blocks, feeds } = await readConfigFile();
+    const { sources, filters, blocks, feeds } = await importTypescript(process.env.CONFIG_PATH!) as {
+        sources: ConfigSource[], filters: ConfigFilter[], blocks: ConfigBlock[], feeds: ConfigFeed[]
+    };
 
     // Upsert sources with channels
     await Promise.all(sources.map(async (source) => {
