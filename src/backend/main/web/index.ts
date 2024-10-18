@@ -4,7 +4,7 @@ import { createServer } from 'http';
 import path from 'path';
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 // Serve static files from the 'dist' directory
 app.use(express.static(path.join(process.cwd(), 'out-web')));
