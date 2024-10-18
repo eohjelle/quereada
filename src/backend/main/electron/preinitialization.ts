@@ -3,7 +3,7 @@ import log from "electron-log";
 import path from "path";
 import fs from "fs";
 
-// Enable logging. Logs can be found in ~/Library/Logs/querygator on macOS, and inside the userData directory on Linux and Windows.
+// Enable logging. Logs can be found in ~/Library/Logs/quereada on macOS, and inside the userData directory on Linux and Windows.
 
 console.log = log.info;
 console.warn = log.warn;
@@ -30,13 +30,7 @@ if (fs.existsSync(apiKeysPath)) {
 }
 
 // Load database from CONFIG_FOLDER/store.db, initializing an empty one if it doesn't exist
-const dbPath = (() => {
-if (app.isPackaged) {
-    return path.join(CONFIG_FOLDER, 'store.db');
-} else {
-    return path.join(process.cwd(), 'store.db');
-}
-})();
+const dbPath = path.join(CONFIG_FOLDER, 'store.db');
 
 if (!fs.existsSync(dbPath)) {
 try {
@@ -56,8 +50,8 @@ const configPath = path.join(CONFIG_FOLDER, 'config.ts');
 if (!fs.existsSync(configPath)) {
     try {
         console.log(`Could not find config at ${configPath}, copying template from resources...`);
-        fs.copyFileSync(path.join(RESOURCES_PATH, 'querygator.config.ts'), configPath);
-        console.log(`Config file copied to ${configPath}!`);
+        fs.copyFileSync(path.join(RESOURCES_PATH, 'quereada.config.ts'), configPath);
+        console.log(`Config file template copied to ${configPath}!`);
     } catch (error) {
         throw new Error(`Error copying config file: ${error}`);
     }

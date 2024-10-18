@@ -1,18 +1,15 @@
 {
-  "name": "querator",
+  "name": "quereada",
   "version": "0.0.1",
   "private": true,
   "main": "./out/main/index.mjs",
   "scripts": {
-    "build:db": "prisma generate && prisma migrate dev",
+    "build:db": "prisma generate && prisma migrate dev --name init",
     "electron:dev": "electron-vite dev --mode electron",
     "electron:build": "electron-vite build --mode electron",
-    "electron:preview": "electron-vite preview",
-    "electron:package:mac": "npm run electron:build & electron-builder --mac --config",
+    "electron:package:mac": "npm run build:db && npm run electron:build && electron-builder --mac --config",
     "web:build": "vite build --emptyOutDir --mode web",
     "web:start": "tsx --inspect src/backend/main/web/index.ts",
-    "check": "svelte-check --tsconfig ./tsconfig.json",
-    "check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
     "test": "vitest"
   },
   "devDependencies": {

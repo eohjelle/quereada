@@ -1,20 +1,20 @@
 # About
 
-Querygator is a news and media aggregator which offers a high degree of control and customization, as well as advanced features.
+Quereada is a news and media aggregator which offers a high degree of control and customization, as well as advanced features.
 [Click here](https://querygator-c8a6b9c38b54.herokuapp.com/) to see a demo.
 
-Querygator works by:
+Quereada works by:
 
 1. _Aggregating_ new items such as articles and videos from various sources on the internet. RSS feeds have basic support, but in principle, anything on the internet can be a source, and the design of the codebase makes it easy to add custom support for additional sources.
 2. Building feeds using _queries_ defined in a config file, where it is possible to filter by properties such as source, date published, authors, whether the item has been seen or clicked before, number of words, number of likes, and more. It is even possible to filter items by their relevance to any topic.
 
-## What sets Querygator apart from other news aggregators and RSS readers?
+## What sets Quereada apart from other news aggregators and RSS readers?
 
-Unlike most news aggregators with automatic suggestions, Querygator offers you much more control over what you see. The philosophy behind this app is to let editors of newspapers, and not an algorithm, make most decisions about what your daily feed should look like. But at the same time, Querygator allows you to combine and filter these feeds in ways that makes it much more customizable than most RSS readers. It is also open source, so you can make a fork of the project tailored to your own preferences.
+Unlike most news aggregators with automatic suggestions, Quereada offers you much more control over what you see. The philosophy behind this app is to let editors of newspapers, and not an algorithm, make most decisions about what your daily feed should look like. But at the same time, Quereada allows you to combine and filter these feeds in ways that makes it much more customizable than most RSS readers. It is also open source, so you can make a fork of the project tailored to your own preferences.
 
 ## AI-powered features
 
-Querygator's most advanced features, namely summarization and topic classification, are powered by LLMs. However, care has been made to not to use these powerful tools for tasks where they are not needed, such as scraping websites for content, because this would be a waste of resources.
+Quereada's most advanced features, namely summarization and topic classification, are powered by LLMs. However, care has been made to not to use these powerful tools for tasks where they are not needed, such as scraping websites for content, because this would be a waste of resources.
 
 # How to use
 
@@ -28,7 +28,7 @@ This program can run as a web app that can be accessed in a web browser, or as a
 
 ### API keys
 
-The app will look for API keys in a `userData` folder, which defaults to `~/.config/querygator` on Linux, `~/Library/Application Support/querygator` on macOS, and `AppData\Roaming\querygator` on Windows. Specifically, it will look for a file called `api_keys.json`. Inside, you should have keys for the services you want to use. For example:
+The app will look for API keys in a `userData` folder, which defaults to `~/.config/quereada` on Linux, `~/Library/Application Support/quereada` on macOS, and `AppData\Roaming\quereada` on Windows. Specifically, it will look for a file called `api_keys.json`. Inside, you should have keys for the services you want to use. For example:
 
 ```userData/api_keys.json
 {
@@ -56,7 +56,7 @@ At the moment, `OPENAI_API_KEY` is the only key that is required.
 
 Now that you have the app up and running, you can customize it to your liking.
 
-## Writing `querygator.config.ts`
+## Writing `quereada.config.ts`
 
 ## Adding new sources
 

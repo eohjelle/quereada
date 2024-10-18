@@ -82,16 +82,14 @@
     margin: 5px;
     background-color: #ffffff;
     display: grid;
-    grid-template-columns: 95% 5%;
-    width: 80vw;
-    max-width: 80%;
+    grid-template-columns: 1fr 50px;
+    width: min(1200px, 95vw);
     height: 250px; /* If removed, text content seems to cut off in some cases. todo: investigate */
     max-height: 250px;
     border: 2px solid #ddd;
   }
 
   .item-box:hover {
-    /* border: 2px solid orange; */
     background-color: var(--item-hover-color);
   }
 </style>

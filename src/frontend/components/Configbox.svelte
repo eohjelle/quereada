@@ -11,7 +11,7 @@
 
 <div class="codebox">
   <div class="codebox-header">
-    <span class="filename">querygator.config.ts</span>
+    <span class="filename">config.ts</span>
     <span class="language">(TypeScript)</span>
   </div>
   <pre><code class="language-javascript">
@@ -22,6 +22,10 @@
 <svelte:head>
   <link
     href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/themes/prism.min.css"
+    rel="stylesheet"
+  />
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.22.0/plugins/line-numbers/prism-line-numbers.min.css"
     rel="stylesheet"
   />
 </svelte:head>
@@ -60,5 +64,6 @@
   pre {
     margin: 0;
     padding: 15px;
+    overflow-x: auto;
   }
 </style>

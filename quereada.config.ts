@@ -157,6 +157,24 @@ export const blocks: ConfigBlock[] =
         }
     },
     {
+        title: "Articles by Olga Khazan",
+        query: {
+            where: {
+                authors: {
+                    some: {
+                        name: "Olga Khazan"
+                    }
+                }
+            },
+            include: {
+                authors: true
+            },
+            orderBy: {
+                date_published: "desc"
+            }
+        }
+    },
+    {
         title: "Unseen Items",
         query: {
             where: {
@@ -227,7 +245,7 @@ export const feeds: ConfigFeed[] =
         blocks: [ "Read Later" ]
     },
     {
-        title: "US News Minus Presidential Election",
+        title: "US News Excluding Presidential Election",
         blocks: [ "US News Not Relevant To 2024 Presidential Election" ]
     },
     {
@@ -235,8 +253,12 @@ export const feeds: ConfigFeed[] =
         blocks: [ "2024 Presidential Election" ]
     },
     {
-        title: "Long Reads and George Packer",
-        blocks: [ "Long Reads in The Atlantic", "Articles by George Packer" ]
+        title: "Long Reads",
+        blocks: [ "Long Reads in The Atlantic" ]
+    },
+    {
+        title: "Articles by specific authors",
+        blocks: [ "Articles by Olga Khazan", "Articles by George Packer" ]
     },
     {
         title: "Environmental News",

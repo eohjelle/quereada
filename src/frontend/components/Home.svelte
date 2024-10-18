@@ -4,15 +4,15 @@
 
 <main>
   <p>
-    This is the start page of <a href="https://github.com/eohjelle/querygator"
-      >Querygator</a
-    >, a news and media aggregator which offers a high degree of
+    This is the start page of <a href="https://github.com/eohjelle/quereada"
+      >Quereada</a
+    >: a free, open-source news aggregator which offers a high degree of
     customizability. Try navigating to some feeds using the navigation bar on
     the top of the window.
   </p>
   <p>
-    The visible feeds are controlled by a configuration file. It looks like
-    this:
+    All the feeds are controlled by a simple configuration file, which is
+    previewed below.
   </p>
   <Configbox />
 </main>
