@@ -6,7 +6,23 @@ import type { FrontendRequest, Instructions, BackendResponse } from '$bridge/loa
 /** This sets up the API used in src/bridge/api_endpoint/electron/frontend.ts */
 contextBridge.exposeInMainWorld('electronAPI', {
     itemUpdate: (request: Prisma.ItemUpdateArgs) => ipcRenderer.invoke('update_item', request),
-    getSummary: (item_id: number) => ipcRenderer.invoke('get_summary', item_id),
+    getSummary: (item_id: number, callback: (chunk: string | null) => void) => {
+        const summaryChunkHandler = (event: any, chunk: any) => {
+            const { id, type, textChunk } = chunk as { id: number, type: 'chunk' | 'end', textChunk?: string };
+            if (id === item_id && type === 'chunk' && textChunk !== undefined) {
+                callback(textChunk);
+            } else if (id === item_id && type === 'end') {
+                callback(null); // Signify end of stream
+                ipcRenderer.removeListener('summary', summaryChunkHandler);
+            }
+        };
+        ipcRenderer.on('summary', summaryChunkHandler);
+        ipcRenderer.send('get_summary', item_id);
+        
+        return () => {
+            ipcRenderer.removeListener('summary', summaryChunkHandler);
+        };
+    },
     refreshFeeds: () => ipcRenderer.invoke('refresh_feeds'),
     getFeedData: () => ipcRenderer.invoke('get_feed_data'),
     getRawConfig: () => ipcRenderer.invoke('get_raw_config')
@@ -22,7 +38,7 @@ declare global {
     interface Window {
         electronAPI: { 
             itemUpdate: (request: Prisma.ItemUpdateArgs) => Promise<void>,
-            getSummary: (item_id: number) => Promise<ReadableStream<string>>,
+            getSummary: (item_id: number, callback: (chunk: string | null) => void) => Promise<() => void>,
             refreshFeeds: () => Promise<void>,
             getFeedData: () => Promise<Feed[]>,
             getRawConfig: () => Promise<string>

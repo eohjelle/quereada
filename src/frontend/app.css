@@ -9,6 +9,9 @@
   --item-hover-color: #fffbf0;
   --link-color: #333333;
   --link-hover-color: #e7131a;
+  --inactive-button-color: #cdcdcd;
+  --active-button-color: #4d9645;
+  --hover-button-color: var(--active-button-color);
 }
 
 body {

@@ -82,7 +82,7 @@
     margin: 5px;
     background-color: #ffffff;
     display: grid;
-    grid-template-columns: 90% 10%;
+    grid-template-columns: 95% 5%;
     width: 80vw;
     max-width: 80%;
     height: 250px; /* If removed, text content seems to cut off in some cases. todo: investigate */

@@ -10,7 +10,21 @@ export class ElectronEndpointFrontend extends EndpointFrontend {
     }
 
     async getSummary(item_id: number): Promise<ReadableStream<string>> {
-        return window.electronAPI.getSummary(item_id);
+        let removeListener: () => void;
+        return new ReadableStream({
+            start: async (controller) => {
+                removeListener = await window.electronAPI.getSummary(item_id, (chunk) => {
+                    if (chunk === null) {
+                        controller.close();
+                    } else {
+                        controller.enqueue(chunk);
+                    }
+                });
+            },
+            cancel() {
+                removeListener();
+            }
+        });
     }
 
     async refreshFeeds(): Promise<void> {

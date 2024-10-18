@@ -10,7 +10,7 @@
   // Initiate variable to indicate whether to show the summary. This will be controlled by a button in a child component.
   const show_summary = getContext<Writable<boolean>>("show_summary");
 
-  // Paths to outlet logos (stored in ../assets/logos)
+  // Paths to outlet logos (stored in $root/static/logos)
   const outlet_logos: Record<string, string> = {
     "The Atlantic": "the_atlantic.svg",
   };

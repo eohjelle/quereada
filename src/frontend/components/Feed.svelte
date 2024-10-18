@@ -4,6 +4,7 @@
   import type { DisplayItem } from "$lib/types";
   import type { Feed as FeedType } from "$lib/types";
   import type { StreamInterface } from "$bridge/loading_items_to_feed/frontend";
+  import { fade } from "svelte/transition";
 
   export let feed: FeedType;
   export let streamInterface: StreamInterface;
@@ -86,7 +87,7 @@
   {#if finishedLoading}
     <h1 style="text-alignment: center">No more items to show.</h1>
   {:else if showLoadingItemsMessage}
-    <h1 style="text-alignment: center">Loading items...</h1>
+    <h1 style="text-alignment: center" in:fade>Loading items...</h1>
   {/if}
 </div>
 

@@ -18,14 +18,21 @@ export class ElectronEndpointBackend extends EndpointBackend {
             }
         });
 
-        ipcMain.handle('get_summary', async (event: IpcMainInvokeEvent, item_id: number) => {
+        ipcMain.on('get_summary', async (event: IpcMainInvokeEvent, item_id: number) => {
             try {
                 console.log('Received request to get summary for item:', item_id);
                 const summaryStream = await this.getSummary(item_id);
-                return summaryStream;
+                summaryStream.pipeTo(new WritableStream({
+                    write(chunk) {
+                        event.sender.send('summary', { id: item_id, type: 'chunk', textChunk: chunk });
+                    },
+                    close() {
+                        event.sender.send('summary', { id: item_id, type: 'end' });
+                    }
+                }));
             } catch (error) {
-                console.error('Error getting summary:', error);
-                return { error: 'Internal server error' };
+                console.error('Could not send summary from main process to renderer process.', error);
+                return { error: `Request to get summary for item ${item_id} led to error in the main process. Inspect the logs for more information.` };
             }
         });
 
