@@ -37,7 +37,7 @@ server.listen(port, () => {
 // Set schedule for updating the feed
 import { fetchItemsFromSources } from '$src/backend/fetch';
 import schedule from 'node-schedule';
-const updateFeedSchedule = schedule.scheduleJob('0 0 * * * *', () => {
+schedule.scheduleJob('0 0 * * * *', () => {
   console.log('Scheduled job refreshing feeds...');
   fetchItemsFromSources();
 });
