@@ -21,7 +21,7 @@ export class WebEndpointBackend extends EndpointBackend {
             }
         });
 
-        this.app.use('/api/get_summary', express.urlencoded());
+        this.app.use('/api/get_summary', express.urlencoded({ extended: false }));
         this.app.get('/api/get_summary', async (req, res) => {
             try {
                 console.log('Received request to get summary:', req.query);

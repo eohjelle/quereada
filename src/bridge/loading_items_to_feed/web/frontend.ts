@@ -14,7 +14,9 @@ export class WebStreamInterface extends StreamInterface {
         });
 
         // Initialize the WebSocket connection
-        this.socket = new WebSocket(`ws://${window.location.host}`);
+        const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+        const host = window.location.host;
+        this.socket = new WebSocket(`${protocol}://${host}`);
 
         // Log errors
         this.socket.onerror = (error) => {
