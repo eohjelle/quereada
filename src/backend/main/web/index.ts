@@ -34,10 +34,11 @@ server.listen(port, () => {
 });
 
 
-// Set schedule for updating the feed
-import { fetchItemsFromSources } from '$src/backend/fetch';
-import schedule from 'node-schedule';
-schedule.scheduleJob('0 0 * * * *', () => {
-  console.log('Scheduled job refreshing feeds...');
-  fetchItemsFromSources();
-});
+// Commented out for now, since a scheduled job can interfere with reading a feed
+// // Set schedule for updating the feed
+// import { fetchItemsFromSources } from '$src/backend/fetch';
+// import schedule from 'node-schedule';
+// schedule.scheduleJob('0 0 * * * *', () => {
+//   console.log('Scheduled job refreshing feeds...');
+//   fetchItemsFromSources();
+// });
