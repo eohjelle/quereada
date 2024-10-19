@@ -19,14 +19,14 @@ export abstract class StreamBackend<T = any> {
     // - requesting the next item (should call the nextItem method)
 
     protected initClient(client: T, instructions: Instructions) {
-        console.log('Initializing client with instructions', instructions);
+        console.log('Initializing client stream with instructions', instructions);
         const stream = new ItemsStream(instructions);
         this.stream.set(client, stream);
         this.reader.set(client, stream.stream.getReader());
     }
 
     protected async closeClient(client: T) {
-        console.log('Closing client connection...');
+        console.log('Closing client stream...');
         await this.reader.get(client)?.cancel();
         this.reader.delete(client);
         this.stream.delete(client);
@@ -35,7 +35,8 @@ export abstract class StreamBackend<T = any> {
     protected async nextItem(client: T) {
         const reader = this.reader.get(client);
         if (!reader) {
-            throw new Error('Client does not have a reader.');
+            console.error('Client does not have a reader (because the client may have disconnected). Closing stream.');
+            return { done: true, item: null };
         }
         const { done, value } = await reader.read();
         if (done) {
