@@ -1,7 +1,7 @@
 import { db } from '$src/backend/database';
 import type { Prisma } from '@prisma/client';
-import path from 'path';
 import { importTypescript } from '$src/lib/import';
+import { refreshSources } from '$root/modules/sources';
 
 
 export type ConfigSource = Pick<Prisma.SourceCreateInput, 'name' | 'source_class' | 'url'> & { channels?: string[] };
@@ -32,6 +32,7 @@ export async function loadConfig(): Promise<void> {
             create: source_data
         });
     }));
+    await refreshSources();
 
     // Upsert filters
     await Promise.all(filters.map(async (filter) => {

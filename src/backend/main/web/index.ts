@@ -32,3 +32,12 @@ server.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
   console.log(`WebSocket server is running on ws://localhost:${port}`);
 });
+
+
+// Set schedule for updating the feed
+import { fetchItemsFromSources } from '$src/backend/fetch';
+import schedule from 'node-schedule';
+const updateFeedSchedule = schedule.scheduleJob('0 0 * * * *', () => {
+  console.log('Scheduled job refreshing feeds...');
+  fetchItemsFromSources();
+});

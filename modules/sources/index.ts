@@ -36,5 +36,10 @@ async function loadSources(): Promise<{ [name: string]: Source }> {
     return sources;
 }
 
-export const sources = await loadSources();
+export let sources = await loadSources();
 export type { Source };
+
+// Function to refresh the sources (used by src/backend/load_config.ts to refresh sources when config is updated)
+export async function refreshSources() {
+    sources = await loadSources();
+}
