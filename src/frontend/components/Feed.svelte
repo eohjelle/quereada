@@ -3,7 +3,8 @@
   import { onMount, onDestroy } from "svelte";
   import type { DisplayItem } from "$lib/types";
   import type { Feed as FeedType } from "$lib/types";
-  import type { StreamInterface } from "$bridge/loading_items_to_feed/frontend";
+  import { StreamInterface } from "$bridge/loading_items_to_feed/frontend";
+  import { WebStreamInterface } from "$bridge/loading_items_to_feed/web/frontend";
   import { fade } from "svelte/transition";
 
   export let feed: FeedType;
@@ -86,6 +87,10 @@
 
   {#if finishedLoading}
     <h1 style="text-alignment: center">No more items to show.</h1>
+  {:else if streamInterface instanceof WebStreamInterface && !streamInterface.isConnected}
+    <h1 style="text-alignment: center">
+      WebSocket disconnected. Refresh the page to reconnect.
+    </h1>
   {:else if showLoadingItemsMessage}
     <h1 style="text-alignment: center" in:fade>Loading items...</h1>
   {/if}

@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 export class WebStreamInterface extends StreamInterface {
     private socket: WebSocket;
     protected connectionPromise: Promise<void>;
+    isConnected: boolean = false;
 
     constructor() {
         super();
@@ -27,10 +28,12 @@ export class WebStreamInterface extends StreamInterface {
         this.socket.onopen = async () => {
             console.log("Connected to WebSocket server.");
             resolveConnection();
+            this.isConnected = true;
         };
 
         this.socket.onclose = (event) => {
             console.log("WebSocket connection closed:", event.reason);
+            this.isConnected = false;
         };
     }
 
