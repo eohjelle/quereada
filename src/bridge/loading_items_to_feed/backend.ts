@@ -7,14 +7,16 @@ import type { Instructions } from './types';
 export abstract class StreamBackend<T = any> {
     protected stream: Map<T, ItemsStream>;
     protected reader: Map<T, ReadableStreamDefaultReader>;
-    protected lock: Map<T, Promise<void>>;
+    protected lock: Map<T, Promise<void>>; // A lock that prevents a user from initializing a new stream while the previous stream is not closed
     protected key: Map<T, () => void>; // A key that unlocks the lock
+    protected initializing: Map<T, Promise<void>>; // A promise that resolves when the client is initialized
 
     constructor() {
         this.stream = new Map();
         this.reader = new Map();
         this.lock = new Map();
         this.key = new Map();
+        this.initializing = new Map();
     }
 
     // In the subclass, the constructor also sets up listeners to handle three types of requests:
@@ -23,6 +25,10 @@ export abstract class StreamBackend<T = any> {
     // - requesting the next item (should call the nextItem method)
 
     protected async initClient(client: T, instructions: Instructions) {
+        let initialized!: () => void;
+        this.initializing.set(client, new Promise(resolve => {
+            initialized = resolve;
+        }));
         console.log('Initializing client stream with instructions', instructions);
         const stream = new ItemsStream(instructions);
         if (this.lock.has(client)) {
@@ -34,6 +40,7 @@ export abstract class StreamBackend<T = any> {
         }));
         this.stream.set(client, stream);
         this.reader.set(client, stream.stream.getReader());
+        initialized();
     }
 
     protected async closeClient(client: T) {
@@ -44,15 +51,22 @@ export abstract class StreamBackend<T = any> {
         const key = this.key.get(client);
         this.key.delete(client);
         this.lock.delete(client);
+        this.initializing.delete(client);
         if (key) {
             key();
         }
     }
 
     protected async nextItem(client: T) {
+        // Make sure the client is initialized before getting the next item
+        if (!this.initializing.has(client)) {
+            console.error('Calling nextItem before client is initialized.');
+            return { done: true, item: null };
+        }
+        await this.initializing.get(client);
         const reader = this.reader.get(client);
         if (!reader) {
-            console.error('Client does not have a reader (because the client may have disconnected). Closing stream.');
+            console.error('Client does not have a reader. Closing stream.');
             return { done: true, item: null };
         }
         const { done, value } = await reader.read();
