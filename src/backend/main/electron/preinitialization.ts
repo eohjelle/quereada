@@ -46,7 +46,7 @@ process.env['DATABASE_URL'] = `file://${dbPath}`;
 console.log(`Set DATABASE_URL to ${process.env['DATABASE_URL']}`);
 
 // Set CONFIG_PATH to CONFIG_FOLDER/config.ts, copying a template if it doesn't exist
-const configPath = path.join(CONFIG_FOLDER, 'config.ts');
+const configPath = path.join(CONFIG_FOLDER, 'quereada.config.ts');
 if (!fs.existsSync(configPath)) {
     try {
         console.log(`Could not find config at ${configPath}, copying template from resources...`);

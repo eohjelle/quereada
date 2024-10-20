@@ -4,10 +4,10 @@
   "private": true,
   "main": "./out/main/index.mjs",
   "scripts": {
-    "build:db": "prisma generate && prisma migrate dev --name init",
+    "db:build": "prisma generate && prisma migrate dev --name init",
     "electron:dev": "electron-vite dev --mode electron",
     "electron:build": "electron-vite build --mode electron",
-    "electron:package:mac": "npm run build:db && npm run electron:build && electron-builder --mac --config",
+    "electron:package:mac": "npm run db:build && npm run electron:build && electron-builder --mac --config",
     "web:build": "vite build --emptyOutDir --mode web",
     "web:start": "tsx --inspect src/backend/main/web/index.ts",
     "test": "vitest"

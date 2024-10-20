@@ -1,5 +1,5 @@
 import './preinitialization'; // This module sets up environmental variables and logging. It should be imported first.
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, shell } from 'electron';
 import { ElectronEndpointBackend } from '$bridge/api_endpoint/electron/backend';
 import { ElectronStreamBackend } from '$bridge/loading_items_to_feed/electron/backend';
 import path from 'path';
@@ -13,6 +13,7 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
+      contextIsolation: true,
       sandbox: false,
       preload: path.join(__main_dirname, '..', 'preload', 'preload.mjs')
     }
@@ -24,18 +25,23 @@ function createWindow() {
   }
 }
 
-app.whenReady().then(
-  () => {
-    const endpointBackend = new ElectronEndpointBackend();
-    const streamBackend = new ElectronStreamBackend();
-    createWindow();
-  }
-);
+app.whenReady().then(() => {
+  const endpointBackend = new ElectronEndpointBackend();
+  const streamBackend = new ElectronStreamBackend();
+  createWindow();
+});
+
+// Add event listener for new-window-for-tab events
+app.on('web-contents-created', (event, contents) => {
+  contents.setWindowOpenHandler(({ url }) => {
+    // Open the URL in the default browser
+    shell.openExternal(url);
+    return { action: 'deny' };
+  });
+});
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+  app.quit();
 });
 
 app.on('activate', () => {

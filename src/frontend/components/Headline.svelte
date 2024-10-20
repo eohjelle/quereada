@@ -13,6 +13,7 @@
 <h2>
   <a
     href={item.link}
+    target="_blank"
     on:click={() =>
       api.updateClicks(item.id, item.feed_title, item.block_title)}
     >{@html item.title}</a
