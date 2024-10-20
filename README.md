@@ -37,7 +37,7 @@ Depending on your choice, follow the instructions below.
 
 For some systems, releases are available on the [Releases](https://github.com/quereada/quereada/releases) page. If you install from one of these releases, you can skip the "Build from source" section.
 
-### 1. Build from source
+### Build from source
 
 The first step is to clone the repository to a folder on your machine:
 
@@ -151,10 +151,6 @@ A source class is an implementation of the `Source` class in `modules/sources`, 
 ## Creating filters
 
 A filter is an implementation of the `Filter` type in `modules/filters`. Essentially, a filter is essentially a function which takes as input an item and outputs a boolean (true if the item passes the filter, false otherwise). You can add your own filter classes to `modules/filters/implementations`.
-
-# Contributing
-
-# To do list
 
 # Features in development
 
