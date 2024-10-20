@@ -42,7 +42,7 @@ For some systems, releases are available on the [Releases](https://github.com/qu
 The first step is to clone the repository to a folder on your machine:
 
 ```bash
-git clone https://github.com/quereada/quereada.git
+git clone https://github.com/eohjelle/quereada.git
 ```
 
 Then, install the dependencies (this requires [Node.js](https://nodejs.org) to be installed on your machine) in the root folder of the project:
@@ -83,7 +83,7 @@ See the sections below for more information about what each file is for.
 The first step is to clone the repository to a folder on your machine:
 
 ```bash
-git clone https://github.com/quereada/quereada.git
+git clone https://github.com/eohjelle/quereada.git
 ```
 
 Then, install the dependencies (this requires [Node.js](https://nodejs.org) to be installed on your machine) in the root folder of the project:

@@ -1,13 +1,15 @@
 {
   "name": "quereada",
-  "version": "0.0.1",
+  "version": "0.1.0-alpha",
+  "description": "A customizable way to engage with content on the internet.",
+  "author": "Eivind Otto Hjelle",
   "private": true,
   "main": "./out/main/index.mjs",
   "scripts": {
     "db:build": "prisma generate && prisma migrate dev --name init",
     "electron:dev": "electron-vite dev --mode electron",
     "electron:build": "electron-vite build --mode electron",
-    "electron:package:mac": "npm run db:build && npm run electron:build && electron-builder --mac --config",
+    "electron:package:mac": "npm run electron:build && electron-builder --mac --config",
     "web:build": "vite build --emptyOutDir --mode web",
     "web:start": "tsx --inspect src/backend/main/web/index.ts",
     "test": "vitest"
@@ -69,7 +71,8 @@
       "./schema.prisma",
       "./store.db",
       "./node_modules/.prisma/**/*",
-      "./node_modules/@prisma/client/**/*"
+      "./node_modules/@prisma/client/**/*",
+      "./LICENSE"
     ]
   }
 }
