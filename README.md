@@ -1,7 +1,7 @@
 # About
 
 Quereada is a news and media aggregator which offers a high degree of control and customization, as well as advanced features.
-[Click here](https://querygator-c8a6b9c38b54.herokuapp.com/) to see a demo.
+[Click here](https://quereada-342c36fe2c15.herokuapp.com) to see a demo.
 
 Quereada works by:
 
