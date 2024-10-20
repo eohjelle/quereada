@@ -167,3 +167,7 @@ A filter is an implementation of the `Filter` type in `modules/filters`. Essenti
 - Improve support for current sources:
   - [ ] Improve general RSS support by extracting more information from RSS feeds.
   - [ ] Enable summarization of NYTimes articles (will require a subscription to NYTimes and captcha solving).
+
+# Disclaimer
+
+I am not a professional software engineer, and I built Quereada as a personal project. I built it because it was a program that I would like to use myself, and share with others.
