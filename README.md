@@ -1,10 +1,8 @@
 # Quereada
 
 Quereada provides a deeply customizable way to engage with content on the internet.
+Quereada is open-source and free to use.
 [Click here](https://quereada-342c36fe2c15.herokuapp.com) to see a demo.
-Quereada is open-source and will always be free to use.
-
-## How it works
 
 Quereada works by:
 
@@ -12,24 +10,24 @@ Quereada works by:
 2. Building feeds using _queries_ to a database of collected items. These queries are defined in a configuration file, which controls the available feeds. Feeds can be described and ordered in terms of properties such as source, date published, authors, whether the item has been seen or clicked before, number of words, number of likes, and more.
 3. Adding additional _filters_ on top of the queries. For example, it is possible to filter items by whether or not they are relevant to any topic.
 
-It is easy for anyone to use Quereada, but at the time of writing, the initial setup requires some technical knowledge.
-
 ## Philosophy
 
-There are already a myriad of RSS readers and news aggregators out there, so what sets Quereada apart? It is the unique blend of guiding principles
-that leads to its distinctive quality:
+There are already a myriad of RSS readers and news aggregators out there, so what sets Quereada apart? A combination of the following features lead to its distinctive quality:
 
 - The items are sourced from trusted content creators, and not a black box algorithm. In this way, Quereada is closer to a traditional news outlet or an RSS reader than most news aggregators.
-- Instead of being locked into a format like RSS, which is not supported by many websites, Quereada makes it easy to add support for any source on the internet.
+- Instead of being locked into a format like RSS, which is being phased out by many websites, Quereada makes it convenient to add support for any source on the internet.
 - Build customized feeds using queries to a database of items, instead of using each source as its own feed.
 - Enable the option to add additional filters on top of the queries, such as filtering by topic, to further customize the feeds.
+- Satisfy the urge to scroll through a never-ending stream of content, but make it more purposeful.
 
-# Installation
+# How to use
 
-There are currently two ways to use Quereada:
+It is easy for anyone to use Quereada, but at the time of writing, the initial setup requires some technical knowledge.
+
+There are currently two options for using Quereada:
 
 1. As a desktop app that runs natively on your machine (recommended).
-2. As a self hosted web app that can be accessed in a web browser.
+2. As a self-hosted web app that can be accessed in a web browser.
 
 Depending on your choice, follow the instructions below.
 
@@ -74,8 +72,6 @@ Both the API keys and feed configuration are located in the `userData` folder, w
 
 See the sections below for more information about what each file is for.
 
-#todo Create an interface for setting API keys.
-
 ## Web installation
 
 ### Setup
@@ -92,7 +88,7 @@ Then, install the dependencies (this requires [Node.js](https://nodejs.org) to b
 npm install
 ```
 
-Before building the app, you need to create the database. By default, this is an SQLite database named `store.db` in the root folder of the project. But if you prefer to use PostgreSQL, you can change the database driver in the `prisma/schema.prisma` file and set the database URL in the `.env` file in the root folder of the project. To set up the initial database schema, run the following command:
+Before building the app, you need to create the database. By default, this is an SQLite database named `store.db` in the root folder of the project. But if you prefer to use PostgreSQL, you can change the database driver in the `schema.prisma` file and set `DATABASE_URL` in the `.env` file in the root folder of the project. To set up the initial database schema, run the following command:
 
 ```bash
 npm run db:build
@@ -114,7 +110,7 @@ npm run web:start
 
 The app will look for API keys and other environmental variables in a file called `.env` in the root folder of the project. The `quereada.config.ts` file which controls the feeds is also in the root folder of the project.
 
-# Keys
+## Keys
 
 Some services require keys. Depending on whether you use the desktop or web version, you will set the keys in different ways -- see "Configuration" in the sections above.
 
@@ -125,15 +121,15 @@ Here is a list of the keys you can set:
 | OPENAI_API_KEY  | OpenAI                  | Yes, but this requirement should be removed in the future.         |
 | NYTIMES_API_KEY | NYTimesAPI source class | No in general, but required with the `quereada.config.ts` template |
 
-_Note:_ Usage of Quereada may incur costs with the services listed above. For example, the default implementation of summarization features and topic relevance checks uses the OpenAI API. However, a lot of care has been taken to ensure that the number of requests is minimized. For example, items are only summarized upon request, and filters are only applied when a feed is being loaded.
+_Note:_ Usage of Quereada may incur costs with the services listed above. For example, the default implementation of summarization and topic relevance checks uses the OpenAI API. However, the software is designed to minimize the number of requests. For example, items are only summarized upon request, and filters are only applied when a feed using that filter is being loaded. Moreover, the results of summarization requests and topic relevance checks are stored, so that they are applied at most once per item.
 
-# Customization
+## Customization
 
 After setting up the app, you can customize it to your liking.
 
 #todo Add more detailed information.
 
-## Writing `quereada.config.ts`
+### Writing `quereada.config.ts`
 
 The `quereada.config.ts` file controls the feeds. It needs to export the following constants:
 
@@ -144,16 +140,20 @@ The `quereada.config.ts` file controls the feeds. It needs to export the followi
 
 It is recommended to edit this file by cloning the project, and modifying the copy of `quereada.config.ts` in the root folder of the project. This ensures that you get syntax highlighting and error checking as you type (if using a modern editor with TypeScript support).
 
-## Adding new source classes
+### Adding new source classes
 
 A source class is an implementation of the `Source` class in `modules/sources`, which tells Quereada how to fetch items from a particular source. You can add your own source classes to `modules/sources/implementations`.
 
-## Creating filters
+### Creating filters
 
-A filter is an implementation of the `Filter` type in `modules/filters`. Essentially, a filter is essentially a function which takes as input an item and outputs a boolean (true if the item passes the filter, false otherwise). You can add your own filter classes to `modules/filters/implementations`.
+A filter is an implementation of the `Filter` type in `modules/filters`. A filter is essentially a function which takes as input an item and outputs a boolean (true if the item passes the filter, false otherwise). You can add your own filter classes to `modules/filters/implementations`.
 
 # Features in development
 
+#todo
+
+- [ ] Interface for setting API keys.
+- [ ] Interface for setting feed configuration.
 - Add support for more sources:
   - [ ] More news outlets (e. g. Financial Times, The Guardian, etc.)
   - [ ] Email newsletters
@@ -166,4 +166,6 @@ A filter is an implementation of the `Filter` type in `modules/filters`. Essenti
 
 # Disclaimer
 
-I am not a professional software engineer, and I built Quereada as a personal project. I built it because it was a program that I would like to use myself, and share with others.
+I built Quereada as a personal project, because it was a product that I wanted to use and share with others. However, I'm not a professional software engineer, so the code base may not always adhere to industry standards.
+
+If you would like to contribute to the project, please do not hesitate to contact me.
