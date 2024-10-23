@@ -5,9 +5,11 @@ Quereada is an open-source and free to use app that provides tools to build your
 
 Quereada is similar to many RSS readers, but with the twist that feeds are built from queries to a database of items, instead of using each source as its own feed. This makes Quereada more flexible and customizable than most RSS readers. In more detail, Quereada works by:
 
-1. Collecting new items such as articles, links, and videos from various _sources_ on the internet. It is easy to use RSS feeds and API endpoints as sources, but in principle, anything on the internet can be used as a source.
-2. Building feeds using _queries_ to a database of collected items. These queries are defined in a configuration file, which controls the available feeds. Feeds can be described and ordered in terms of properties such as source, date published, authors, whether the item has been seen or clicked before, number of words, number of likes, and more.
+1. Collecting new _items_ (articles, links, videos, etc.) from various _sources_ (RSS feeds, API endpoints, websites, etc.) on the internet.
+2. Building feeds using _queries_ to the database of collected items. Feeds can be defined and ordered in terms of properties such as source, date published, authors, whether the item has been seen or clicked before, number of words, number of likes, and more.
 3. Adding additional _filters_ on top of the queries. For example, it is possible to filter items by whether or not they are relevant to any topic.
+
+Some services such as summarization or filtering by relevance to topics rely on external APIs. To use these services it is necessary to provide API keys, and costs may apply. However, Quereada is designed to minimize the number of requests, and to store the results of requests to avoid making duplicate requests.
 
 # How to use
 
