@@ -56,9 +56,9 @@ The app will be built and placed in the `dist` folder.
 
 ### Configuration
 
-Both the API keys and feed configuration are located in the `userData` folder, which defaults to `~/.config/quereada` on Linux, `~/Library/Application Support/quereada` on macOS, and `AppData\Roaming\quereada` on Windows. Specifically, it will look for the following files:
+Quereada looks for keys and feed configuration in the `userData` folder, which defaults to `~/.config/quereada` on Linux, `~/Library/Application Support/quereada` on macOS, and `AppData\Roaming\quereada` on Windows. Specifically, Quereada will look for the following files in the `userData` folder:
 
-- `api_keys.json`
+- `keys.json`
 - `quereada.config.ts`
 
 See the sections below for more information about what each file is for.
