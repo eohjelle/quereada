@@ -1,24 +1,13 @@
 # Quereada
 
-Quereada provides a deeply customizable way to engage with content on the internet.
-Quereada is open-source and free to use.
+Quereada is an open-source and free to use app that provides tools to build your own feeds from the internet and display them in an elegant interface. It is available as a desktop app or self-hosted web app.
 [Click here](https://quereada-342c36fe2c15.herokuapp.com) to see a demo.
 
-Quereada works by:
+Quereada is similar to many RSS readers, but with the twist that feeds are built from queries to a database of items, instead of using each source as its own feed. This makes Quereada more flexible and customizable than most RSS readers. In more detail, Quereada works by:
 
 1. Collecting new items such as articles, links, and videos from various _sources_ on the internet. It is easy to use RSS feeds and API endpoints as sources, but in principle, anything on the internet can be used as a source.
 2. Building feeds using _queries_ to a database of collected items. These queries are defined in a configuration file, which controls the available feeds. Feeds can be described and ordered in terms of properties such as source, date published, authors, whether the item has been seen or clicked before, number of words, number of likes, and more.
 3. Adding additional _filters_ on top of the queries. For example, it is possible to filter items by whether or not they are relevant to any topic.
-
-## Philosophy
-
-There are already a myriad of RSS readers and news aggregators out there, so what sets Quereada apart? A combination of the following features lead to its distinctive quality:
-
-- The items are sourced from trusted content creators, and not a black box algorithm. In this way, Quereada is closer to a traditional news outlet or an RSS reader than most news aggregators.
-- Instead of being locked into a format like RSS, which is being phased out by many websites, Quereada makes it convenient to add support for any source on the internet.
-- Build customized feeds using queries to a database of items, instead of using each source as its own feed.
-- Enable the option to add additional filters on top of the queries, such as filtering by topic, to further customize the feeds.
-- Satisfy the urge to scroll through a never-ending stream of content, but make it more purposeful.
 
 # How to use
 
