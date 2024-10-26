@@ -72,9 +72,6 @@ export const blocks: ConfigBlock[] =
                     }
                 }
             },
-            include: {
-                authors: true
-            },
             orderBy: {
                 date_published: "desc"
             }
@@ -91,9 +88,6 @@ export const blocks: ConfigBlock[] =
                 number_of_words: {
                     gte: 4000
                 }
-            },
-            include: {
-                authors: true
             },
             orderBy: {
                 date_added: "desc"
@@ -113,9 +107,6 @@ export const blocks: ConfigBlock[] =
                     }
                 },
             },
-            include: {
-                authors: true
-            },
             orderBy: {
                 date_published: "desc"
             }
@@ -134,9 +125,6 @@ export const blocks: ConfigBlock[] =
                     in: ["The Atlantic", "The New York Times"]
                 }
             },
-            include: {
-                authors: true
-            },
             orderBy: {
                 date_published: "desc"
             }
@@ -151,9 +139,6 @@ export const blocks: ConfigBlock[] =
                         name: "George Packer"
                     }
                 }
-            },
-            include: {
-                authors: true
             },
             orderBy: {
                 date_published: "desc"
@@ -170,9 +155,6 @@ export const blocks: ConfigBlock[] =
                     }
                 }
             },
-            include: {
-                authors: true
-            },
             orderBy: {
                 date_published: "desc"
             }
@@ -186,9 +168,6 @@ export const blocks: ConfigBlock[] =
                     equals: 0
                 }
             },
-            include: {
-                authors: true
-            },
             orderBy: {
                 date_added: "desc"
             }
@@ -199,9 +178,6 @@ export const blocks: ConfigBlock[] =
         query: {
             where: {
                 read_later: true
-            },
-            include: {
-                authors: true
             },
             orderBy: {
                 date_added: "desc"
@@ -214,10 +190,6 @@ export const blocks: ConfigBlock[] =
             where: 
             {
                 saved: true
-            },
-            include: 
-            {
-                authors: true
             },
             orderBy: {
                 date_added: "desc"

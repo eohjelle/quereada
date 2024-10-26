@@ -149,8 +149,8 @@ A filter is an implementation of the `Filter` type in `modules/filters`. A filte
 - Add support for more sources:
   - [ ] More news outlets (e. g. Financial Times, The Guardian, etc.)
   - [ ] Email newsletters
-  - [ ] Twitter/X (users as channels)
-  - [ ] Reddit (subreddits as channels)
+  - [ ] Twitter/X
+  - [ ] Reddit
   - [ ] YouTube
 - Improve support for current sources:
   - [ ] Improve general RSS support by extracting more information from RSS feeds.
