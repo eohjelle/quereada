@@ -10,28 +10,36 @@ const defaultItemFields = ['item_type', 'language', 'authors', 'summarizable'] a
 type DefaultItemFields = typeof defaultItemFields[number];
 
 /** The type of the parameters for the constructor of a Source class. */
-export type SourceConstructorParams = {
+export type SourceConstructorParams<T extends Record<string, any> = {}> = {
     name: string;
-    url?: string;
-    channels?: string[];
-    item_type?: ItemType;
-    lang_id?: string;
-    authors?: string[];
-    summarizable?: boolean;
+    args?: T;
+    default_values?: {
+        item_type?: ItemType;
+        lang_id?: string;
+        authors?: string[];
+        summarizable?: boolean;
+    };
 }
 
-/** This is the class that all sources must implement. */
-export abstract class Source implements Omit<PrismaSource, 'source_class' | 'date_added'> {
-    name: string;
-    url: string | null;
-    channels: string[];
-    defaultValues: Partial<Pick<InsertItem, DefaultItemFields>>; // Default values for item fields that are not set in the fetchItemsFromSource method.
+/** A basic type that the Source class implements. */
+type SourceType<T extends Record<string, any> | undefined = undefined> = 
+    Omit<PrismaSource, 'implementation' | 'date_added' | 'args' | 'default_values'> 
+    & { 
+        args: T, 
+        default_values: Partial<Pick<InsertItem, DefaultItemFields>> 
+    }
 
-    constructor({ name, url, channels, item_type, lang_id, authors, summarizable }: SourceConstructorParams) {
+/** This is the class that all sources must implement. */
+export abstract class Source<T extends Record<string, any> = {}> implements SourceType<T> {
+    name: string;
+    args: T;
+    default_values: Partial<Pick<InsertItem, DefaultItemFields>>; // Default values for item fields that are not set in the fetchItemsFromSource method.
+
+    constructor({ name, args, default_values }: SourceConstructorParams<T>) {
         this.name = name;
-        this.url = url || null;
-        this.channels = channels || [];
-        this.defaultValues = {
+        this.args = args ?? {} as T;
+        const { item_type, lang_id, authors, summarizable } = default_values || {};
+        this.default_values = {
             item_type: item_type,
             language: lang_id 
                 ? {
@@ -55,7 +63,7 @@ export abstract class Source implements Omit<PrismaSource, 'source_class' | 'dat
         item: FetchItem,
         key: K
     ): InsertItem[K] {
-        const value = item[key] ?? this.defaultValues[key];
+        const value = item[key] ?? this.default_values[key];
         if (value) {
             return value;
         } else if (['language', 'authors'].includes(key)) {

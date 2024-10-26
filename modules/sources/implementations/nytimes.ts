@@ -2,21 +2,22 @@ import type { FetchItem } from '$lib/types';
 import { Source, type SourceConstructorParams } from '../source';
 import { authorListFromByline, authorListToConnectOrCreateField } from '$lib/utils';
 
-export class NYTimesAPI extends Source{
-    constructor({ channels = ["topstories/v2/home.json", "mostpopular/v2/viewed/1.json"] }: SourceConstructorParams) {
+export class NYTimesAPI extends Source<{ channel_codes: string[] }> {
+    constructor({ args = { channel_codes: ["topstories/v2/home.json", "mostpopular/v2/viewed/1.json"] } }: SourceConstructorParams<{ channel_codes: string[] }>) {
         // todo: make channel names more intuitive
         super({
             name: 'The New York Times',
-            url: 'https://api.nytimes.com/svc',
-            channels: channels, 
-            item_type: 'Article',
-            lang_id: 'en',
-            summarizable: false // todo: implement summarization and make this true
+            args: args,
+            default_values: {
+                item_type: 'Article',
+                lang_id: 'en',
+                summarizable: false // todo: implement summarization and make this true
+            }
         })
     }
 
     async fetchItemsFromChannel(channel_code: string) {
-        const response = await fetch(`${this.url}/${channel_code}?api-key=${process.env.NYTIMES_API_KEY}`);
+        const response = await fetch(`https://api.nytimes.com/svc/${channel_code}?api-key=${process.env.NYTIMES_API_KEY}`);
         const data = await response.json();
 
         const items: FetchItem[] = [];
@@ -46,7 +47,7 @@ export class NYTimesAPI extends Source{
 
     async fetchItemsFromSource() {
         const items: FetchItem[] = [];
-        await Promise.all(this.channels.map(async (channel_code) => {
+        await Promise.all(this.args.channel_codes.map(async (channel_code) => {
             const new_items = await this.fetchItemsFromChannel(channel_code);
             items.push(...new_items);
         }));

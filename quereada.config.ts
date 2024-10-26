@@ -8,17 +8,21 @@ export const sources: ConfigSource[] =
 [
     { 
         name: 'The New York Times', 
-        source_class: 'NYTimesAPI'
+        implementation: 'NYTimesAPI'
     },
     { 
         name: 'The Atlantic', 
-        source_class: 'TheAtlantic', 
-        channels: ['bestof']
+        implementation: 'TheAtlantic', 
+        args: {
+            channels: [ 'bestof' ]
+        }
     },
     { 
         name: "Dan Carlin's Substack", 
-        source_class: 'RSS', 
-        url: 'https://dancarlin.substack.com/feed' 
+        implementation: 'RSS', 
+        args: {
+            urls: [ 'https://dancarlin.substack.com/feed' ]
+        }
     }
 ];
 

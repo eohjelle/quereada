@@ -1,16 +1,19 @@
 import { parseStringPromise } from 'xml2js';
 import type { FetchItem } from '$lib/types';
-import { Source } from '../source';
+import { Source, type SourceConstructorParams } from '../source';
 import { authorListToConnectOrCreateField } from '$lib/utils';
 
-export class TheAtlantic extends Source {
-    name: string = 'The Atlantic';
-    url: string = 'https://www.theatlantic.com';
-    channels: string[] = ['bestof'];
-    defaultValues = {
-        item_type: 'Article',
-        lang_id: 'en',
-        summarizable: true
+export class TheAtlantic extends Source<{ channels: string[] }> {
+    constructor({ args = { channels: ['bestof'] } }: SourceConstructorParams<{ channels: string[] }>) {
+        super({
+            name: 'The Atlantic',
+            args: args,
+            default_values: {
+                item_type: 'Article',
+                lang_id: 'en',
+                summarizable: true
+            }
+        })
     }
 
     async fetchItemsFromChannel(channel: string) {
@@ -39,7 +42,7 @@ export class TheAtlantic extends Source {
     }
 
     async fetchItemsFromSource() {
-        const items = await Promise.all(this.channels.map(channel => this.fetchItemsFromChannel(channel)));
+        const items = await Promise.all(this.args.channels.map(channel => this.fetchItemsFromChannel(channel)));
         return items.flat();
     }
 }

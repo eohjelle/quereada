@@ -5,19 +5,9 @@ import type { FetchItem } from '$lib/types';
 
 
 
-export class RSS extends Source {
-    constructor({ name, url, lang_id }: SourceConstructorParams) {
-        super({
-            name: name,
-            url: url,
-            channels: [],
-            item_type: 'Link',
-            lang_id: lang_id
-        });
-    }
-
-    async fetchItemsFromSource () {
-        const feed = await extract(this.url!);
+export class RSS extends Source<{ urls: string[] }> {
+    async fetchItemsFromUrl (url: string) {
+        const feed = await extract(url);
         const items: FetchItem[] = [];
         if (!feed.entries) {
             console.error(`No entries found in feed for ${this.name}`);
@@ -36,5 +26,14 @@ export class RSS extends Source {
             items.push(item);
         };
         return items
+    }
+
+    async fetchItemsFromSource () {
+        const items: FetchItem[] = [];
+        await Promise.all(this.args.urls.map(async (url) => {
+            const new_items = await this.fetchItemsFromUrl(url);
+            items.push(...new_items);
+        }));
+        return items;
     }
 }

@@ -8,7 +8,7 @@ export type Filter = (item: FilterItem) => Promise<boolean>;
 /** This is the type of a filter constructor. Given some arguments, it returns a filter.
  * 
  * @example
- * // This is a constructor for a filter that does nothing (in the sense that all items pass it).
+ * This is a constructor for a filter that does nothing (in the sense that all items pass it).
  * const Trivial: FilterConstructor = ({}) => async (item: FilterItem) => true;
  */
 export type FilterConstructor<T extends Record<string, any> = {}> = ((args: T) => Filter);

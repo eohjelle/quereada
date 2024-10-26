@@ -145,6 +145,7 @@ A filter is an implementation of the `Filter` type in `modules/filters`. A filte
 
 - [ ] Interface for setting API keys.
 - [ ] Interface for setting feed configuration.
+- [ ] Usage statistics.
 - Add support for more sources:
   - [ ] More news outlets (e. g. Financial Times, The Guardian, etc.)
   - [ ] Email newsletters
@@ -157,6 +158,6 @@ A filter is an implementation of the `Filter` type in `modules/filters`. A filte
 
 # Disclaimer
 
-I built Quereada as a personal project, because it was a product that I wanted to use and share with others. However, I'm not a professional software engineer, so the code base may not always adhere to industry standards.
+I built Quereada as a personal project, because it was a product that I wanted to use and share with others. However, I'm not a professional software engineer, so some design choices in the project may be non-standard.
 
 If you would like to contribute to the project, please do not hesitate to contact me.

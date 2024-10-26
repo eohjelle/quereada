@@ -7,7 +7,7 @@ import { TheAtlantic } from './implementations/the_atlantic';
 import { RSS } from './implementations/rss';
 import { NYTimesAPI } from './implementations/nytimes';
 
-const sourceClasses: { [key: string]: new (params: SourceConstructorParams) => Source } = {
+const sourceClasses: { [key: string]: new (params: SourceConstructorParams<any>) => Source<any> } = {
     'TheAtlantic': TheAtlantic,
     'RSS': RSS,
     'NYTimesAPI': NYTimesAPI,
@@ -19,17 +19,17 @@ async function loadSources(): Promise<{ [name: string]: Source }> {
     const sourceData = await db.source.findMany( {
          select: { 
             name: true, 
-            source_class: true, 
-            url: true, 
-            channels: { select: { channel_name: true } }
+            implementation: true, 
+            args: true,
+            default_values: true
         } 
     } );
     for (const source of sourceData) {
-        const SourceClass = sourceClasses[source.source_class];
+        const SourceClass = sourceClasses[source.implementation];
         const instance = new SourceClass({
             name: source.name,
-            url: source.url || undefined,
-            channels: source.channels.length > 0 ? source.channels.map((channel: { channel_name: string }) => channel.channel_name) : undefined
+            args: source.args ? JSON.parse(source.args) : undefined,
+            default_values: source.default_values ? JSON.parse(source.default_values) : undefined
         });
         sources[source.name] = instance;
     }
