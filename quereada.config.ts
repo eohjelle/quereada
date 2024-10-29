@@ -45,32 +45,8 @@ export const sources: ConfigSource[] =
         }
     },
     {
-        name: 'NRK',
-        implementation: 'RSS',
-        args: {
-            urls: [
-                "https://www.nrk.no/norge/toppsaker.rss"
-            ]
-        },
-        default_values: {
-            item_type: 'Article',
-            lang_id: 'no',
-            summarizable: true
-        }
-    },
-    {
-        name: "Reddit Soccer",
-        implementation: "RSS",
-        args: {
-            urls: [
-                "https://www.reddit.com/r/soccer/.rss"
-            ]
-        },
-        default_values: {
-            item_type: 'Link',
-            lang_id: 'en',
-            summarizable: false
-        }
+        name: "Aeon",
+        implementation: "Aeon"
     }
 ];
 
@@ -125,7 +101,7 @@ export const blocks: ConfigBlock[] =
         query: {
             where: {
                 source_name: {
-                    in: [ "The Atlantic", "The New York Times", "NRK" ]
+                    in: [ "The Atlantic", "The New York Times" ]
                 },
                 filters_passed: {
                     none: {
@@ -146,16 +122,22 @@ export const blocks: ConfigBlock[] =
         }
     },
     {
-        title: "Long Reads in The Atlantic",
+        title: "Food for Thought",
         query: {
-            take: 15,
             where: {
-                source_name: {
-                    in: [ "The Atlantic" ]
-                },
-                number_of_words: {
-                    gte: 3500
-                }
+                OR: [
+                    {
+                        source_name: {
+                            in: [ "The Atlantic" ]
+                        },
+                        number_of_words: {
+                            gte: 3500
+                        }
+                    },
+                    {
+                        source_name: "Aeon"
+                    }
+                ]
             },
             orderBy: {
                 date_added: "desc"
@@ -167,7 +149,7 @@ export const blocks: ConfigBlock[] =
         query: {
             where: {
                 source_name: {
-                    in: [ "The Atlantic", "The New York Times", "NRK" ]
+                    in: [ "The Atlantic", "The New York Times" ]
                 },
                 filters_passed: {
                     some: {
@@ -185,7 +167,7 @@ export const blocks: ConfigBlock[] =
         query: {
             where: {
                 source_name: {
-                    in: [ "The Atlantic", "The New York Times", "NRK" ]
+                    in: [ "The Atlantic", "The New York Times" ]
                 },
                 filters_passed: {
                     some: { title: "War" }
@@ -206,7 +188,7 @@ export const blocks: ConfigBlock[] =
                     }
                 },
                 source_name: {
-                    in: ["The Atlantic", "The New York Times", "NRK"]
+                    in: ["The Atlantic", "The New York Times"]
                 }
             },
             orderBy: {
@@ -330,8 +312,8 @@ export const feeds: ConfigFeed[] =
         blocks: [ "War" ]
     },
     {
-        title: "Long Reads",
-        blocks: [ "Long Reads in The Atlantic" ]
+        title: "Food for Thought",
+        blocks: [ "Food for Thought" ]
     },
     {
         title: "Specific authors",
