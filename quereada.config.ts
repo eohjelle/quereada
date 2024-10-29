@@ -1,4 +1,3 @@
-
 import { subDays } from 'date-fns';
 
 import type { ConfigSource, ConfigFilter, ConfigBlock, ConfigFeed } from './src/backend/load_config';
@@ -103,37 +102,43 @@ export const filters: ConfigFilter[] =
                 "Waste Management"
             ]
         }
+    },
+    {
+        title: "War",
+        implementation: "RelevantToTopics",
+        args: {
+            topics: [
+                "War",
+                "Armed Conflict",
+                "Terrorism",
+                "Israeli-Palestinian Conflict",
+                "Russo-Ukrainian War"
+            ]
+        }
     }
 ];
 
 export const blocks: ConfigBlock[] = 
 [
     {
-        title: "News Not Relevant To 2024 Presidential Election",
+        title: "News - No Election or War",
         query: {
             where: {
-                OR: [
-                    {
-                        source_name: {
-                            in: ["The Atlantic", "The New York Times"]
-                        },
-                        filters_passed: {
-                            none: {
-                                title: "Relevant to 2024 US Politics"
-                            }
-                        }
-                    },
-                    {
-                        source_name: {
-                            equals: "NRK"
-                        },
+                source_name: {
+                    in: [ "The Atlantic", "The New York Times", "NRK" ]
+                },
+                filters_passed: {
+                    none: {
                         title: {
-                            not: {
-                                contains: "nyheter"
-                            }
+                            in: [ "Relevant to 2024 US Politics", "War" ]
                         }
                     }
-                ]
+                },
+                title: {
+                    not: {
+                        contains: "nyheter"
+                    }
+                }
             },
             orderBy: {
                 date_published: "desc"
@@ -162,13 +167,29 @@ export const blocks: ConfigBlock[] =
         query: {
             where: {
                 source_name: {
-                    in: ["The Atlantic", "The New York Times", "NRK"]
+                    in: [ "The Atlantic", "The New York Times", "NRK" ]
                 },
                 filters_passed: {
                     some: {
                         title: "Relevant to 2024 US Politics"
                     }
                 },
+            },
+            orderBy: {
+                date_published: "desc"
+            }
+        }
+    },
+    {
+        title: "War",
+        query: {
+            where: {
+                source_name: {
+                    in: [ "The Atlantic", "The New York Times", "NRK" ]
+                },
+                filters_passed: {
+                    some: { title: "War" }
+                }
             },
             orderBy: {
                 date_published: "desc"
@@ -297,12 +318,16 @@ export const feeds: ConfigFeed[] =
         blocks: [ "Read Later" ]
     },
     {
-        title: "News Excluding 2024 Presidential Election",
-        blocks: [ "News Not Relevant To 2024 Presidential Election" ]
+        title: "News - No Election or War",
+        blocks: [ "News - No Election or War" ]
     },
     {
         title: "2024 Presidential Election",
         blocks: [ "2024 Presidential Election" ]
+    },
+    {
+        title: "War",
+        blocks: [ "War" ]
     },
     {
         title: "Long Reads",
