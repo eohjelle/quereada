@@ -67,7 +67,6 @@ export class ItemsStream {
             },
             where: {
                 OR: [
-                    
                     this.query.where ?? { id: { gte: 0 } }, // Because of how Prisma handles OR, we need a non-empty condition that will always be true.
                     {   
                         AND: [

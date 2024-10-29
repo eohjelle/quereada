@@ -26,8 +26,13 @@
 </script>
 
 <div class="item-content">
-  <div class="base-layer">
-    <img src={item.image_link} alt={item.image_caption} class="item-photo" />
+  <div
+    class="base-layer"
+    style:grid-template-columns={item.image_link ? "33% 67%" : "100%"}
+  >
+    {#if item.image_link}
+      <img src={item.image_link} alt={item.image_caption} class="item-photo" />
+    {/if}
     <div class="text-content">
       <header class="outlet-header">
         <p>{item.source_name}</p>
@@ -80,7 +85,6 @@
     width: 100%;
     height: 100%;
     display: grid;
-    grid-template-columns: 33% 67%;
     background-color: inherit;
   }
 

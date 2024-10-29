@@ -7,9 +7,10 @@ import type { ItemType } from '$lib/types';
 export type ConfigSource = Pick<Prisma.SourceCreateInput, 'name' | 'implementation'> 
     & { args?: Record<string, any> } // channels, etc.
     & { default_values?: {
-        item_type?: ItemType;
-        lang_id?: string;
-        authors?: string[];
+        item_type?: ItemType,
+        lang_id?: string,
+        authors?: string[],
+        summarizable?: boolean
     } };
 export type ConfigFilter = Pick<Prisma.FilterCreateInput, 'title' | 'implementation'> & { args?: Record<string, any> };
 export type ConfigBlock = Pick<Prisma.BlockCreateInput, 'title'> & { query: Omit<Prisma.ItemFindManyArgs, 'filters_checked'>, filters?: string[] };
@@ -106,6 +107,13 @@ export async function loadConfig(): Promise<void> {
     await db.block.deleteMany({
         where: {
             title: { notIn: blocks.map(block => block.title) }
+        }
+    });
+
+    // Delete sources that are not in the config. Cascading deletes items.
+    await db.source.deleteMany({
+        where: {
+            name: { notIn: sources.map(source => source.name) }
         }
     });
 }

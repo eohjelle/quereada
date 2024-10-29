@@ -7,5 +7,6 @@ export const db = new PrismaClient({
         db: {
             url: process.env.DATABASE_URL
         }
-    }
+    },
+    log: ['warn', 'error']
 });

@@ -8,13 +8,29 @@ export const sources: ConfigSource[] =
 [
     { 
         name: 'The New York Times', 
-        implementation: 'NYTimesAPI'
+        implementation: 'RSS',
+        args: {
+            urls: [
+                'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml',
+                'https://rss.nytimes.com/services/xml/rss/nyt/MostShared.xml'
+            ]
+        },
+        default_values: {
+            item_type: 'Article',
+            lang_id: 'en',
+            summarizable: false
+        }
     },
     { 
         name: 'The Atlantic', 
-        implementation: 'TheAtlantic', 
+        implementation: 'RSS', 
         args: {
-            channels: [ 'bestof' ]
+            urls: [ 'https://www.theatlantic.com/feed/bestof/' ]
+        },
+        default_values: {
+            item_type: 'Article',
+            lang_id: 'en',
+            summarizable: true
         }
     },
     { 
@@ -22,6 +38,39 @@ export const sources: ConfigSource[] =
         implementation: 'RSS', 
         args: {
             urls: [ 'https://dancarlin.substack.com/feed' ]
+        },
+        default_values: {
+            item_type: 'Article',
+            lang_id: 'en',
+            summarizable: true
+        }
+    },
+    {
+        name: 'NRK',
+        implementation: 'RSS',
+        args: {
+            urls: [
+                "https://www.nrk.no/norge/toppsaker.rss"
+            ]
+        },
+        default_values: {
+            item_type: 'Article',
+            lang_id: 'no',
+            summarizable: true
+        }
+    },
+    {
+        name: "Reddit Soccer",
+        implementation: "RSS",
+        args: {
+            urls: [
+                "https://www.reddit.com/r/soccer/.rss"
+            ]
+        },
+        default_values: {
+            item_type: 'Link',
+            lang_id: 'en',
+            summarizable: false
         }
     }
 ];
@@ -60,17 +109,31 @@ export const filters: ConfigFilter[] =
 export const blocks: ConfigBlock[] = 
 [
     {
-        title: "US News Not Relevant To 2024 Presidential Election",
+        title: "News Not Relevant To 2024 Presidential Election",
         query: {
             where: {
-                source_name: {
-                    in: ["The Atlantic", "The New York Times"]
-                },
-                filters_passed: {
-                    none: {
-                        title: "Relevant to 2024 US Politics"
+                OR: [
+                    {
+                        source_name: {
+                            in: ["The Atlantic", "The New York Times"]
+                        },
+                        filters_passed: {
+                            none: {
+                                title: "Relevant to 2024 US Politics"
+                            }
+                        }
+                    },
+                    {
+                        source_name: {
+                            equals: "NRK"
+                        },
+                        title: {
+                            not: {
+                                contains: "nyheter"
+                            }
+                        }
                     }
-                }
+                ]
             },
             orderBy: {
                 date_published: "desc"
@@ -86,7 +149,7 @@ export const blocks: ConfigBlock[] =
                     in: [ "The Atlantic" ]
                 },
                 number_of_words: {
-                    gte: 4000
+                    gte: 3500
                 }
             },
             orderBy: {
@@ -99,7 +162,7 @@ export const blocks: ConfigBlock[] =
         query: {
             where: {
                 source_name: {
-                    in: ["The Atlantic", "The New York Times"]
+                    in: ["The Atlantic", "The New York Times", "NRK"]
                 },
                 filters_passed: {
                     some: {
@@ -122,7 +185,7 @@ export const blocks: ConfigBlock[] =
                     }
                 },
                 source_name: {
-                    in: ["The Atlantic", "The New York Times"]
+                    in: ["The Atlantic", "The New York Times", "NRK"]
                 }
             },
             orderBy: {
@@ -153,6 +216,19 @@ export const blocks: ConfigBlock[] =
                     some: {
                         name: "Olga Khazan"
                     }
+                }
+            },
+            orderBy: {
+                date_published: "desc"
+            }
+        }
+    },
+    {
+        title: "Dan Carlin",
+        query: {
+            where: {
+                authors: {
+                    some: { name: "Dan Carlin" }
                 }
             },
             orderBy: {
@@ -221,8 +297,8 @@ export const feeds: ConfigFeed[] =
         blocks: [ "Read Later" ]
     },
     {
-        title: "US News Excluding Presidential Election",
-        blocks: [ "US News Not Relevant To 2024 Presidential Election" ]
+        title: "News Excluding 2024 Presidential Election",
+        blocks: [ "News Not Relevant To 2024 Presidential Election" ]
     },
     {
         title: "2024 Presidential Election",
@@ -233,8 +309,8 @@ export const feeds: ConfigFeed[] =
         blocks: [ "Long Reads in The Atlantic" ]
     },
     {
-        title: "Articles by specific authors",
-        blocks: [ "Articles by Olga Khazan", "Articles by George Packer" ]
+        title: "Specific authors",
+        blocks: [ "Articles by Olga Khazan", "Articles by George Packer", "Dan Carlin" ]
     },
     {
         title: "Environmental News",

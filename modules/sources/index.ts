@@ -3,12 +3,10 @@ import { db } from '$src/backend/database';
 
 // Import source classes and create a dictionary mapping the source_type field to the correct class
 // todo: create more dynamic import of the source classes. 
-import { TheAtlantic } from './implementations/the_atlantic'; 
-import { RSS } from './implementations/rss';
-import { NYTimesAPI } from './implementations/nytimes';
+import { RSS } from './implementations/RSS';
+import { NYTimesAPI } from './implementations/NYTimesAPI';
 
 const sourceClasses: { [key: string]: new (params: SourceConstructorParams<any>) => Source<any> } = {
-    'TheAtlantic': TheAtlantic,
     'RSS': RSS,
     'NYTimesAPI': NYTimesAPI,
 }

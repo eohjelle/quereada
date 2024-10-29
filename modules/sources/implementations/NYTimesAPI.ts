@@ -2,6 +2,8 @@ import type { FetchItem } from '$lib/types';
 import { Source, type SourceConstructorParams } from '../source';
 import { authorListFromByline, authorListToConnectOrCreateField } from '$lib/utils';
 
+// This class is not currently used because it doesn't add any value over the RSS implementation.
+// But it's kept here for now in case it becomes useful in the future.
 export class NYTimesAPI extends Source<{ channel_codes: string[] }> {
     constructor({ args = { channel_codes: ["topstories/v2/home.json", "mostpopular/v2/viewed/1.json"] } }: SourceConstructorParams<{ channel_codes: string[] }>) {
         // todo: make channel names more intuitive

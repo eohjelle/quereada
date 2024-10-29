@@ -3,6 +3,7 @@ import type { ItemType, FetchItem, InsertItem, ItemToSummarize } from '$lib/type
 import { db } from '$src/backend/database';
 import { authorListToConnectOrCreateField } from '$lib/utils';
 import { summarize } from '$src/backend/summarize';
+import { extract } from '@extractus/article-extractor';
 
 
 /** The fields that (may) have default values set in the source class. */
@@ -14,7 +15,7 @@ export type SourceConstructorParams<T extends Record<string, any> = {}> = {
     name: string;
     args?: T;
     default_values?: {
-        item_type?: ItemType;
+        item_type: ItemType;
         lang_id?: string;
         authors?: string[];
         summarizable?: boolean;
@@ -40,7 +41,7 @@ export abstract class Source<T extends Record<string, any> = {}> implements Sour
         this.args = args ?? {} as T;
         const { item_type, lang_id, authors, summarizable } = default_values || {};
         this.default_values = {
-            item_type: item_type,
+            item_type: item_type ?? 'Article',
             language: lang_id 
                 ? {
                     connectOrCreate: {
@@ -64,7 +65,7 @@ export abstract class Source<T extends Record<string, any> = {}> implements Sour
         key: K
     ): InsertItem[K] {
         const value = item[key] ?? this.default_values[key];
-        if (value) {
+        if (value !== undefined) {
             return value;
         } else if (['language', 'authors'].includes(key)) {
             // InsertItem allows some keys to be undefined
@@ -74,7 +75,7 @@ export abstract class Source<T extends Record<string, any> = {}> implements Sour
             return (item.content ? true : false) as InsertItem[K]; 
         } else {
             throw new Error(
-                `Item ${item.title} is missing value for key ${key}. Either set a default value in the source class ${this.name} or make sure the value is set in the fetchItemsFromSource method.`
+                `Item ${item.title} is missing value for key ${key}. Either set a default value in the implementation class or config or set the value in the fetchItemsFromSource method.`
             );
         }
     }
@@ -116,10 +117,20 @@ export abstract class Source<T extends Record<string, any> = {}> implements Sour
 
     /** This method can be overriden by a subclass to provide a custom method of summarizing items.
      * The default implementation is to use the summarize function in src/backend/summarize.ts, based on the item's content field.
+     * If the item's content field is not set, the method will attempt to extract the content from the item's link.
      */
-    async summarizeItem(item: ItemToSummarize): Promise<ReadableStream<string>> {
+    async summarizeItem(item: ItemToSummarize & { id: number,link: string }): Promise<ReadableStream<string>> {
         if (!item.content) {
-            throw new Error(`Item ${item.title} has no content, so it cannot be summarized using the default summarizeItem method.`);
+            const itemData = await extract(item.link);
+            if (itemData !== null && itemData.content) {
+                item.content = itemData.content;
+                db.item.update({
+                    where: { id: item.id },
+                    data: { content: item.content }
+                })
+            } else {
+                throw new Error(`Item ${item.title} has no content, and content could not be extracted from link ${item.link}. The item is not summarizable using the default summarizeItem method.`);
+            }
         }
         return summarize(item);
     }

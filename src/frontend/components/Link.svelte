@@ -1,12 +1,12 @@
 <script>
-  import { byline } from "$lib/utils";
+  import Headline from "./Headline.svelte";
 
   export let item;
 </script>
 
 <div class="link-container">
-  <h3>{item.source_name}</h3>
-  <h2><a href={item.link}>{@html item.title}</a></h2>
+  <h3 style:font-family="var(--outlet-font)">{item.source_name}</h3>
+  <Headline {item} />
 </div>
 
 <style>

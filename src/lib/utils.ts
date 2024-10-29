@@ -71,7 +71,7 @@ export function omitKeysFromObject(obj: Record<string, any>, key: string): Recor
 		}
 		return obj; 
 	}
-	return recurse({ ...obj }, key);
+	return recurse(JSON.parse(JSON.stringify(obj)), key);
 }
 
 
