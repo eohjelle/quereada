@@ -32,7 +32,7 @@ export class EndpointBackend {
     }
 
     protected async getFeedData(): Promise<Feed[]> {
-        const feeds = await db.feed.findMany({include: { blocks: { include: { block: true } } }, orderBy: { index: "asc" } });
+        const feeds = await db.feed.findMany({include: { blocks: { select: { block: true, index: true }, orderBy: { index: "asc" } } }, orderBy: { index: "asc" } });
         const parsedFeeds = feeds.map((feed) => {
             return {
                 ...feed,

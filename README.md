@@ -147,17 +147,13 @@ A filter is an implementation of the `Filter` type in `modules/filters`. A filte
 - [ ] Interface for setting feed configuration.
 - [ ] Usage statistics.
 - Add support for more sources:
-  - [ ] More news outlets (e. g. Financial Times, The Guardian, etc.)
   - [ ] Email newsletters
-  - [ ] Twitter/X
-  - [ ] Reddit
-  - [ ] YouTube
+  - [ ] Major platforms (YouTube, Reddit, Twitter/X)
 - Improve support for current sources:
-  - [ ] Improve general RSS support by extracting more information from RSS feeds.
   - [ ] Enable summarization of NYTimes articles (will require a subscription to NYTimes and captcha solving).
 
 # Disclaimer
 
-I built Quereada as a personal project, because it was a product that I wanted to use and share with others. However, I'm not a professional software engineer, so some design choices in the project may be non-standard.
+I built Quereada as a personal project, because it was a product that I wanted to use and share with others, and because I wanted to learn about full-stack development. However, I'm not a professional software engineer, so some design choices in the project may be non-standard.
 
 If you would like to contribute to the project, please do not hesitate to contact me.

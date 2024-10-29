@@ -34,7 +34,6 @@ export async function loadConfig(): Promise<void> {
             create: source_data
         });
     }));
-    await refreshSources();
 
     // Upsert filters
     await Promise.all(filters.map(async (filter) => {
@@ -115,4 +114,6 @@ export async function loadConfig(): Promise<void> {
             name: { notIn: sources.map(source => source.name) }
         }
     });
+
+    await refreshSources();
 }

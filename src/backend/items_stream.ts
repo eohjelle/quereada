@@ -56,7 +56,7 @@ export class ItemsStream {
         // Fetch candidateItems, namely those items that satisfy the query, or have not been checked for all relevant filters.
         // Example: Given { where: { filters_passed: { some: { title: 'foo' } } } }, the resulting items should be 
         // - items for which the filter 'foo' has been checked and passed,
-        // - items for which the filter 'foo' has not been checked.
+        // - items for which the filter 'foo' has not been checked, that satisfy the query without using filters_passed.
         const candidateItems = await db.item.findMany({
             ...this.query,
             include: {

@@ -5,10 +5,12 @@ import { db } from '$src/backend/database';
 // todo: create more dynamic import of the source classes. 
 import { RSS } from './implementations/RSS';
 import { NYTimesAPI } from './implementations/NYTimesAPI';
+import { Aeon } from './implementations/aeon';
 
 const sourceClasses: { [key: string]: new (params: SourceConstructorParams<any>) => Source<any> } = {
     'RSS': RSS,
     'NYTimesAPI': NYTimesAPI,
+    'Aeon': Aeon
 }
 
 // Function to load sources (construct the relevant classes) based on sources in database

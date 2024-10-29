@@ -50,6 +50,7 @@
     "esbuild": "^0.24.0",
     "esm": "^3.2.25",
     "express": "^4.21.0",
+    "jsdom": "^25.0.1",
     "node-schedule": "^2.1.1",
     "openai": "^4.56.0",
     "prisma": "^5.18.0",
