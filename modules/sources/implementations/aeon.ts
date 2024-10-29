@@ -72,7 +72,7 @@ export class Aeon extends Source {
                         return null;
                     }
                     const articleData = await this.extractArticleData(link);
-                    if (articleData && author) {
+                    if (articleData && author !== undefined) {
                         articleData.authors = authorListToConnectOrCreateField(authorListFromByline(author));
                     }
                     return articleData;
