@@ -96,4 +96,8 @@ describe('authorListFromByline', () => {
     it('should handle bylines without "By" prefix', () => {
         expect(authorListFromByline('John Doe and Jane Smith')).toEqual(['John Doe', 'Jane Smith']);
     });
+
+    it('should convert an empty byline to an empty array', () => {
+        expect(authorListFromByline('')).toEqual([]);
+    });
 });

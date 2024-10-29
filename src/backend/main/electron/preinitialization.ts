@@ -29,17 +29,22 @@ if (fs.existsSync(keysPath)) {
     }
 }
 
-// Load database from CONFIG_FOLDER/store.db, initializing an empty one if it doesn't exist
-const dbPath = path.join(CONFIG_FOLDER, 'store.db');
-
-if (!fs.existsSync(dbPath)) {
-try {
-    console.log(`Could not find database at ${dbPath}, copying from resources...`);
-    fs.copyFileSync(path.join(RESOURCES_PATH, 'store.db'), dbPath);
-    console.log(`Database file copied to ${dbPath}!`);
-} catch (error) {
-    throw new Error(`Error copying database file: ${error}`);
-}
+// Load database from CONFIG_FOLDER/store.db, initializing an empty one if it doesn't exist.
+// If in development mode, look for the database file in the root folder of the project instead.
+let dbPath: string;
+if (import.meta.env.PROD) {
+    dbPath = path.join(CONFIG_FOLDER, 'store.db');
+    if (!fs.existsSync(dbPath)) {
+        try {
+            console.log(`Could not find database at ${dbPath}, copying from resources...`);
+            fs.copyFileSync(path.join(RESOURCES_PATH, 'store.db'), dbPath);
+            console.log(`Database file copied to ${dbPath}!`);
+        } catch (error) {
+            throw new Error(`Error copying database file: ${error}`);
+        }
+    }
+} else {
+    dbPath = path.join(path.resolve(process.cwd()), 'store.db');
 }
 
 process.env['DATABASE_URL'] = `file://${dbPath}`;

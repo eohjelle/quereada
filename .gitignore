@@ -8,6 +8,7 @@ node_modules
 out
 out-web
 dist
+migrations
 
 # OS
 .DS_Store
