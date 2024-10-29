@@ -6,9 +6,9 @@
   <p>
     This is the start page of <a href="https://github.com/eohjelle/quereada"
       >Quereada</a
-    >: a free, open-source news aggregator which offers a high degree of
-    customizability. Try navigating to some feeds using the navigation bar on
-    the top of the window.
+    >: an open-source and free to use app that provides tools to build your own
+    feeds from the internet and display them in an elegant interface. Try
+    navigating to some feeds using the navigation bar on the top of the window.
   </p>
   <p>
     All the feeds are controlled by a simple configuration file, which is
