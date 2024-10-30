@@ -109,11 +109,6 @@ export const blocks: ConfigBlock[] =
                             in: [ "Relevant to 2024 US Politics", "War" ]
                         }
                     }
-                },
-                title: {
-                    not: {
-                        contains: "nyheter"
-                    }
                 }
             },
             orderBy: {
