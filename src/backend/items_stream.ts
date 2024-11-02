@@ -139,7 +139,7 @@ export class ItemsStream {
         });
 
         // Traverse updatedItems in order and enqueue items.
-        let taken = 0;
+        const seenItemIds: number[] = [];
         for (const itemPromise of updatedItems) {
             const item = await itemPromise; // Wait for the operations to finish for this item
             if (item) {
@@ -148,10 +148,10 @@ export class ItemsStream {
                     block_title: this.currentBlock.title,
                     feed_title: this.feed.title
                 });
-                taken++;
+                seenItemIds.push(item.id);
                 console.log('Enqueued item:', item.id);
             }
-            if (this.query?.take && taken >= this.query.take) {
+            if (this.query?.take && seenItemIds.length >= this.query.take) {
                 console.log('Found enough items. Going to next block.');
                 this.goToNextBlock();
                 return true;
@@ -162,13 +162,18 @@ export class ItemsStream {
         // We need to alter the query to go to the next batch of items.
         this.query = {
             ...this.query,
-            skip: this.query.skip ? this.query.skip + taken : taken,
-            take: this.query.take ? this.query.take - taken : undefined
+            take: this.query.take ? this.query.take - seenItemIds.length : undefined,
+            where: {
+                AND: [
+                    this.query.where ?? { id: { gte: 0 } }, // Again we use a vacuous condition that will always be true due to how Prisma behaves.
+                    { id: { notIn: seenItemIds } }
+                ]
+            }
         }
         console.log('Altered query:', this.query);
 
         if (this.stopLoadingIfNotItemsFor) {
-            if (taken === 0) {
+            if (seenItemIds.length === 0) {
                 this.notItemsFor += candidateItems.length;
             } else {
                 this.notItemsFor = 0;
@@ -181,7 +186,7 @@ export class ItemsStream {
         }
 
         // If no items were found, try again. Otherwise, let the controller pull again when it's ready.
-        if (taken === 0) {
+        if (seenItemIds.length === 0) {
             return true;
         } else {
             return false;
