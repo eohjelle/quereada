@@ -110,7 +110,6 @@ Here is a list of the keys you can set:
 | Key             | Service                 | Required?                                                          |
 | --------------- | ----------------------- | ------------------------------------------------------------------ |
 | OPENAI_API_KEY  | OpenAI                  | Yes, but this requirement should be removed in the future.         |
-| NYTIMES_API_KEY | NYTimesAPI source class | No in general, but required with the `quereada.config.ts` template |
 
 _Note:_ Usage of Quereada may incur costs with the services listed above. For example, the default implementation of summarization and topic relevance checks uses the OpenAI API. However, the software is designed to minimize the number of requests. For example, items are only summarized upon request, and filters are only applied when a feed using that filter is being loaded. Moreover, the results of summarization requests and topic relevance checks are stored, so that they are applied at most once per item.
 
