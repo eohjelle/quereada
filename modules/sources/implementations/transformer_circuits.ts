@@ -43,7 +43,8 @@ export class TransformerCircuits extends Source {
                 description: description ? description.trim() : article?.description ? article.description.trim() : undefined,
                 content: article?.content,
                 authors: article?.author ? authorListToConnectOrCreateField(authorListFromByline(article.author)) : undefined,
-                date_published: dateInfo ? new Date(dateInfo.year, this.getMonthNumber(dateInfo.month)) : new Date(),
+                // date_published: dateInfo ? new Date(dateInfo.year, this.getMonthNumber(dateInfo.month)) : new Date(),
+                date_published: new Date(), // todo: fix
                 image_link: article?.image,
                 number_of_words: article?.content?.split(' ').length,
                 link
