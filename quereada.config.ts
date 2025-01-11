@@ -53,15 +53,13 @@ export const sources: ConfigSource[] =
 export const filters: ConfigFilter[] = 
 [
     {
-        title: "Relevant to 2024 US Politics",
+        title: "Donald Trump",
         implementation: "RelevantToTopics",
         args: {
             topics: [
-                "The 2024 US Presidential Election" ,
                 "Donald Trump",
-                "J. D. Vance",
-                "Kamala Harris",
-                "Tim Walz"
+                "POTUS",
+                "President of the United States"
             ]
         }
     },
@@ -80,13 +78,12 @@ export const filters: ConfigFilter[] =
         }
     },
     {
-        title: "War",
+        title: "Wars",
         implementation: "RelevantToTopics",
         args: {
             topics: [
                 "War",
                 "Armed Conflict",
-                "Terrorism",
                 "Israeli-Palestinian Conflict",
                 "Russo-Ukrainian War"
             ]
@@ -97,7 +94,7 @@ export const filters: ConfigFilter[] =
 export const blocks: ConfigBlock[] = 
 [
     {
-        title: "News - No Election or War",
+        title: "Trump & War Free News",
         query: {
             where: {
                 source_name: {
@@ -106,7 +103,7 @@ export const blocks: ConfigBlock[] =
                 filters_passed: {
                     none: {
                         title: {
-                            in: [ "Relevant to 2024 US Politics", "War" ]
+                            in: [ "Donald Trump", "Wars" ]
                         }
                     }
                 }
@@ -140,7 +137,7 @@ export const blocks: ConfigBlock[] =
         }
     },
     {
-        title: "2024 Presidential Election",
+        title: "Trump News",
         query: {
             where: {
                 source_name: {
@@ -148,7 +145,7 @@ export const blocks: ConfigBlock[] =
                 },
                 filters_passed: {
                     some: {
-                        title: "Relevant to 2024 US Politics"
+                        title: "Donald Trump"
                     }
                 },
             },
@@ -158,14 +155,14 @@ export const blocks: ConfigBlock[] =
         }
     },
     {
-        title: "War",
+        title: "Wars",
         query: {
             where: {
                 source_name: {
                     in: [ "The Atlantic", "The New York Times" ]
                 },
                 filters_passed: {
-                    some: { title: "War" }
+                    some: { title: "Wars" }
                 }
             },
             orderBy: {
@@ -295,16 +292,16 @@ export const feeds: ConfigFeed[] =
         blocks: [ "Read Later" ]
     },
     {
-        title: "News - No Election or War",
-        blocks: [ "News - No Election or War" ]
+        title: "Trump & War Free News",
+        blocks: [ "Trump & War Free News" ]
     },
     {
-        title: "2024 Presidential Election",
-        blocks: [ "2024 Presidential Election" ]
+        title: "Trump News",
+        blocks: [ "Trump News" ]
     },
     {
-        title: "War",
-        blocks: [ "War" ]
+        title: "Wars",
+        blocks: [ "Wars" ]
     },
     {
         title: "Food for Thought",
