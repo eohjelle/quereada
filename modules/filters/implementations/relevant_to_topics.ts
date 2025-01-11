@@ -19,7 +19,7 @@ export const RelevantToTopics: FilterConstructor<{ topics: string[] }> = ({ topi
         description: item.description
     };
     const completion = await openai.beta.chat.completions.parse({
-        model: 'gpt-4o-2024-08-06',
+        model: 'gpt-4o-mini',
         messages: [
             { role: 'system', content: 'Determine if the following article is relevant to the topics.'},
             { role: 'user', content: JSON.stringify(itemToPrompt)}
