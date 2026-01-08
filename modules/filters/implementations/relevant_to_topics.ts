@@ -9,9 +9,7 @@ const openai = new OpenAI();
 export const RelevantToTopics: FilterConstructor<{ topics: string[] }> = ({ topics }) => async (item: FilterItem) => {
     const topicsEnum = z.enum(topics as [string, ...string[]]);
     const response_object = z.object({
-        explanation: z.string(),
-        relevant_topics: z.array(topicsEnum),
-        is_relevant: z.boolean()
+        relevant_topics: z.array(topicsEnum)
     });
     const itemToPrompt = {
         source: item.source_name,
@@ -19,7 +17,7 @@ export const RelevantToTopics: FilterConstructor<{ topics: string[] }> = ({ topi
         description: item.description
     };
     const completion = await openai.beta.chat.completions.parse({
-        model: 'gpt-4o-mini',
+        model: 'gpt-5-nano',
         messages: [
             { role: 'system', content: 'Determine if the following article is relevant to the topics.'},
             { role: 'user', content: JSON.stringify(itemToPrompt)}
@@ -33,8 +31,7 @@ export const RelevantToTopics: FilterConstructor<{ topics: string[] }> = ({ topi
     if (!response) {
         throw new Error(`Attempt to decide if item ${item.title} is relevant to topics ${topics} failed`);
     }
-    // (`Asked gpt-4o if ${item.title} is relevant to topic group ${topic_group_title}. Response: ${response}`);
-    return JSON.parse(response).is_relevant;
+    return JSON.parse(response).relevant_topics.length > 0;
 }
 
 
