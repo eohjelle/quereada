@@ -1,11 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 
-console.log(`Loading database at ${process.env.DATABASE_URL}...`);
+const databaseUrl = process.env.DATABASE_URL || 'file:./store.db';
+console.log(`Loading database at ${databaseUrl}...`);
 
 export const db = new PrismaClient({
     datasources: {
         db: {
-            url: process.env.DATABASE_URL
+            url: databaseUrl
         }
     },
     log: ['warn', 'error']
