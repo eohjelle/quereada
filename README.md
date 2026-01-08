@@ -1,13 +1,17 @@
 # Quereada
 
-Quereada is an open-source and free to use app that provides tools to build your own feeds from the internet and display them in an elegant interface. It is available as a desktop app or self-hosted web app.
-[Click here](https://quereada-342c36fe2c15.herokuapp.com) to see a demo.
+Quereada provides tools to build your own feeds from anything that is on the internet. It is available as a desktop app or self-hosted web app. [Click here](https://quereada-342c36fe2c15.herokuapp.com) to see a demo.
 
-Quereada is similar to many RSS readers, but with the twist that feeds are built from queries to a database of items, instead of using each source as its own feed. This makes Quereada more flexible and customizable than most RSS readers. In more detail, Quereada works by:
+Quereada is inspired by RSS readers, but it is a lot more customizable and flexible. Think of it as an ETL (Extract, Transform, Load) pipeline for information. It is built from modular components:
 
-1. Collecting new _items_ (articles, links, videos, etc.) from various _sources_ (RSS feeds, API endpoints, websites, etc.) on the internet.
-2. Building feeds using _queries_ to the database of collected items. Feeds can be defined and ordered in terms of properties such as source, date published, authors, whether the item has been seen or clicked before, number of words, number of likes, and more.
-3. Adding additional _filters_ on top of the queries. For example, it is possible to filter items by whether or not they are relevant to any topic.
+1. _Sources_: Generalized RSS feeds which collect _items_ from anything on the internet and store them in a local database. Examples: news articles, arxiv papers, blog posts, tweets, sports games, job postings.
+2. _Filters_: Used to filter items. For example, by filtering for items that are relevant (or not) to certain topics. To save costs, this is only done on demand (i. e. not for all items stored in the database) and the results cached.
+3. _Blocks_: Components used to sequentially describe feeds. They are:
+
+- _Streams_: Infinite-scroll like streams of items described by SQL-like _queries_ to the database.
+- _Digests_: Use LLMs to digest blocks of items. These are composable.
+
+4. _Feeds_: The sequence of blocks that the user sees.
 
 Some services such as summarization or filtering by relevance to topics rely on external APIs. To use these services it is necessary to provide API keys, and costs may apply. However, Quereada is designed to minimize the number of requests, and to store the results of requests to avoid making duplicate requests.
 
@@ -107,9 +111,9 @@ Some services require keys. Depending on whether you use the desktop or web vers
 
 Here is a list of the keys you can set:
 
-| Key             | Service                 | Required?                                                          |
-| --------------- | ----------------------- | ------------------------------------------------------------------ |
-| OPENAI_API_KEY  | OpenAI                  | Yes, but this requirement should be removed in the future.         |
+| Key            | Service | Required?                                                  |
+| -------------- | ------- | ---------------------------------------------------------- |
+| OPENAI_API_KEY | OpenAI  | Yes, but this requirement should be removed in the future. |
 
 _Note:_ Usage of Quereada may incur costs with the services listed above. For example, the default implementation of summarization and topic relevance checks uses the OpenAI API. However, the software is designed to minimize the number of requests. For example, items are only summarized upon request, and filters are only applied when a feed using that filter is being loaded. Moreover, the results of summarization requests and topic relevance checks are stored, so that they are applied at most once per item.
 
@@ -148,11 +152,3 @@ A filter is an implementation of the `Filter` type in `modules/filters`. A filte
 - Add support for more sources:
   - [ ] Email newsletters
   - [ ] Major platforms (YouTube, Reddit, Twitter/X)
-- Improve support for current sources:
-  - [ ] Enable summarization of NYTimes articles (will require a subscription to NYTimes and captcha solving).
-
-# Disclaimer
-
-I built Quereada as a personal project, because it was a product that I wanted to use and share with others, and because I wanted to learn about full-stack development. However, I'm not a professional software engineer, so some design choices in the project may be non-standard.
-
-If you would like to contribute to the project, please do not hesitate to contact me.
