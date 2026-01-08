@@ -79,7 +79,7 @@
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    margin: 5px;
+    margin: 5px 0;
     background-color: #ffffff;
     display: grid;
     grid-template-columns: 1fr 50px;

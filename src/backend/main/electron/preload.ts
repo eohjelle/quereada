@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import type { Feed } from '$lib/types';
+import type { Feed, DigestItem } from '$lib/types';
 import type { Prisma } from '@prisma/client';
 import type { FrontendRequest, Instructions, BackendResponse } from '$bridge/loading_items_to_feed/types';
 
@@ -25,7 +25,29 @@ contextBridge.exposeInMainWorld('electronAPI', {
     },
     refreshFeeds: () => ipcRenderer.invoke('refresh_feeds'),
     getFeedData: () => ipcRenderer.invoke('get_feed_data'),
-    getRawConfig: () => ipcRenderer.invoke('get_raw_config')
+    getRawConfig: () => ipcRenderer.invoke('get_raw_config'),
+    generateDigest: (blockTitle: string, callback: (chunk: string | null) => void) => {
+        const digestChunkHandler = (event: any, data: any) => {
+            const { blockTitle: bt, type, textChunk, error } = data as { blockTitle: string, type: 'chunk' | 'end' | 'error', textChunk?: string, error?: string };
+            if (bt === blockTitle && type === 'chunk' && textChunk !== undefined) {
+                callback(textChunk);
+            } else if (bt === blockTitle && type === 'end') {
+                callback(null); // Signify end of stream
+                ipcRenderer.removeListener('digest', digestChunkHandler);
+            } else if (bt === blockTitle && type === 'error') {
+                console.error('Digest error:', error);
+                callback(null);
+                ipcRenderer.removeListener('digest', digestChunkHandler);
+            }
+        };
+        ipcRenderer.on('digest', digestChunkHandler);
+        ipcRenderer.send('generate_digest', blockTitle);
+
+        return () => {
+            ipcRenderer.removeListener('digest', digestChunkHandler);
+        };
+    },
+    getDigestItems: (itemIds: number[]) => ipcRenderer.invoke('get_digest_items', itemIds)
 });
 
 /** This sets up the API used in src/bridge/loading_items_to_feed/electron/frontend.ts */
@@ -36,12 +58,14 @@ contextBridge.exposeInMainWorld('feedAPI', {
 /** Electron's IPC allows the above to be accessed as methods of the window object, so we need to declare this to avoid type errors. */
 declare global {
     interface Window {
-        electronAPI: { 
+        electronAPI: {
             itemUpdate: (request: Prisma.ItemUpdateArgs) => Promise<void>,
             getSummary: (item_id: number, callback: (chunk: string | null) => void) => Promise<() => void>,
             refreshFeeds: () => Promise<void>,
             getFeedData: () => Promise<Feed[]>,
-            getRawConfig: () => Promise<string>
+            getRawConfig: () => Promise<string>,
+            generateDigest: (blockTitle: string, callback: (chunk: string | null) => void) => () => void,
+            getDigestItems: (itemIds: number[]) => Promise<DigestItem[]>
         },
         feedAPI: {
             sendRequest<T extends BackendResponse>(request: FrontendRequest, instructions?: Instructions): Promise<T>,

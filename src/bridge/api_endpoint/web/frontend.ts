@@ -1,6 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import { EndpointFrontend } from "../frontend";
-import { type Feed } from '$lib/types';
+import { type Feed, type DigestDisplayItem } from '$lib/types';
 
 export class WebEndpointFrontend extends EndpointFrontend {
     protected async itemUpdate(request: Prisma.ItemUpdateArgs): Promise<void> {
@@ -62,5 +62,32 @@ export class WebEndpointFrontend extends EndpointFrontend {
             throw new Error("Failed to get raw config");
         }
         return response.text();
+    }
+
+    async generateDigest(blockTitle: string): Promise<ReadableStream<string>> {
+        const response = await fetch(`/api/generate_digest?block_title=${encodeURIComponent(blockTitle)}`, {
+            method: "GET"
+        });
+
+        if (!response.body) {
+            throw new Error(`Request to generate digest for block ${blockTitle} yielded a response with no body.`);
+        }
+
+        return response.body.pipeThrough(new TextDecoderStream());
+    }
+
+    async getDigestItems(itemIds: number[]): Promise<DigestDisplayItem[]> {
+        const response = await fetch("/api/get_digest_items", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ item_ids: itemIds }),
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to get digest items");
+        }
+        return response.json();
     }
 }

@@ -2,6 +2,12 @@ import ts from 'typescript';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
+import { configUtilities } from './config-utils';
+
+// Register config utilities as globals so they're available to config files
+for (const [name, value] of Object.entries(configUtilities)) {
+    (globalThis as Record<string, unknown>)[name] = value;
+}
 
 /** Compile a typescript file to a javascript file in a temporary folder and dynamically import it. */
 export async function importTypescript(filePath: string) {

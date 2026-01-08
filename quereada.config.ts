@@ -1,6 +1,7 @@
-import { subDays } from 'date-fns';
-
 import type { ConfigSource, ConfigFilter, ConfigBlock, ConfigFeed } from './src/backend/load_config';
+
+// Date utilities (subDays, addDays, etc.) are available as globals - no import needed
+declare const subDays: (date: Date, amount: number) => Date;
 
 
 export const sources: ConfigSource[] = 
@@ -274,11 +275,36 @@ export const blocks: ConfigBlock[] =
                 id: "desc"
             }
         }
+    },
+    {
+        title: "Daily Briefing",
+        implementation: "NewsBriefing",
+        args: {
+            focus_areas: ["politics", "technology", "culture"]
+        },
+        query: {
+            where: {
+                source_name: {
+                    in: ["The Atlantic", "The New York Times"]
+                },
+                date_added: {
+                    gte: subDays(new Date(), 3)
+                }
+            },
+            orderBy: {
+                date_published: "desc"
+            },
+            take: 15
+        }
     }
 ]
 
-export const feeds: ConfigFeed[] = 
+export const feeds: ConfigFeed[] =
 [
+    {
+        title: "Daily Digest",
+        blocks: [ "Daily Briefing", "Trump & War Free News" ]
+    },
     {
         title: "All items",
         blocks: [ "All items" ]

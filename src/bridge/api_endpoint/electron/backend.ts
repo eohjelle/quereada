@@ -65,5 +65,33 @@ export class ElectronEndpointBackend extends EndpointBackend {
                 return { error: 'Internal server error' };
             }
         });
+
+        ipcMain.on('generate_digest', async (event: IpcMainInvokeEvent, blockTitle: string) => {
+            try {
+                console.log('Received request to generate digest for block:', blockTitle);
+                const digestStream = await this.generateDigest(blockTitle);
+                digestStream.pipeTo(new WritableStream({
+                    write(chunk) {
+                        event.sender.send('digest', { blockTitle, type: 'chunk', textChunk: chunk });
+                    },
+                    close() {
+                        event.sender.send('digest', { blockTitle, type: 'end' });
+                    }
+                }));
+            } catch (error) {
+                console.error('Could not send digest from main process to renderer process.', error);
+                event.sender.send('digest', { blockTitle, type: 'error', error: String(error) });
+            }
+        });
+
+        ipcMain.handle('get_digest_items', async (event: IpcMainInvokeEvent, itemIds: number[]) => {
+            try {
+                const items = await this.getDigestItems(itemIds);
+                return items;
+            } catch (error) {
+                console.error('Error getting digest items:', error);
+                return { error: 'Internal server error' };
+            }
+        });
     }
 }

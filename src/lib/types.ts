@@ -67,11 +67,32 @@ export type ItemToSummarize = Pick<
 /** The type Author is the type returned by the Prisma client. */
 export { type Author } from '@prisma/client';
 
-/** The type Block is the type returned by the Prisma client with the parsed version of the query field. */
-export type Block = Omit<Prisma.BlockGetPayload<{}>, 'query'> & { query: Prisma.ItemFindManyArgs };
+/** The type Block is the type returned by the Prisma client with the parsed version of the query and args fields. */
+export type Block = Omit<Prisma.BlockGetPayload<{}>, 'query' | 'args'>
+    & { query: Prisma.ItemFindManyArgs }
+    & { args: Record<string, any> | null };
+
+/** Helper to check if a block is a digest block (implementation !== "ItemsStream") */
+export function isDigestBlock(block: Block): boolean {
+    return block.implementation !== 'ItemsStream';
+}
 
 /** The type Feed is the type returned by the Prisma client with the parsed version of the query field inside each Block. */
 export type Feed = Prisma.FeedGetPayload<{}> & { blocks: Block[] };
+
+/** The type of items passed to digesters for processing */
+export type DigestItem = Pick<
+    Item,
+    'id' | 'title' | 'description' | 'source_name' | 'date_published' | 'content' | 'link'
+> & { authors: Author[] };
+
+/** The type of items returned for inline display in digests - matches DisplayItem structure */
+export type DigestDisplayItem = Pick<
+    Item,
+    'id' | 'item_type' | 'source_name' | 'title' | 'description' | 'link' | 'date_published'
+    | 'image_link' | 'image_caption' | 'image_credit' | 'number_of_words' | 'likes' | 'comments_link'
+    | 'seen' | 'read_later' | 'saved' | 'summarizable'
+> & { authors: Author[] };
 
 /** The type Filter is the type returned by the Prisma client. */
 export type PrismaFilter = Prisma.FilterGetPayload<{}>;

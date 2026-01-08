@@ -13,7 +13,10 @@ export type ConfigSource = Pick<Prisma.SourceCreateInput, 'name' | 'implementati
         summarizable?: boolean
     } };
 export type ConfigFilter = Pick<Prisma.FilterCreateInput, 'title' | 'implementation'> & { args?: Record<string, any> };
-export type ConfigBlock = Pick<Prisma.BlockCreateInput, 'title'> & { query: Omit<Prisma.ItemFindManyArgs, 'filters_checked'> };
+export type ConfigBlock = Pick<Prisma.BlockCreateInput, 'title'>
+    & { implementation?: string }  // Defaults to "ItemsStream" if not specified
+    & { args?: Record<string, any> }  // For digest implementations
+    & { query: Omit<Prisma.ItemFindManyArgs, 'filters_checked'> };
 export type ConfigFeed = Pick<Prisma.FeedCreateInput, 'title'> & { blocks: string[] };
 
 export async function loadConfig(): Promise<void> {
@@ -51,7 +54,9 @@ export async function loadConfig(): Promise<void> {
     // Upsert blocks
     await Promise.all(blocks.map(async (block) => {
         const block_data = {
-            ...block,
+            title: block.title,
+            implementation: block.implementation ?? 'ItemsStream',
+            args: block.args ? JSON.stringify(block.args) : undefined,
             query: JSON.stringify(block.query)
         };
         await db.block.upsert({

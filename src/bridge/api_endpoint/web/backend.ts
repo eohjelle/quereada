@@ -80,5 +80,49 @@ export class WebEndpointBackend extends EndpointBackend {
                 res.status(500).json({ error: 'Internal server error' });
             }
         });
+
+        this.app.use('/api/generate_digest', express.urlencoded({ extended: false }));
+        this.app.get('/api/generate_digest', async (req, res) => {
+            try {
+                const blockTitle = req.query.block_title as string;
+                if (!blockTitle) {
+                    throw new Error('Missing block_title parameter');
+                }
+                const digestStream = await this.generateDigest(blockTitle);
+
+                res.setHeader('Content-Type', 'text/event-stream');
+                res.setHeader('Cache-Control', 'no-cache');
+                res.setHeader('Connection', 'keep-alive');
+
+                digestStream
+                    .pipeThrough(new TextEncoderStream())
+                    .pipeTo(new WritableStream({
+                        write(chunk) {
+                            res.write(chunk);
+                        },
+                        close() {
+                            res.end();
+                        }
+                    }));
+            } catch (error) {
+                console.error('Error generating digest:', error);
+                res.status(500).json({ error: 'Internal server error' });
+            }
+        });
+
+        this.app.use('/api/get_digest_items', express.json());
+        this.app.post('/api/get_digest_items', async (req, res) => {
+            try {
+                const itemIds = req.body.item_ids as number[];
+                if (!Array.isArray(itemIds)) {
+                    throw new Error('Invalid item_ids parameter');
+                }
+                const items = await this.getDigestItems(itemIds);
+                res.status(200).json(items);
+            } catch (error) {
+                console.error('Error getting digest items:', error);
+                res.status(500).json({ error: 'Internal server error' });
+            }
+        });
     }
 }

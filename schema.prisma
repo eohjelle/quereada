@@ -75,7 +75,9 @@ model Item {
 
 model Block {
   title                         String                @id @unique
-  query                         String // This should be a JSON string which can be jsonified into a valid query for the Prisma client's findMany method
+  implementation                String                @default("ItemsStream") // "ItemsStream" for item streaming, or a digester name like "NewsBriefing"
+  args                          String?               // JSON stringified args for digest implementations
+  query                         String                // This should be a JSON string which can be jsonified into a valid query for the Prisma client's findMany method
   stop_loading_if_not_items_for Int?
   feeds                         OrderedBlocksInFeed[]
   seen_items                    Item[]                @relation("item_seen_in_blocks")

@@ -1,107 +1,81 @@
 <script lang="ts">
-  import ItemContainer from "./ItemContainer.svelte";
-  import { onMount, onDestroy } from "svelte";
-  import type { DisplayItem } from "$lib/types";
-  import type { Feed as FeedType } from "$lib/types";
-  import { StreamInterface } from "$bridge/loading_items_to_feed/frontend";
-  import { WebStreamInterface } from "$bridge/loading_items_to_feed/web/frontend";
-  import { fade } from "svelte/transition";
+  import type { Feed as FeedType, Block } from "$lib/types";
+  import { isDigestBlock } from "$lib/types";
+  import type { StreamInterface } from "$bridge/loading_items_to_feed/frontend";
+  import ItemsStreamBlock from "./ItemsStreamBlock.svelte";
+  import DigestBlock from "./DigestBlock.svelte";
 
   export let feed: FeedType;
   export let streamInterface: StreamInterface;
-  let abortController = new AbortController();
-  let items: DisplayItem[] = [];
-  const pageSize = 5;
 
-  let showLoadingItemsMessage = false;
-  const resetShowLoadingItemsMessageTimer = (timeout?: NodeJS.Timeout) => {
-    if (timeout) {
-      clearTimeout(timeout);
+  // Group consecutive blocks by type (ItemsStream vs digest)
+  // This allows us to render ItemsStream blocks together and digest blocks separately
+  type BlockGroup = {
+    type: "items" | "digest";
+    blocks: Block[];
+  };
+
+  function groupBlocksByType(blocks: Block[]): BlockGroup[] {
+    const groups: BlockGroup[] = [];
+    let currentGroup: BlockGroup | null = null;
+
+    for (const block of blocks) {
+      const isDigest = isDigestBlock(block);
+      const groupType = isDigest ? "digest" : "items";
+
+      if (!currentGroup || currentGroup.type !== groupType) {
+        currentGroup = { type: groupType, blocks: [] };
+        groups.push(currentGroup);
+      }
+      currentGroup.blocks.push(block);
     }
-    return setTimeout(() => {
-      showLoadingItemsMessage = true;
-    }, 300);
-  };
 
-  let showLoadingItemsMessageTimer: NodeJS.Timeout;
-  let finishedLoading = false;
+    return groups;
+  }
 
-  let waitToGetAnotherItem: Promise<void> = Promise.resolve();
-  let getAnotherItem: () => void;
-  const setWaitToGetAnotherItem = () => {
-    waitToGetAnotherItem = new Promise((resolve) => (getAnotherItem = resolve));
-  };
+  $: blockGroups = groupBlocksByType(feed.blocks);
 
-  onMount(async () => {
-    showLoadingItemsMessageTimer = resetShowLoadingItemsMessageTimer();
-    console.log(`Initializing stream for feed ${feed.title}...`);
-    await streamInterface
-      .start({
-        feed: feed,
-        pageSize: pageSize,
-      })
-      .then((message) => {
-        console.log(message);
-      });
-    streamInterface.stream.pipeTo(
-      new WritableStream(
-        {
-          write: async (item) => {
-            items = [...items, item];
-
-            // If items hasn't been changed within 300ms, show "Loading items..."
-            showLoadingItemsMessage = false;
-            showLoadingItemsMessageTimer = resetShowLoadingItemsMessageTimer(
-              showLoadingItemsMessageTimer
-            );
-
-            // Only push new items when we are close to the end of the stream.
-            await waitToGetAnotherItem.then(setWaitToGetAnotherItem);
-
-            // Don't push all the items at once -- set a 100ms delay before the next item is pushed.
-            await new Promise((resolve) => setTimeout(resolve, 100));
-          },
-          close: () => {
-            finishedLoading = true;
-          },
-        },
-        new CountQueuingStrategy({ highWaterMark: pageSize })
-      ),
-      { signal: abortController.signal }
-    );
-  });
-
-  onDestroy(async () => {
-    console.log(`Closing stream for feed ${feed.title}...`);
-    abortController.abort();
-    await streamInterface.close();
-    clearTimeout(showLoadingItemsMessageTimer);
-    console.log(`Stream for feed ${feed.title} closed.`);
-  });
+  // Create a modified feed for ItemsStream groups (containing only ItemsStream blocks)
+  function createItemsStreamFeed(blocks: Block[]): FeedType {
+    return {
+      ...feed,
+      blocks: blocks,
+    };
+  }
 </script>
 
-<div class="items-container">
-  {#each items as item}
-    <ItemContainer {item} on:entered_view={getAnotherItem} />
+<div class="feed-container">
+  {#each blockGroups as group, i}
+    {#if i > 0}
+      <hr class="block-separator" />
+    {/if}
+    {#if group.type === "items"}
+      <!-- Render ItemsStream blocks as a group -->
+      <ItemsStreamBlock
+        feed={createItemsStreamFeed(group.blocks)}
+        {streamInterface}
+      />
+    {:else}
+      <!-- Render each digest block separately -->
+      {#each group.blocks as block}
+        <DigestBlock {block} feedTitle={feed.title} />
+      {/each}
+    {/if}
   {/each}
-
-  {#if finishedLoading}
-    <h1 style="text-alignment: center">No more items to show.</h1>
-  {:else if streamInterface instanceof WebStreamInterface && !streamInterface.isConnected}
-    <h1 style="text-alignment: center">
-      WebSocket disconnected. Refresh the page to reconnect.
-    </h1>
-  {:else if showLoadingItemsMessage}
-    <h1 style="text-alignment: center" in:fade>Loading items...</h1>
-  {/if}
 </div>
 
 <style>
-  .items-container {
-    place-items: center;
+  .feed-container {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    /* border: 2px solid red; */ /* For development purposes */
+    align-items: center;
+    width: 100%;
+  }
+
+  .block-separator {
+    width: min(1200px, 95vw);
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 20px 0;
   }
 </style>

@@ -1,12 +1,17 @@
 import type { Prisma } from "@prisma/client";
-import type { Feed } from "$lib/types";
+import type { Feed, DigestDisplayItem } from "$lib/types";
 
 export abstract class EndpointFrontend {
     protected abstract itemUpdate(request: Prisma.ItemUpdateArgs): Promise<void>;
     // Send a request to the backend to call db.item.update(request)
 
     abstract getSummary(item_id: number): Promise<ReadableStream<string>>;
-    
+
+    abstract generateDigest(blockTitle: string): Promise<ReadableStream<string>>;
+    // Send a request to generate a digest for a block
+
+    abstract getDigestItems(itemIds: number[]): Promise<DigestDisplayItem[]>;
+    // Fetch items by ID for inline expansion in digests
 
     abstract refreshFeeds(): Promise<void>;
     // Send a request to the backend to fetch new items from the sources
