@@ -13,6 +13,10 @@
   // The item to be displayed
   export let item: DisplayItem;
 
+  // When true, start the "seen" timer immediately on mount instead of waiting for intersection observer.
+  // Useful for inline items that are explicitly expanded by user action.
+  export let autoMarkSeen: boolean = false;
+
   // A dictionary to map names of item types (used in db) to the corresponding svelte component
   type Component = typeof Article | typeof Link;
   const svelte_component_of_type: {
@@ -38,6 +42,15 @@
   let hasEnteredView = false;
   const dispatch = createEventDispatcher();
 
+  onMount(() => {
+    if (autoMarkSeen) {
+      seen_timer = setTimeout(() => {
+        item.seen += 1;
+        api.updateSeen(item.id, item.feed_title, item.block_title);
+      }, 3000);
+    }
+  });
+
   onDestroy(() => {
     clearTimeout(seen_timer);
   });
@@ -58,6 +71,7 @@
     in:fade
     use:inview={{ threshold: 1 }}
     on:inview_enter={(event) => {
+      if (autoMarkSeen) return;
       seen_timer = setTimeout(() => {
         item.seen += 1;
         api.updateSeen(item.id, item.feed_title, item.block_title);
@@ -65,6 +79,7 @@
       }, 3000);
     }}
     on:inview_leave={() => {
+      if (autoMarkSeen) return;
       clearTimeout(seen_timer);
     }}
   >

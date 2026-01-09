@@ -82,7 +82,7 @@
     {@html split.before}
     <div class="inline-item-wrapper" transition:slide={{ duration: 200 }}>
       <button class="close-btn" on:click|stopPropagation={handleClose}>&times;</button>
-      <ItemContainer item={toDisplayItem(expandedItemData)} />
+      <ItemContainer item={toDisplayItem(expandedItemData)} autoMarkSeen={true} />
     </div>
     {@html split.after}
   {:else if fullHtml}

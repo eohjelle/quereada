@@ -5,8 +5,10 @@ import type { FilterConstructor, FilterItem } from '../index';
 
 const openai = new OpenAI();
 
+const DEFAULT_MODEL = 'gpt-5-nano';
+
 // todo: maybe add channel, language, etc, to help with context
-export const RelevantToTopics: FilterConstructor<{ topics: string[] }> = ({ topics }) => async (item: FilterItem) => {
+export const RelevantToTopics: FilterConstructor<{ topics: string[]; model?: string }> = ({ topics, model }) => async (item: FilterItem) => {
     const topicsEnum = z.enum(topics as [string, ...string[]]);
     const response_object = z.object({
         relevant_topics: z.array(topicsEnum)
@@ -17,7 +19,7 @@ export const RelevantToTopics: FilterConstructor<{ topics: string[] }> = ({ topi
         description: item.description
     };
     const completion = await openai.beta.chat.completions.parse({
-        model: 'gpt-5-nano',
+        model: model || DEFAULT_MODEL,
         messages: [
             { role: 'system', content: 'Determine if the following article is relevant to the topics.'},
             { role: 'user', content: JSON.stringify(itemToPrompt)}

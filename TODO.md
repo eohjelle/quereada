@@ -1,12 +1,9 @@
-# Bugs
-
-- Inline items in digests don't have their "seen" update as expected.
-
 # Features
 
 - Interface for setting API keys.
 - Usage statistics.
 - Warnings for high LLM usage (e. g. before trying to make a digest from thousands of items).
+  - For this, maybe best to create a small wrapper for LLM calls?
 
 ## Improve digests
 
