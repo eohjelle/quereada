@@ -4,7 +4,7 @@ import { handleSummarizeRequest } from '$src/backend/summarize';
 import { generateDigest as generateDigestBackend, getDigestItems as getDigestItemsBackend } from '$src/backend/digest';
 import { loadConfig } from '$src/backend/load_config';
 import { fetchItemsFromSources } from '$src/backend/fetch';
-import { type Feed, type DigestItem } from '$lib/types';
+import { type Feed, type DigestDisplayItem } from '$lib/types';
 import fs from 'fs';
 
 export class EndpointBackend {
@@ -43,8 +43,7 @@ export class EndpointBackend {
                         return {
                             title: block.block.title,
                             implementation: block.block.implementation,
-                            args: block.block.args ? JSON.parse(block.block.args) : null,
-                            query: JSON.parse(block.block.query) as Prisma.ItemFindManyArgs,
+                            args: JSON.parse(block.block.args),
                             stop_loading_if_not_items_for: block.block.stop_loading_if_not_items_for
                         }
                 })
@@ -57,7 +56,7 @@ export class EndpointBackend {
         return generateDigestBackend(blockTitle);
     }
 
-    protected async getDigestItems(itemIds: number[]): Promise<DigestItem[]> {
+    protected async getDigestItems(itemIds: number[]): Promise<DigestDisplayItem[]> {
         return getDigestItemsBackend(itemIds);
     }
 

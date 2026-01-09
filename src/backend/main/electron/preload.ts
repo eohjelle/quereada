@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import type { Feed, DigestItem } from '$lib/types';
+import type { Feed, DigestDisplayItem } from '$lib/types';
 import type { Prisma } from '@prisma/client';
 import type { FrontendRequest, Instructions, BackendResponse } from '$bridge/loading_items_to_feed/types';
 
@@ -65,7 +65,7 @@ declare global {
             getFeedData: () => Promise<Feed[]>,
             getRawConfig: () => Promise<string>,
             generateDigest: (blockTitle: string, callback: (chunk: string | null) => void) => () => void,
-            getDigestItems: (itemIds: number[]) => Promise<DigestItem[]>
+            getDigestItems: (itemIds: number[]) => Promise<DigestDisplayItem[]>
         },
         feedAPI: {
             sendRequest<T extends BackendResponse>(request: FrontendRequest, instructions?: Instructions): Promise<T>,
