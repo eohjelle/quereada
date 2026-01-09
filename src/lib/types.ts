@@ -67,10 +67,16 @@ export type ItemToSummarize = Pick<
 /** The type Author is the type returned by the Prisma client. */
 export { type Author } from '@prisma/client';
 
-/** The type Block is the type returned by the Prisma client with the parsed version of the query and args fields. */
-export type Block = Omit<Prisma.BlockGetPayload<{}>, 'query' | 'args'>
-    & { query: Prisma.ItemFindManyArgs }
-    & { args: Record<string, any> | null };
+/** The type Block is the type returned by the Prisma client with the parsed version of the args field. */
+export type Block = Omit<Prisma.BlockGetPayload<{}>, 'args'>
+    & { args: BlockArgs };
+
+/** Args for blocks - ItemsStream blocks have query, digesters have input_blocks */
+export type BlockArgs = {
+    query?: Prisma.ItemFindManyArgs;
+    input_blocks?: string[];
+    [key: string]: any;
+};
 
 /** Helper to check if a block is a digest block (implementation !== "ItemsStream") */
 export function isDigestBlock(block: Block): boolean {

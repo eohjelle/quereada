@@ -1,16 +1,17 @@
 import { db } from '$src/backend/database';
-import { digesters } from '$root/modules/digesters';
-import type { DigestItem, DigestDisplayItem } from '$lib/types';
+import { BlockExecutor } from '$root/modules/blocks';
+import type { DigestDisplayItem } from '$lib/types';
 
 /**
  * Generate a digest for a block.
- * Fetches items matching the block's query and processes them through the digester.
+ * Uses BlockExecutor to properly handle input_blocks and chaining.
  *
  * @param blockTitle - The title of the block to generate a digest for
+ * @param feedTitle - Optional feed title for context
  * @returns A ReadableStream of the digest content
  */
-export async function generateDigest(blockTitle: string): Promise<ReadableStream<string>> {
-    // Get the block from the database
+export async function generateDigest(blockTitle: string, feedTitle: string = ''): Promise<ReadableStream<string>> {
+    // Get the block from the database to verify it's a digest block
     const block = await db.block.findUnique({
         where: { title: blockTitle }
     });
@@ -23,27 +24,15 @@ export async function generateDigest(blockTitle: string): Promise<ReadableStream
         throw new Error(`Block "${blockTitle}" is not a digest block (implementation is ItemsStream)`);
     }
 
-    // Get the digester constructor
-    const digesterConstructor = digesters[block.implementation];
-    if (!digesterConstructor) {
-        throw new Error(`Digester implementation "${block.implementation}" not found`);
+    // Use BlockExecutor to handle input_blocks and chaining
+    const executor = new BlockExecutor(feedTitle);
+    const output = await executor.execute(blockTitle);
+
+    if (output.type !== 'content') {
+        throw new Error(`Block "${blockTitle}" did not produce content output`);
     }
 
-    // Parse the query and args
-    const query = JSON.parse(block.query);
-    const args = block.args ? JSON.parse(block.args) : {};
-
-    // Fetch items matching the query
-    const items = await db.item.findMany({
-        ...query,
-        include: {
-            authors: true
-        }
-    }) as DigestItem[];
-
-    // Create the digester and generate the digest
-    const digester = digesterConstructor(args);
-    return digester(items);
+    return output.stream;
 }
 
 /**

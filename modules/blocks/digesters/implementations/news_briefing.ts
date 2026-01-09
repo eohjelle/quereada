@@ -1,7 +1,29 @@
 import OpenAI from 'openai';
-import type { DigesterConstructor, DigestItem } from '../index';
+import type { DisplayItem } from '$lib/types';
+import type { DigesterConstructor, BlockOutput } from '../index';
+import { collectItems, toDigestItems } from '../utils';
 
 const openai = new OpenAI();
+
+/**
+ * Collects all text content from a content stream.
+ */
+async function collectContent(stream: ReadableStream<string>): Promise<string> {
+    const chunks: string[] = [];
+    const reader = stream.getReader();
+
+    try {
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            chunks.push(value);
+        }
+    } finally {
+        reader.releaseLock();
+    }
+
+    return chunks.join('');
+}
 
 /**
  * NewsBriefing digester: Creates a summary/briefing of multiple news items.
@@ -12,7 +34,27 @@ const openai = new OpenAI();
  * @param focus_areas - Optional array of topics to focus on in the briefing
  */
 export const NewsBriefing: DigesterConstructor<{ focus_areas?: string[] }> = ({ focus_areas }) =>
-    async (items: DigestItem[]): Promise<ReadableStream<string>> => {
+    async (inputs: BlockOutput[]): Promise<ReadableStream<string>> => {
+        // Collect items and content from all input blocks
+        const allDisplayItems: DisplayItem[] = [];
+        const upstreamContent: string[] = [];
+
+        for (const input of inputs) {
+            if (input.type === 'items') {
+                // Collect items from item stream
+                const displayItems = await collectItems(input.stream);
+                allDisplayItems.push(...displayItems);
+            } else {
+                // Collect content from upstream digester
+                const content = await collectContent(input.stream);
+                upstreamContent.push(content);
+            }
+        }
+
+        // Fetch additional fields if needed (like content for summarization)
+        // For now we just need basic info for the briefing
+        const items = await toDigestItems(allDisplayItems);
+
         // Build items context with IDs for referencing
         const itemsContext = items.map(item => ({
             id: item.id,
@@ -43,11 +85,20 @@ Example of correct output:
 <h2>Politics</h2>
 <p>Tensions continue [321]. New policies announced [654].</p>`;
 
+        // Build user message with items and any upstream content
+        let userContent = '';
+        if (upstreamContent.length > 0) {
+            userContent += 'Previous briefing content to incorporate:\n\n';
+            userContent += upstreamContent.join('\n\n---\n\n');
+            userContent += '\n\n---\n\nAdditional items:\n\n';
+        }
+        userContent += JSON.stringify(itemsContext);
+
         const stream = await openai.chat.completions.create({
             model: "gpt-5-mini",
             messages: [
                 { role: "system", content: systemPrompt },
-                { role: "user", content: JSON.stringify(itemsContext) }
+                { role: "user", content: userContent }
             ],
             stream: true
         });

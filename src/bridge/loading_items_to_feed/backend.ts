@@ -1,10 +1,10 @@
-import { ItemsStream } from '$src/backend/items_stream';
+import { ItemsIterator } from '$root/modules/blocks/items_iterator';
 import type { Instructions } from './types';
 
 
-// A request to get an item should call itemsReader.read() and return the value. 
+// A request to get an item should call itemsReader.read() and return the value.
 export abstract class StreamBackend<T = any> {
-    protected stream: Map<T, ItemsStream>;
+    protected stream: Map<T, ItemsIterator>;
     protected reader: Map<T, ReadableStreamDefaultReader>;
     protected operationQueue: Map<T, Promise<any>>;
 
@@ -29,9 +29,9 @@ export abstract class StreamBackend<T = any> {
     protected async initClient(client: T, instructions: Instructions): Promise<void> {
         return this.enqueueOperation(client, async () => {
             console.log(`Initializing stream for client with instructions`, instructions);
-            const itemsStream = new ItemsStream(instructions);
-            this.stream.set(client, itemsStream);
-            this.reader.set(client, itemsStream.stream.getReader());
+            const itemsIterator = new ItemsIterator(instructions);
+            this.stream.set(client, itemsIterator);
+            this.reader.set(client, itemsIterator.stream.getReader());
             console.log(`Stream for client initialized.`);
         });
     }

@@ -13,15 +13,18 @@ export type ConfigSource = Pick<Prisma.SourceCreateInput, 'name' | 'implementati
         summarizable?: boolean
     } };
 export type ConfigFilter = Pick<Prisma.FilterCreateInput, 'title' | 'implementation'> & { args?: Record<string, any> };
+export type ConfigQuery = { title: string } & Omit<Prisma.ItemFindManyArgs, 'include'>;
 export type ConfigBlock = Pick<Prisma.BlockCreateInput, 'title'>
-    & { implementation?: string }  // Defaults to "ItemsStream" if not specified
-    & { args?: Record<string, any> }  // For digest implementations
-    & { query: Omit<Prisma.ItemFindManyArgs, 'filters_checked'> };
+    & { implementation: string }  // Required for blocks (e.g., "NewsBriefing")
+    & { args: {
+        input_blocks?: string[];  // For digester blocks
+        [key: string]: any;
+    }};
 export type ConfigFeed = Pick<Prisma.FeedCreateInput, 'title'> & { blocks: string[] };
 
 export async function loadConfig(): Promise<void> {
-    const { sources, filters, blocks, feeds } = await importTypescript(process.env.CONFIG_PATH!) as {
-        sources: ConfigSource[], filters: ConfigFilter[], blocks: ConfigBlock[], feeds: ConfigFeed[]
+    const { sources, filters, queries, blocks, feeds } = await importTypescript(process.env.CONFIG_PATH!) as {
+        sources: ConfigSource[], filters: ConfigFilter[], queries?: ConfigQuery[], blocks?: ConfigBlock[], feeds: ConfigFeed[]
     };
 
     // Upsert sources with channels
@@ -51,13 +54,27 @@ export async function loadConfig(): Promise<void> {
         });
     }));
 
-    // Upsert blocks
-    await Promise.all(blocks.map(async (block) => {
+    // Upsert queries as ItemsStream blocks
+    await Promise.all((queries ?? []).map(async (query) => {
+        const { title, ...queryFields } = query;
+        const block_data = {
+            title: title,
+            implementation: 'ItemsStream',
+            args: JSON.stringify({ query: queryFields })
+        };
+        await db.block.upsert({
+            where: { title },
+            update: block_data,
+            create: block_data
+        });
+    }));
+
+    // Upsert blocks (digesters)
+    await Promise.all((blocks ?? []).map(async (block) => {
         const block_data = {
             title: block.title,
-            implementation: block.implementation ?? 'ItemsStream',
-            args: block.args ? JSON.stringify(block.args) : undefined,
-            query: JSON.stringify(block.query)
+            implementation: block.implementation,
+            args: JSON.stringify(block.args)
         };
         await db.block.upsert({
             where: { title: block.title },
@@ -107,9 +124,15 @@ export async function loadConfig(): Promise<void> {
             title: { notIn: feeds.map(feed => feed.title) }
         }
     });
+
+    // Collect all valid block titles from both queries and blocks
+    const allBlockTitles = [
+        ...(queries ?? []).map(q => q.title),
+        ...(blocks ?? []).map(b => b.title)
+    ];
     await db.block.deleteMany({
         where: {
-            title: { notIn: blocks.map(block => block.title) }
+            title: { notIn: allBlockTitles }
         }
     });
 

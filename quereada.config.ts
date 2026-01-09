@@ -1,13 +1,13 @@
-import type { ConfigSource, ConfigFilter, ConfigBlock, ConfigFeed } from './src/backend/load_config';
+import type { ConfigSource, ConfigFilter, ConfigQuery, ConfigBlock, ConfigFeed } from './src/backend/load_config';
 
 // Date utilities (subDays, addDays, etc.) are available as globals - no import needed
 declare const subDays: (date: Date, amount: number) => Date;
 
 
-export const sources: ConfigSource[] = 
+export const sources: ConfigSource[] =
 [
-    { 
-        name: 'The New York Times', 
+    {
+        name: 'The New York Times',
         implementation: 'RSS',
         args: {
             urls: [
@@ -21,9 +21,9 @@ export const sources: ConfigSource[] =
             summarizable: false
         }
     },
-    { 
-        name: 'The Atlantic', 
-        implementation: 'RSS', 
+    {
+        name: 'The Atlantic',
+        implementation: 'RSS',
         args: {
             urls: [ 'https://www.theatlantic.com/feed/bestof/' ]
         },
@@ -33,9 +33,9 @@ export const sources: ConfigSource[] =
             summarizable: true
         }
     },
-    { 
-        name: "Dan Carlin's Substack", 
-        implementation: 'RSS', 
+    {
+        name: "Dan Carlin's Substack",
+        implementation: 'RSS',
         args: {
             urls: [ 'https://dancarlin.substack.com/feed' ]
         },
@@ -51,7 +51,7 @@ export const sources: ConfigSource[] =
     }
 ];
 
-export const filters: ConfigFilter[] = 
+export const filters: ConfigFilter[] =
 [
     {
         title: "Donald Trump",
@@ -92,212 +92,193 @@ export const filters: ConfigFilter[] =
     }
 ];
 
-export const blocks: ConfigBlock[] = 
+export const queries: ConfigQuery[] =
 [
     {
         title: "Trump & War Free News",
-        query: {
-            where: {
-                source_name: {
-                    in: [ "The Atlantic", "The New York Times" ]
-                },
-                filters_passed: {
-                    none: {
-                        title: {
-                            in: [ "Donald Trump", "Wars" ]
-                        }
+        where: {
+            source_name: {
+                in: [ "The Atlantic", "The New York Times" ]
+            },
+            filters_passed: {
+                none: {
+                    title: {
+                        in: [ "Donald Trump", "Wars" ]
                     }
                 }
-            },
-            orderBy: {
-                date_published: "desc"
             }
+        },
+        orderBy: {
+            date_published: "desc"
         }
     },
     {
         title: "Food for Thought",
-        query: {
-            where: {
-                OR: [
-                    {
-                        source_name: {
-                            in: [ "The Atlantic" ]
-                        },
-                        number_of_words: {
-                            gte: 3500
-                        }
+        where: {
+            OR: [
+                {
+                    source_name: {
+                        in: [ "The Atlantic" ]
                     },
-                    {
-                        source_name: "Aeon"
+                    number_of_words: {
+                        gte: 3500
                     }
-                ]
-            },
-            orderBy: {
-                date_added: "desc"
-            }
+                },
+                {
+                    source_name: "Aeon"
+                }
+            ]
+        },
+        orderBy: {
+            date_added: "desc"
         }
     },
     {
         title: "Trump News",
-        query: {
-            where: {
-                source_name: {
-                    in: [ "The Atlantic", "The New York Times" ]
-                },
-                filters_passed: {
-                    some: {
-                        title: "Donald Trump"
-                    }
-                },
+        where: {
+            source_name: {
+                in: [ "The Atlantic", "The New York Times" ]
             },
-            orderBy: {
-                date_published: "desc"
-            }
+            filters_passed: {
+                some: {
+                    title: "Donald Trump"
+                }
+            },
+        },
+        orderBy: {
+            date_published: "desc"
         }
     },
     {
         title: "Wars",
-        query: {
-            where: {
-                source_name: {
-                    in: [ "The Atlantic", "The New York Times" ]
-                },
-                filters_passed: {
-                    some: { title: "Wars" }
-                }
+        where: {
+            source_name: {
+                in: [ "The Atlantic", "The New York Times" ]
             },
-            orderBy: {
-                date_published: "desc"
+            filters_passed: {
+                some: { title: "Wars" }
             }
+        },
+        orderBy: {
+            date_published: "desc"
         }
     },
     {
         title: "Environmental News",
-        query: {
-            where: {
-                filters_passed: {
-                    some: {
-                        title: "Relevant to Environmental Issues"
-                    }
-                },
-                source_name: {
-                    in: ["The Atlantic", "The New York Times"]
+        where: {
+            filters_passed: {
+                some: {
+                    title: "Relevant to Environmental Issues"
                 }
             },
-            orderBy: {
-                date_published: "desc"
+            source_name: {
+                in: ["The Atlantic", "The New York Times"]
             }
+        },
+        orderBy: {
+            date_published: "desc"
         }
     },
     {
         title: "Articles by George Packer",
-        query: {
-            where: {
-                authors: {
-                    some: {
-                        name: "George Packer"
-                    }
+        where: {
+            authors: {
+                some: {
+                    name: "George Packer"
                 }
-            },
-            orderBy: {
-                date_published: "desc"
             }
+        },
+        orderBy: {
+            date_published: "desc"
         }
     },
     {
         title: "Articles by Olga Khazan",
-        query: {
-            where: {
-                authors: {
-                    some: {
-                        name: "Olga Khazan"
-                    }
+        where: {
+            authors: {
+                some: {
+                    name: "Olga Khazan"
                 }
-            },
-            orderBy: {
-                date_published: "desc"
             }
+        },
+        orderBy: {
+            date_published: "desc"
         }
     },
     {
         title: "Dan Carlin",
-        query: {
-            where: {
-                authors: {
-                    some: { name: "Dan Carlin" }
-                }
-            },
-            orderBy: {
-                date_published: "desc"
+        where: {
+            authors: {
+                some: { name: "Dan Carlin" }
             }
+        },
+        orderBy: {
+            date_published: "desc"
         }
     },
     {
         title: "Unseen Items",
-        query: {
-            where: {
-                seen: {
-                    equals: 0
-                }
-            },
-            orderBy: {
-                date_added: "desc"
+        where: {
+            seen: {
+                equals: 0
             }
+        },
+        orderBy: {
+            date_added: "desc"
         }
     },
     {
         title: "Read Later",
-        query: {
-            where: {
-                read_later: true
-            },
-            orderBy: {
-                date_added: "desc"
-            }
+        where: {
+            read_later: true
+        },
+        orderBy: {
+            date_added: "desc"
         }
     },
     {
         title: "Saved items",
-        query: {
-            where: 
-            {
-                saved: true
-            },
-            orderBy: {
-                date_added: "desc"
-            }
+        where: {
+            saved: true
+        },
+        orderBy: {
+            date_added: "desc"
         }
     },
     {
         title: "All items",
-        query: {
-            orderBy: {
-                id: "desc"
-            }
+        orderBy: {
+            id: "desc"
         }
     },
+    {
+        title: "Daily Briefing Items",
+        where: {
+            source_name: {
+                in: ["The Atlantic", "The New York Times"]
+            },
+            date_added: {
+                gte: subDays(new Date(), 3)
+            }
+        },
+        orderBy: {
+            date_published: "desc"
+        },
+        take: 15
+    }
+];
+
+export const blocks: ConfigBlock[] =
+[
     {
         title: "Daily Briefing",
         implementation: "NewsBriefing",
         args: {
-            focus_areas: ["politics", "technology", "culture"]
-        },
-        query: {
-            where: {
-                source_name: {
-                    in: ["The Atlantic", "The New York Times"]
-                },
-                date_added: {
-                    gte: subDays(new Date(), 3)
-                }
-            },
-            orderBy: {
-                date_published: "desc"
-            },
-            take: 15
+            focus_areas: ["politics", "technology", "culture"],
+            input_blocks: ["Daily Briefing Items"]
         }
     }
-]
+];
 
 export const feeds: ConfigFeed[] =
 [

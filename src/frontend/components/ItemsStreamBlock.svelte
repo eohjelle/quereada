@@ -1,13 +1,14 @@
 <script lang="ts">
   import ItemContainer from "./ItemContainer.svelte";
   import { onMount, onDestroy } from "svelte";
-  import type { DisplayItem, Feed as FeedType, Block } from "$lib/types";
+  import type { DisplayItem, Block } from "$lib/types";
   import type { StreamInterface } from "$bridge/loading_items_to_feed/frontend";
   import { WebStreamInterface } from "$bridge/loading_items_to_feed/web/frontend";
   import { fade } from "svelte/transition";
 
-  // Pass in a feed with only ItemsStream blocks
-  export let feed: FeedType;
+  // Pass in a single block to stream
+  export let block: Block;
+  export let feedTitle: string;
   export let streamInterface: StreamInterface;
 
   let abortController = new AbortController();
@@ -34,17 +35,12 @@
   };
 
   onMount(async () => {
-    // Only proceed if there are blocks to stream
-    if (feed.blocks.length === 0) {
-      finishedLoading = true;
-      return;
-    }
-
     showLoadingItemsMessageTimer = resetShowLoadingItemsMessageTimer();
-    console.log(`Initializing stream for ItemsStream blocks in feed ${feed.title}...`);
+    console.log(`Initializing stream for block "${block.title}" in feed "${feedTitle}"...`);
     await streamInterface
       .start({
-        feed: feed,
+        block: block,
+        feedTitle: feedTitle,
         pageSize: pageSize,
       })
       .then((message) => {
@@ -79,11 +75,11 @@
   });
 
   onDestroy(async () => {
-    console.log(`Closing stream for feed ${feed.title}...`);
+    console.log(`Closing stream for block "${block.title}"...`);
     abortController.abort();
     await streamInterface.close();
     clearTimeout(showLoadingItemsMessageTimer);
-    console.log(`Stream for feed ${feed.title} closed.`);
+    console.log(`Stream for block "${block.title}" closed.`);
   });
 </script>
 
