@@ -96,3 +96,8 @@ npm run electron:dev                      # Desktop with hot reload
 npm run web:build && npm run web:start    # Web app
 npm run test                              # Run tests
 ```
+
+## Limitations
+
+- Many popular platforms make it very difficult to extract content without browsing as a human, having strong anti-bot detection, non-existent or costly API, and no alternative methods of access like RSS.
+- The app is only designed for desktop use. 
