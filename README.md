@@ -141,14 +141,3 @@ A source class is an implementation of the `Source` class in `modules/sources`, 
 ### Creating filters
 
 A filter is an implementation of the `Filter` type in `modules/filters`. A filter is essentially a function which takes as input an item and outputs a boolean (true if the item passes the filter, false otherwise). You can add your own filter classes to `modules/filters/implementations`.
-
-# Features in development
-
-#todo
-
-- [ ] Interface for setting API keys.
-- [ ] Interface for setting feed configuration.
-- [ ] Usage statistics.
-- Add support for more sources:
-  - [ ] Email newsletters
-  - [ ] Major platforms (YouTube, Reddit, Twitter/X)
