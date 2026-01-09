@@ -10,8 +10,8 @@ Quereada is inspired by RSS readers, but more customizable and flexible. Think o
 
 3. **Blocks**: Components that make up feeds:
 
-   - _Streams_: Infinite-scroll item lists defined by database queries
-   - _Digests_: LLM-generated summaries of items and/or digests from other blocks
+   - _Streams_: Infinite-scroll item lists defined by database queries.
+   - _Digests_: LLM-generated summaries of items and/or digests from other blocks. These are composable.
 
 4. **Feeds**: Sequences of blocks that users navigate between.
 
