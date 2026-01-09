@@ -272,19 +272,19 @@ export const blocks: ConfigBlock[] =
 [
     {
         title: "Daily Briefing",
-        implementation: "NewsBriefing",
+        implementation: "LLMDigest",
         args: {
-            focus_areas: ["politics", "technology", "culture"],
+            prompt: `You are a news briefing assistant. Summarize the day's news, grouping by topic. Focus particularly on: politics, technology, culture.`,
+            model: "gpt-5-mini",
             input_blocks: ["Daily Briefing Items"]
         }
-    }
-,
+    },
     {
         title: 'Thoughts of the moment',
-        implementation: 'NewsBriefing',
+        implementation: 'LLMDigest',
         args: {
-            input_blocks: [ 'Articles by George Packer', 'Daily Briefing', 'Food for Thought' ],
-            focus_areas: [ 'society', 'vibes' ]
+            prompt: `You are a thoughtful analyst. Identify the most significant developments and explain their implications. Highlight connections between different stories. Focus on: society, vibes.`,
+            input_blocks: [ 'Articles by George Packer', 'Daily Briefing', 'Food for Thought' ]
         }
     }
 ];

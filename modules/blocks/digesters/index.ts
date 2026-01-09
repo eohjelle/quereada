@@ -13,12 +13,12 @@ export type { DigestItem, DisplayItem };
 export type { Digester, DigesterConstructor, BlockOutput };
 
 // Import digester implementations
-import { NewsBriefing } from './implementations/news_briefing';
+import { LLMDigest } from './implementations/llm_digest';
 
 /**
  * Registry of available digester implementations.
  * Each key is a unique digester identifier used in block.implementation.
  */
 export const digesters: { [implementation: string]: DigesterConstructor<any> } = {
-    'NewsBriefing': NewsBriefing
+    'LLMDigest': LLMDigest
 };

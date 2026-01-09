@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
   import { slide } from "svelte/transition";
+  import { marked } from "marked";
   import type { DigestDisplayItem, DisplayItem } from "$lib/types";
   import ItemContainer from "./ItemContainer.svelte";
 
@@ -19,6 +20,11 @@
       feed_title: feedTitle,
       block_title: blockTitle,
     };
+  }
+
+  // Convert markdown content to HTML
+  function markdownToHtml(markdown: string): string {
+    return marked.parse(markdown, { async: false }) as string;
   }
 
   // Replace [ID] references with button HTML, marking the expanded one
@@ -51,8 +57,10 @@
     };
   }
 
-  $: split = expandedItemData ? splitAtExpandedItem(content) : null;
-  $: fullHtml = !split ? replaceRefsWithButtons(content) : null;
+  // First convert markdown to HTML, then process [ID] references
+  $: htmlContent = markdownToHtml(content);
+  $: split = expandedItemData ? splitAtExpandedItem(htmlContent) : null;
+  $: fullHtml = !split ? replaceRefsWithButtons(htmlContent) : null;
 
   function handleClick(e: MouseEvent) {
     const target = e.target as HTMLElement;

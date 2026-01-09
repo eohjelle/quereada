@@ -4,7 +4,6 @@
 
 # Features
 
-- Modular design of digests, making it easier to customize prompts (i. e. it's not a const hidden away in the middle of a file somewhere).
 - Interface for setting API keys.
 - Usage statistics.
 - Warnings for high LLM usage (e. g. before trying to make a digest from thousands of items).

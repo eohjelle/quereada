@@ -5,6 +5,8 @@ import { collectItems, toDigestItems } from '../utils';
 
 const openai = new OpenAI();
 
+const DEFAULT_MODEL = 'gpt-5-mini';
+
 /**
  * Collects all text content from a content stream.
  */
@@ -26,15 +28,20 @@ async function collectContent(stream: ReadableStream<string>): Promise<string> {
 }
 
 /**
- * NewsBriefing digester: Creates a summary/briefing of multiple news items.
+ * LLMDigest: A generic LLM-based digester that accepts a configurable prompt.
  *
- * The output references items using [item:ID] syntax, which the frontend
+ * The output references items using [ID] syntax, which the frontend
  * parses into clickable links that expand to show the full item.
  *
- * @param focus_areas - Optional array of topics to focus on in the briefing
+ * @param prompt - The system prompt defining the digest style/content
+ * @param model - The LLM model to use (defaults to gpt-5-mini)
  */
-export const NewsBriefing: DigesterConstructor<{ focus_areas?: string[] }> = ({ focus_areas }) =>
-    async (inputs: BlockOutput[]): Promise<ReadableStream<string>> => {
+export const LLMDigest: DigesterConstructor<{ prompt: string; model?: string }> = ({ prompt, model }) => {
+    if (!prompt) {
+        throw new Error('LLMDigest requires a "prompt" argument');
+    }
+
+    return async (inputs: BlockOutput[]): Promise<ReadableStream<string>> => {
         // Collect items and content from all input blocks
         const allDisplayItems: DisplayItem[] = [];
         const upstreamContent: string[] = [];
@@ -52,7 +59,6 @@ export const NewsBriefing: DigesterConstructor<{ focus_areas?: string[] }> = ({ 
         }
 
         // Fetch additional fields if needed (like content for summarization)
-        // For now we just need basic info for the briefing
         const items = await toDigestItems(allDisplayItems);
 
         // Build items context with IDs for referencing
@@ -65,37 +71,25 @@ export const NewsBriefing: DigesterConstructor<{ focus_areas?: string[] }> = ({ 
             authors: item.authors.map(a => a.name).join(', ')
         }));
 
-        const focusAreasText = focus_areas?.length
-            ? `Focus particularly on these areas: ${focus_areas.join(', ')}.`
-            : '';
+        // Build the full system prompt with formatting instructions
+        const systemPrompt = `${prompt}
 
-        const systemPrompt = `You are a news briefing assistant. Your output will be inserted directly into an HTML document using innerHTML, so it must be valid HTML that renders correctly in a browser.
-
-OUTPUT FORMAT: Raw HTML only (no markdown).
-- Use <h2>Section Title</h2> for section headings
-- Use <p>paragraph text</p> for paragraphs
-- Reference articles inline as [ID] (e.g., "reported [123]")
-- Do NOT use markdown syntax like ## or **bold** - these will appear as literal text
-${focusAreasText}
-
-Example of correct output:
-<h2>Technology</h2>
-<p>Apple announced new products [123]. Google responded [456] with strategy changes.</p>
-<p>Meanwhile, Microsoft released updates [789].</p>
-<h2>Politics</h2>
-<p>Tensions continue [321]. New policies announced [654].</p>`;
+OUTPUT FORMAT: Use markdown formatting.
+- Use ## for section headings
+- Use standard markdown for emphasis, lists, etc.
+- Reference articles inline as [ID] (e.g., "reported [123]")`;
 
         // Build user message with items and any upstream content
         let userContent = '';
         if (upstreamContent.length > 0) {
-            userContent += 'Previous briefing content to incorporate:\n\n';
+            userContent += 'Previous content to incorporate:\n\n';
             userContent += upstreamContent.join('\n\n---\n\n');
             userContent += '\n\n---\n\nAdditional items:\n\n';
         }
         userContent += JSON.stringify(itemsContext);
 
         const stream = await openai.chat.completions.create({
-            model: "gpt-5-mini",
+            model: model || DEFAULT_MODEL,
             messages: [
                 { role: "system", content: systemPrompt },
                 { role: "user", content: userContent }
@@ -115,3 +109,4 @@ Example of correct output:
             }
         });
     };
+};
