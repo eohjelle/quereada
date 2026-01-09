@@ -1,143 +1,98 @@
 # Quereada
 
-Quereada provides tools to build your own feeds from anything that is on the internet. It is available as a desktop app or self-hosted web app. [Click here](https://quereada-342c36fe2c15.herokuapp.com) to see a demo.
+Quereada provides tools to build your own feeds from anything on the internet. It is available as a desktop app or self-hosted web app. [Click here](https://quereada-342c36fe2c15.herokuapp.com) to see a demo.
 
-Quereada is inspired by RSS readers, but it is a lot more customizable and flexible. Think of it as an ETL (Extract, Transform, Load) pipeline for information. It is built from modular components:
+Quereada is inspired by RSS readers, but more customizable and flexible. Think of it as an data pipeline for information, built from modular components:
 
-1. _Sources_: Generalized RSS feeds which collect _items_ from anything on the internet and store them in a local database. Examples: news articles, arxiv papers, blog posts, tweets, sports games, job postings.
-2. _Filters_: Used to filter items. For example, by filtering for items that are relevant (or not) to certain topics. To save costs, this is only done on demand (i. e. not for all items stored in the database) and the results cached.
-3. _Blocks_: Components used to sequentially describe feeds. They are:
+1. **Sources**: Generalized RSS feeds that collect _items_ from anywhere on the internet and store them in a local database. Examples: news articles, arxiv papers, blog posts, tweets, sports scores, job postings.
 
-- _Streams_: Infinite-scroll like streams of items described by SQL-like _queries_ to the database.
-- _Digests_: Use LLMs to digest blocks of items. These are composable.
+2. **Filters**: Used to filter items. For example, by filtering for items that are relevant (or not) to certain topics. To save costs, this is only done on demand (i. e. not for all items stored in the database) and the results cached.
 
-4. _Feeds_: The sequence of blocks that the user sees.
+3. **Blocks**: Components that make up feeds:
 
-Some services such as summarization or filtering by relevance to topics rely on external APIs. To use these services it is necessary to provide API keys, and costs may apply. However, Quereada is designed to minimize the number of requests, and to store the results of requests to avoid making duplicate requests.
+   - _Streams_: Infinite-scroll item lists defined by database queries
+   - _Digests_: LLM-generated summaries of items and/or digests from other blocks
 
-# How to use
+4. **Feeds**: Sequences of blocks that users navigate between.
 
-It is easy for anyone to use Quereada, but at the time of writing, the initial setup requires some technical knowledge.
+Some features (summarization, topic filtering, digests) use external APIs. Quereada minimizes API calls and caches results to avoid duplicates.
 
-There are currently two options for using Quereada:
+## Installation
 
-1. As a desktop app that runs natively on your machine (recommended).
-2. As a self-hosted web app that can be accessed in a web browser.
-
-Depending on your choice, follow the instructions below.
-
-## Desktop installation
-
-For some systems, releases are available on the [Releases](https://github.com/quereada/quereada/releases) page. If you install from one of these releases, you can skip the "Build from source" section.
-
-### Build from source
-
-The first step is to clone the repository to a folder on your machine:
+### Desktop App
 
 ```bash
 git clone https://github.com/eohjelle/quereada.git
-```
-
-Then, install the dependencies (this requires [Node.js](https://nodejs.org) to be installed on your machine) in the root folder of the project:
-
-```bash
+cd quereada
 npm install
-```
-
-Before building the app, you need to create the SQLite database:
-
-```bash
 npm run db:build
+npm run electron:package:mac
 ```
 
-_Note:_ If you are making a release for a different platform than the one you are on, you will need to modify the Prisma schema to use the correct database driver. See [here](https://github.com/prisma/prisma/discussions/21027) for some discussion.
+The app will be in the `dist` folder. Pre-built releases may be available on the [Releases](https://github.com/quereada/quereada/releases) page.
 
-Finally, you can build the app based on your platform:
+_Note:_ If building for a different platform than your current one, you may need to modify the Prisma schema to use the correct database driver. See [this discussion](https://github.com/prisma/prisma/discussions/21027).
 
-- Mac: `npm run electron:package:mac`
+**Config location**: `~/.config/quereada/` (Linux), `~/Library/Application Support/quereada/` (macOS), `AppData\Roaming\quereada` (Windows)
 
-The app will be built and placed in the `dist` folder.
-
-### Configuration
-
-Quereada looks for keys and feed configuration in the `userData` folder, which defaults to `~/.config/quereada` on Linux, `~/Library/Application Support/quereada` on macOS, and `AppData\Roaming\quereada` on Windows. Specifically, Quereada will look for the following files in the `userData` folder:
-
-- `keys.json`
-- `quereada.config.ts`
-
-See the sections below for more information about what each file is for.
-
-## Web installation
-
-### Setup
-
-The first step is to clone the repository to a folder on your machine:
+### Web App
 
 ```bash
 git clone https://github.com/eohjelle/quereada.git
-```
-
-Then, install the dependencies (this requires [Node.js](https://nodejs.org) to be installed on your machine) in the root folder of the project:
-
-```bash
+cd quereada
 npm install
-```
-
-Before building the app, you need to create the database. By default, this is an SQLite database named `store.db` in the root folder of the project. But if you prefer to use PostgreSQL, you can change the database driver in the `schema.prisma` file and set `DATABASE_URL` in the `.env` file in the root folder of the project. To set up the initial database schema, run the following command:
-
-```bash
 npm run db:build
-```
-
-Build the app:
-
-```bash
 npm run web:build
-```
-
-Run the app:
-
-```bash
 npm run web:start
 ```
 
-### Configuration
+Uses SQLite by default. For PostgreSQL, update `schema.prisma` and set `DATABASE_URL` in `.env`.
 
-The app will look for API keys and other environmental variables in a file called `.env` in the root folder of the project. The `quereada.config.ts` file which controls the feeds is also in the root folder of the project.
+**Config location**: Project root (`.env` for keys, `quereada.config.ts` for feeds)
 
-## Keys
+## Configuration
 
-Some services require keys. Depending on whether you use the desktop or web version, you will set the keys in different ways -- see "Configuration" in the sections above.
+### API Keys
 
-Here is a list of the keys you can set:
+| Key              | Used for                              |
+| ---------------- | ------------------------------------- |
+| `OPENAI_API_KEY` | Summarization, topic filters, digests |
 
-| Key            | Service | Required?                                                  |
-| -------------- | ------- | ---------------------------------------------------------- |
-| OPENAI_API_KEY | OpenAI  | Yes, but this requirement should be removed in the future. |
+Set keys in `keys.json` (desktop) or `.env` (web).
 
-_Note:_ Usage of Quereada may incur costs with the services listed above. For example, the default implementation of summarization and topic relevance checks uses the OpenAI API. However, the software is designed to minimize the number of requests. For example, items are only summarized upon request, and filters are only applied when a feed using that filter is being loaded. Moreover, the results of summarization requests and topic relevance checks are stored, so that they are applied at most once per item.
+### Adding Content
 
-## Customization
+The easiest way to configure Quereada is through the UI. Click the **+** button to:
 
-After setting up the app, you can customize it to your liking.
+- Add RSS sources (with auto-discovery from website URLs)
+- Create queries with filters
+- Generate AI digests
+- Compose feeds from blocks
 
-#todo Add more detailed information.
+Changes are saved to `quereada.config.ts`.
 
-### Writing `quereada.config.ts`
+### Manual Configuration
 
-The `quereada.config.ts` file controls the feeds. It needs to export the following constants:
+The `quereada.config.ts` file exports four arrays:
 
-- `sources`: An array of `ConfigSource` objects.
-- `filters`: An array of `ConfigFilter` objects.
-- `blocks`: An array of `ConfigBlock` objects. (A block is a part of a feed: a feed composed of multiple blocks show all items in the first block, then all items in the second block, etc.)
-- `feeds`: An array of `ConfigFeed` objects.
+```typescript
+export const sources: ConfigSource[] = [...];   // Where to fetch items
+export const filters: ConfigFilter[] = [...];   // AI-powered filters
+export const blocks: ConfigBlock[] = [...];     // Queries or digests
+export const feeds: ConfigFeed[] = [...];       // What users see
+```
 
-It is recommended to edit this file by cloning the project, and modifying the copy of `quereada.config.ts` in the root folder of the project. This ensures that you get syntax highlighting and error checking as you type (if using a modern editor with TypeScript support).
+## Extending
 
-### Adding new source classes
+Add custom implementations in `modules/`:
 
-A source class is an implementation of the `Source` class in `modules/sources`, which tells Quereada how to fetch items from a particular source. You can add your own source classes to `modules/sources/implementations`.
+- **Sources**: Extend the `Source` class in `modules/sources/`
+- **Filters**: Implement the `Filter` type in `modules/filters/`
 
-### Creating filters
+## Development
 
-A filter is an implementation of the `Filter` type in `modules/filters`. A filter is essentially a function which takes as input an item and outputs a boolean (true if the item passes the filter, false otherwise). You can add your own filter classes to `modules/filters/implementations`.
+```bash
+npm run electron:dev                      # Desktop with hot reload
+npm run web:build && npm run web:start    # Web app
+npm run test                              # Run tests
+```

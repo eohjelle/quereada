@@ -90,4 +90,109 @@ export class WebEndpointFrontend extends EndpointFrontend {
         }
         return response.json();
     }
+
+    async validateRssFeed(url: string): Promise<{
+        valid: boolean;
+        title?: string;
+        itemCount?: number;
+        error?: string;
+    }> {
+        const response = await fetch("/api/validate_rss_feed", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url }),
+        });
+        return response.json();
+    }
+
+    async discoverRssFeeds(websiteUrl: string): Promise<{
+        feeds: Array<{ url: string; title?: string }>;
+        error?: string;
+    }> {
+        const response = await fetch("/api/discover_rss_feeds", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url: websiteUrl }),
+        });
+        return response.json();
+    }
+
+    async addRssSource(source: {
+        name: string;
+        urls: string[];
+        defaultValues?: {
+            item_type?: 'Article' | 'Link';
+            lang_id?: string;
+            summarizable?: boolean;
+        };
+    }): Promise<{ success: boolean; error?: string }> {
+        const response = await fetch("/api/add_rss_source", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(source),
+        });
+        return response.json();
+    }
+
+    async addQuery(
+        query: { title: string; where?: any; orderBy?: any; take?: number },
+        createFeed: boolean = true
+    ): Promise<{ success: boolean; error?: string }> {
+        const response = await fetch("/api/add_query", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ query, createFeed }),
+        });
+        return response.json();
+    }
+
+    async getAvailableSources(): Promise<string[]> {
+        const response = await fetch("/api/get_available_sources", {
+            method: "GET",
+        });
+        return response.json();
+    }
+
+    async getAvailableFilters(): Promise<Array<{ title: string; implementation: string }>> {
+        const response = await fetch("/api/get_available_filters", {
+            method: "GET",
+        });
+        return response.json();
+    }
+
+    async getAvailableBlocks(): Promise<Array<{ title: string; implementation: string }>> {
+        const response = await fetch("/api/get_available_blocks", {
+            method: "GET",
+        });
+        return response.json();
+    }
+
+    async addDigest(block: {
+        title: string;
+        implementation: string;
+        args: {
+            input_blocks: string[];
+            focus_areas?: string[];
+            [key: string]: any;
+        };
+    }): Promise<{ success: boolean; error?: string }> {
+        const response = await fetch("/api/add_digest", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(block),
+        });
+        return response.json();
+    }
+
+    async addFeed(feed: {
+        title: string;
+        blocks: string[];
+    }): Promise<{ success: boolean; error?: string }> {
+        const response = await fetch("/api/add_feed", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(feed),
+        });
+        return response.json();
+    }
 }

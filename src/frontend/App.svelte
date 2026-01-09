@@ -1,6 +1,11 @@
 <script lang="ts">
   import Home from "./components/Home.svelte";
   import RefreshButton from "./components/RefreshButton.svelte";
+  import CreateMenu from "./components/CreateMenu.svelte";
+  import AddSourceModal from "./components/AddSourceModal.svelte";
+  import QueryEditor from "./components/QueryEditor.svelte";
+  import DigestEditor from "./components/DigestEditor.svelte";
+  import FeedEditor from "./components/FeedEditor.svelte";
   import Feed from "./components/Feed.svelte";
   import { onMount } from "svelte";
   import { api } from "$bridge/api_endpoint";
@@ -14,6 +19,28 @@
   let selectedFeed: FeedType;
   let streamInterface: StreamInterface;
 
+  let addSourceModal: AddSourceModal;
+  let queryEditor: QueryEditor;
+  let digestEditor: DigestEditor;
+  let feedEditor: FeedEditor;
+
+  function handleCreateSelect(event: CustomEvent<{ type: 'source' | 'query' | 'digest' | 'feed' }>) {
+    switch (event.detail.type) {
+      case 'source':
+        addSourceModal.open();
+        break;
+      case 'query':
+        queryEditor.open();
+        break;
+      case 'digest':
+        digestEditor.open();
+        break;
+      case 'feed':
+        feedEditor.open();
+        break;
+    }
+  }
+
   onMount(async () => {
     console.log("Loading feed data...");
     feeds = await api.getFeedData();
@@ -24,6 +51,7 @@
 <nav>
   <div class="settings">
     <RefreshButton />
+    <CreateMenu on:select={handleCreateSelect} />
   </div>
   <div class="feeds">
     {#each feeds as feed}
@@ -47,6 +75,11 @@
     <Home />
   {/if}
 </main>
+
+<AddSourceModal bind:this={addSourceModal} />
+<QueryEditor bind:this={queryEditor} />
+<DigestEditor bind:this={digestEditor} />
+<FeedEditor bind:this={feedEditor} />
 
 <style>
   /* body {
@@ -72,6 +105,8 @@
   nav .settings {
     padding: 0 10px;
     margin-right: auto;
+    display: flex;
+    align-items: center;
   }
 
   nav .feeds {

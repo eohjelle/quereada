@@ -93,5 +93,94 @@ export class ElectronEndpointBackend extends EndpointBackend {
                 return { error: 'Internal server error' };
             }
         });
+
+        ipcMain.handle('validate_rss_feed', async (event: IpcMainInvokeEvent, url: string) => {
+            try {
+                return await this.validateRssFeed(url);
+            } catch (error) {
+                console.error('Error validating RSS feed:', error);
+                return { valid: false, error: 'Internal server error' };
+            }
+        });
+
+        ipcMain.handle('discover_rss_feeds', async (event: IpcMainInvokeEvent, url: string) => {
+            try {
+                return await this.discoverRssFeeds(url);
+            } catch (error) {
+                console.error('Error discovering RSS feeds:', error);
+                return { feeds: [], error: 'Internal server error' };
+            }
+        });
+
+        ipcMain.handle('add_rss_source', async (event: IpcMainInvokeEvent, source: {
+            name: string;
+            urls: string[];
+            defaultValues?: {
+                item_type?: 'Article' | 'Link';
+                lang_id?: string;
+                summarizable?: boolean;
+            };
+        }) => {
+            try {
+                return await this.addRssSource(source);
+            } catch (error) {
+                console.error('Error adding RSS source:', error);
+                return { success: false, error: 'Internal server error' };
+            }
+        });
+
+        ipcMain.handle('add_query', async (event: IpcMainInvokeEvent, query: any, createFeed: boolean = true) => {
+            try {
+                return await this.addQuery(query, createFeed);
+            } catch (error) {
+                console.error('Error adding query:', error);
+                return { success: false, error: 'Internal server error' };
+            }
+        });
+
+        ipcMain.handle('get_available_sources', async () => {
+            try {
+                return await this.getAvailableSources();
+            } catch (error) {
+                console.error('Error getting available sources:', error);
+                return [];
+            }
+        });
+
+        ipcMain.handle('get_available_filters', async () => {
+            try {
+                return await this.getAvailableFilters();
+            } catch (error) {
+                console.error('Error getting available filters:', error);
+                return [];
+            }
+        });
+
+        ipcMain.handle('get_available_blocks', async () => {
+            try {
+                return await this.getAvailableBlocks();
+            } catch (error) {
+                console.error('Error getting available blocks:', error);
+                return [];
+            }
+        });
+
+        ipcMain.handle('add_digest', async (event: IpcMainInvokeEvent, block: any) => {
+            try {
+                return await this.addDigest(block);
+            } catch (error) {
+                console.error('Error adding digest:', error);
+                return { success: false, error: 'Internal server error' };
+            }
+        });
+
+        ipcMain.handle('add_feed', async (event: IpcMainInvokeEvent, feed: any) => {
+            try {
+                return await this.addFeed(feed);
+            } catch (error) {
+                console.error('Error adding feed:', error);
+                return { success: false, error: 'Internal server error' };
+            }
+        });
     }
 }

@@ -60,4 +60,70 @@ export class ElectronEndpointFrontend extends EndpointFrontend {
     async getDigestItems(itemIds: number[]): Promise<DigestDisplayItem[]> {
         return window.electronAPI.getDigestItems(itemIds);
     }
+
+    async validateRssFeed(url: string): Promise<{
+        valid: boolean;
+        title?: string;
+        itemCount?: number;
+        error?: string;
+    }> {
+        return window.electronAPI.validateRssFeed(url);
+    }
+
+    async discoverRssFeeds(websiteUrl: string): Promise<{
+        feeds: Array<{ url: string; title?: string }>;
+        error?: string;
+    }> {
+        return window.electronAPI.discoverRssFeeds(websiteUrl);
+    }
+
+    async addRssSource(source: {
+        name: string;
+        urls: string[];
+        defaultValues?: {
+            item_type?: 'Article' | 'Link';
+            lang_id?: string;
+            summarizable?: boolean;
+        };
+    }): Promise<{ success: boolean; error?: string }> {
+        return window.electronAPI.addRssSource(source);
+    }
+
+    async addQuery(
+        query: { title: string; where?: any; orderBy?: any; take?: number },
+        createFeed: boolean = true
+    ): Promise<{ success: boolean; error?: string }> {
+        return window.electronAPI.addQuery(query, createFeed);
+    }
+
+    async getAvailableSources(): Promise<string[]> {
+        return window.electronAPI.getAvailableSources();
+    }
+
+    async getAvailableFilters(): Promise<Array<{ title: string; implementation: string }>> {
+        return window.electronAPI.getAvailableFilters();
+    }
+
+    async getAvailableBlocks(): Promise<Array<{ title: string; implementation: string }>> {
+        return window.electronAPI.getAvailableBlocks();
+    }
+
+    async addDigest(block: {
+        title: string;
+        implementation: string;
+        args: {
+            input_blocks: string[];
+            focus_areas?: string[];
+            [key: string]: any;
+        };
+    }): Promise<{ success: boolean; error?: string }> {
+        return window.electronAPI.addDigest(block);
+    }
+
+    async addFeed(feed: {
+        title: string;
+        blocks: string[];
+    }): Promise<{ success: boolean; error?: string }> {
+        return window.electronAPI.addFeed(feed);
+    }
 }

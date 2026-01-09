@@ -47,7 +47,24 @@ contextBridge.exposeInMainWorld('electronAPI', {
             ipcRenderer.removeListener('digest', digestChunkHandler);
         };
     },
-    getDigestItems: (itemIds: number[]) => ipcRenderer.invoke('get_digest_items', itemIds)
+    getDigestItems: (itemIds: number[]) => ipcRenderer.invoke('get_digest_items', itemIds),
+    validateRssFeed: (url: string) => ipcRenderer.invoke('validate_rss_feed', url),
+    discoverRssFeeds: (url: string) => ipcRenderer.invoke('discover_rss_feeds', url),
+    addRssSource: (source: {
+        name: string;
+        urls: string[];
+        defaultValues?: {
+            item_type?: 'Article' | 'Link';
+            lang_id?: string;
+            summarizable?: boolean;
+        };
+    }) => ipcRenderer.invoke('add_rss_source', source),
+    addQuery: (query: any, createFeed: boolean = true) => ipcRenderer.invoke('add_query', query, createFeed),
+    getAvailableSources: () => ipcRenderer.invoke('get_available_sources'),
+    getAvailableFilters: () => ipcRenderer.invoke('get_available_filters'),
+    getAvailableBlocks: () => ipcRenderer.invoke('get_available_blocks'),
+    addDigest: (block: any) => ipcRenderer.invoke('add_digest', block),
+    addFeed: (feed: any) => ipcRenderer.invoke('add_feed', feed)
 });
 
 /** This sets up the API used in src/bridge/loading_items_to_feed/electron/frontend.ts */
@@ -65,7 +82,16 @@ declare global {
             getFeedData: () => Promise<Feed[]>,
             getRawConfig: () => Promise<string>,
             generateDigest: (blockTitle: string, callback: (chunk: string | null) => void) => () => void,
-            getDigestItems: (itemIds: number[]) => Promise<DigestDisplayItem[]>
+            getDigestItems: (itemIds: number[]) => Promise<DigestDisplayItem[]>,
+            validateRssFeed: (url: string) => Promise<{ valid: boolean; title?: string; itemCount?: number; error?: string }>,
+            discoverRssFeeds: (url: string) => Promise<{ feeds: Array<{ url: string; title?: string }>; error?: string }>,
+            addRssSource: (source: { name: string; urls: string[]; defaultValues?: { item_type?: 'Article' | 'Link'; lang_id?: string; summarizable?: boolean } }) => Promise<{ success: boolean; error?: string }>,
+            addQuery: (query: any, createFeed?: boolean) => Promise<{ success: boolean; error?: string }>,
+            getAvailableSources: () => Promise<string[]>,
+            getAvailableFilters: () => Promise<Array<{ title: string; implementation: string }>>,
+            getAvailableBlocks: () => Promise<Array<{ title: string; implementation: string }>>,
+            addDigest: (block: any) => Promise<{ success: boolean; error?: string }>,
+            addFeed: (feed: any) => Promise<{ success: boolean; error?: string }>
         },
         feedAPI: {
             sendRequest<T extends BackendResponse>(request: FrontendRequest, instructions?: Instructions): Promise<T>,

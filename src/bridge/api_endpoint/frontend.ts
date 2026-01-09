@@ -20,6 +20,56 @@ export abstract class EndpointFrontend {
 
     abstract getRawConfig(): Promise<string>;
 
+    // RSS feed management
+    abstract validateRssFeed(url: string): Promise<{
+        valid: boolean;
+        title?: string;
+        itemCount?: number;
+        error?: string;
+    }>;
+
+    abstract discoverRssFeeds(websiteUrl: string): Promise<{
+        feeds: Array<{ url: string; title?: string }>;
+        error?: string;
+    }>;
+
+    abstract addRssSource(source: {
+        name: string;
+        urls: string[];
+        defaultValues?: {
+            item_type?: 'Article' | 'Link';
+            lang_id?: string;
+            summarizable?: boolean;
+        };
+    }): Promise<{ success: boolean; error?: string }>;
+
+    // Query management
+    abstract addQuery(
+        query: { title: string; where?: any; orderBy?: any; take?: number },
+        createFeed?: boolean
+    ): Promise<{ success: boolean; error?: string }>;
+
+    abstract getAvailableSources(): Promise<string[]>;
+
+    abstract getAvailableFilters(): Promise<Array<{ title: string; implementation: string }>>;
+
+    abstract getAvailableBlocks(): Promise<Array<{ title: string; implementation: string }>>;
+
+    abstract addDigest(block: {
+        title: string;
+        implementation: string;
+        args: {
+            input_blocks: string[];
+            focus_areas?: string[];
+            [key: string]: any;
+        };
+    }): Promise<{ success: boolean; error?: string }>;
+
+    abstract addFeed(feed: {
+        title: string;
+        blocks: string[];
+    }): Promise<{ success: boolean; error?: string }>;
+
     async updateSeen(item_id: number, feed_title: string, block_title: string): Promise<void> {
         await this.itemUpdate({
             where: {

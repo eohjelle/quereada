@@ -278,6 +278,15 @@ export const blocks: ConfigBlock[] =
             input_blocks: ["Daily Briefing Items"]
         }
     }
+,
+    {
+        title: 'Thoughts of the moment',
+        implementation: 'NewsBriefing',
+        args: {
+            input_blocks: [ 'Articles by George Packer', 'Daily Briefing', 'Food for Thought' ],
+            focus_areas: [ 'society', 'vibes' ]
+        }
+    }
 ];
 
 export const feeds: ConfigFeed[] =
@@ -325,5 +334,10 @@ export const feeds: ConfigFeed[] =
     {
         title: "Unseen Items",
         blocks: [ "Unseen Items" ]
+    }
+,
+    {
+        title: 'Test feed',
+        blocks: [ 'Thoughts of the moment' ]
     }
 ];
