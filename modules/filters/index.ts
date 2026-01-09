@@ -19,7 +19,7 @@ import { RelevantToTopics } from './implementations/relevant_to_topics';
 
 /**
  * This is the registry of available filter types.
- * These filters are used in modules/blocks/items_stream.
+ * These filters are used in modules/blocks/items_iterator.
  * Each key represents a unique filter identifier, and its value is the corresponding filter constructor.
  */
 export const filters: { [implementation: string]: FilterConstructor<any> } = {

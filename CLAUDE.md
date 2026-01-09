@@ -49,7 +49,7 @@ The app runs on both Electron and web with shared frontend code. The `src/bridge
 - `main/web/index.ts` - Express server entry
 - `database.ts` - Prisma client initialization
 - `load_config.ts` - Loads and upserts config into database
-- `items_stream.ts` - `ItemsStream` class for streaming items matching feed queries
+- `digest.ts` - Functions for generating and retrieving digest content
 - `fetch.ts` - Fetches items from all sources
 - `summarize.ts` - OpenAI-based article summarization
 
