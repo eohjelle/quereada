@@ -65,7 +65,7 @@ Set keys in `keys.json` (desktop) or `.env` (web).
 The easiest way to configure Quereada is through the UI. Click the **+** button to:
 
 - Add RSS sources (with auto-discovery from website URLs)
-- Create queries with filters
+- Create simple queries with filters (good enough for most purposes but not maximally expressive)
 - Generate AI digests
 - Compose feeds from blocks
 
