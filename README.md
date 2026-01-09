@@ -6,7 +6,7 @@ Quereada is inspired by RSS readers, but more customizable and flexible. Think o
 
 1. **Sources**: Generalized RSS feeds that collect _items_ from anywhere on the internet and store them in a local database. Examples: news articles, arxiv papers, blog posts, tweets, sports scores, job postings.
 
-2. **Filters**: Used to filter items. For example, by filtering for items that are relevant (or not) to certain topics. To save costs, this is only done on demand (i. e. not for all items stored in the database) and the results cached.
+2. **Filters**: Used to filter items. For example, by filtering for items that are relevant (or not) to certain topics.
 
 3. **Blocks**: Components that make up feeds:
 
